@@ -6,7 +6,6 @@ export interface ApiResponse<T = unknown> {
   time: number;
 }
 
-
 // API响应状态码
 export enum ResponseCode {
   CODE_SUCCESS = 200,
@@ -17,5 +16,5 @@ export enum ResponseCode {
   CODE_TOO_MANY_REQUESTS = 429,
   CODE_INTERNAL_SERVER_ERROR = 500,
   CODE_SERVICE_UNAVAILABLE = 503,
-  CODE_GATEWAY_TIMEOUT = 504
+  CODE_GATEWAY_TIMEOUT = 504,
 }

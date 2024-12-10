@@ -1,1 +1,2333 @@
-{"openapi":"3.0.1","info":{"title":"OpenAPI definition","version":"v0"},"servers":[{"url":"http://localhost:8080","description":"Generated server url"}],"tags":[{"name":"Auth","description":"Authentication"}],"paths":{"/users/update":{"put":{"tags":["user-controller"],"operationId":"update","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/User"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/tickets/update":{"put":{"tags":["ticket-controller"],"operationId":"update_1","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Ticket"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/payments/update":{"put":{"tags":["payment-controller"],"operationId":"update_2","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Payment"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/orders/update":{"put":{"tags":["order-controller"],"operationId":"update_3","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Order"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/docks/update":{"put":{"tags":["dock-controller"],"operationId":"update_4","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Dock"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/boats/update":{"put":{"tags":["boat-controller"],"operationId":"update_5","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Boat"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/boatTypes/update":{"put":{"tags":["boat-type-controller"],"operationId":"update_6","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/BoatType"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/alerts/update":{"put":{"tags":["alert-controller"],"operationId":"update_7","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Alert"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/users/save":{"post":{"tags":["user-controller"],"operationId":"save","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/User"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/tickets/save":{"post":{"tags":["ticket-controller"],"operationId":"save_1","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Ticket"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/payments/save":{"post":{"tags":["payment-controller"],"operationId":"save_2","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Payment"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/orders/save":{"post":{"tags":["order-controller"],"operationId":"save_3","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Order"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/docks/save":{"post":{"tags":["dock-controller"],"operationId":"save_4","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Dock"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/boats/save":{"post":{"tags":["boat-controller"],"operationId":"save_5","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Boat"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/boatTypes/save":{"post":{"tags":["boat-type-controller"],"operationId":"save_6","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/BoatType"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/auth/register":{"post":{"tags":["Auth"],"summary":"Register","operationId":"registerWithPassword","parameters":[{"name":"authRequestDTO","in":"query","description":"Register request","required":true}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/AuthRequestDTO"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/ResponseTokenVO"}}}}}}},"/auth/login":{"post":{"tags":["Auth"],"summary":"Login","operationId":"loginWithPassword","parameters":[{"name":"authRequestDTO","in":"query","description":"Login request","required":true}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/AuthRequestDTO"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/ResponseTokenVO"}}}}}}},"/auth/login/code":{"post":{"tags":["Auth"],"summary":"Login by code","operationId":"loginByCode","parameters":[{"name":"authRequestDTO","in":"query","description":"Login request","required":true}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/AuthRequestDTO"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/ResponseTokenVO"}}}}}}},"/auth/code":{"post":{"tags":["Auth"],"summary":"Send code","operationId":"sendCode","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/NameRequestDTO"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/ResponseString"}}}}}}},"/auth/availability":{"post":{"tags":["Auth"],"summary":"Check Username availability","operationId":"checkAvailability","parameters":[{"name":"nameRequestDTO","in":"query","description":"Username request","required":true}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/NameRequestDTO"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/ResponseBoolean"}}}}}}},"/alerts/save":{"post":{"tags":["alert-controller"],"operationId":"save_7","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Alert"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/users/page":{"get":{"tags":["user-controller"],"operationId":"page","parameters":[{"name":"page","in":"query","required":true,"schema":{"$ref":"#/components/schemas/PageUser"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageUser"}}}}}}},"/users/list":{"get":{"tags":["user-controller"],"operationId":"list","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/User"}}}}}}}},"/users/getInfo/{id}":{"get":{"tags":["user-controller"],"operationId":"getInfo","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/User"}}}}}}},"/tickets/page":{"get":{"tags":["ticket-controller"],"operationId":"page_1","parameters":[{"name":"page","in":"query","required":true,"schema":{"$ref":"#/components/schemas/PageTicket"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageTicket"}}}}}}},"/tickets/list":{"get":{"tags":["ticket-controller"],"operationId":"list_1","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/Ticket"}}}}}}}},"/tickets/getInfo/{id}":{"get":{"tags":["ticket-controller"],"operationId":"getInfo_1","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/Ticket"}}}}}}},"/payments/page":{"get":{"tags":["payment-controller"],"operationId":"page_2","parameters":[{"name":"page","in":"query","required":true,"schema":{"$ref":"#/components/schemas/PagePayment"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PagePayment"}}}}}}},"/payments/list":{"get":{"tags":["payment-controller"],"operationId":"list_2","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/Payment"}}}}}}}},"/payments/getInfo/{id}":{"get":{"tags":["payment-controller"],"operationId":"getInfo_2","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/Payment"}}}}}}},"/orders/page":{"get":{"tags":["order-controller"],"operationId":"page_3","parameters":[{"name":"page","in":"query","required":true,"schema":{"$ref":"#/components/schemas/PageOrder"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageOrder"}}}}}}},"/orders/list":{"get":{"tags":["order-controller"],"operationId":"list_3","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/Order"}}}}}}}},"/orders/getInfo/{id}":{"get":{"tags":["order-controller"],"operationId":"getInfo_3","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/Order"}}}}}}},"/docks/page":{"get":{"tags":["dock-controller"],"operationId":"page_4","parameters":[{"name":"page","in":"query","required":true,"schema":{"$ref":"#/components/schemas/PageDock"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageDock"}}}}}}},"/docks/list":{"get":{"tags":["dock-controller"],"operationId":"list_4","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/Dock"}}}}}}}},"/docks/getInfo/{id}":{"get":{"tags":["dock-controller"],"operationId":"getInfo_4","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/Dock"}}}}}}},"/boats/page":{"get":{"tags":["boat-controller"],"operationId":"page_5","parameters":[{"name":"page","in":"query","required":true,"schema":{"$ref":"#/components/schemas/PageBoat"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageBoat"}}}}}}},"/boats/list":{"get":{"tags":["boat-controller"],"operationId":"list_5","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/Boat"}}}}}}}},"/boats/getInfo/{id}":{"get":{"tags":["boat-controller"],"operationId":"getInfo_5","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/Boat"}}}}}}},"/boatTypes/page":{"get":{"tags":["boat-type-controller"],"operationId":"page_6","parameters":[{"name":"page","in":"query","required":true,"schema":{"$ref":"#/components/schemas/PageBoatType"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageBoatType"}}}}}}},"/boatTypes/list":{"get":{"tags":["boat-type-controller"],"operationId":"list_6","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/BoatType"}}}}}}}},"/boatTypes/getInfo/{id}":{"get":{"tags":["boat-type-controller"],"operationId":"getInfo_6","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/BoatType"}}}}}}},"/alerts/page":{"get":{"tags":["alert-controller"],"operationId":"page_7","parameters":[{"name":"page","in":"query","required":true,"schema":{"$ref":"#/components/schemas/PageAlert"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageAlert"}}}}}}},"/alerts/list":{"get":{"tags":["alert-controller"],"operationId":"list_7","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/Alert"}}}}}}}},"/alerts/getInfo/{id}":{"get":{"tags":["alert-controller"],"operationId":"getInfo_7","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/Alert"}}}}}}},"/users/remove/{id}":{"delete":{"tags":["user-controller"],"operationId":"remove","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/tickets/remove/{id}":{"delete":{"tags":["ticket-controller"],"operationId":"remove_1","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/payments/remove/{id}":{"delete":{"tags":["payment-controller"],"operationId":"remove_2","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/orders/remove/{id}":{"delete":{"tags":["order-controller"],"operationId":"remove_3","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/docks/remove/{id}":{"delete":{"tags":["dock-controller"],"operationId":"remove_4","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/boats/remove/{id}":{"delete":{"tags":["boat-controller"],"operationId":"remove_5","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/boatTypes/remove/{id}":{"delete":{"tags":["boat-type-controller"],"operationId":"remove_6","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}},"/alerts/remove/{id}":{"delete":{"tags":["alert-controller"],"operationId":"remove_7","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"boolean"}}}}}}}},"components":{"schemas":{"Code":{"type":"object","properties":{"isDeleted":{"type":"boolean"},"createdAt":{"type":"string","format":"date-time"},"updatedAt":{"type":"string","format":"date-time"},"id":{"type":"integer","format":"int64"},"userId":{"type":"integer","format":"int64"},"user":{"$ref":"#/components/schemas/User"},"code":{"type":"string"},"requestTime":{"type":"string","format":"date-time"},"expirationTime":{"type":"string","format":"date-time"}}},"User":{"type":"object","properties":{"isDeleted":{"type":"boolean"},"createdAt":{"type":"string","format":"date-time"},"updatedAt":{"type":"string","format":"date-time"},"userId":{"type":"integer","format":"int64"},"uuid":{"type":"string"},"username":{"type":"string"},"password":{"type":"string"},"email":{"type":"string"},"phone":{"type":"string"},"role":{"type":"string","enum":["NONE","USER","ADMIN"]},"codeIds":{"type":"array","items":{"type":"integer","format":"int64"}},"codes":{"type":"array","items":{"$ref":"#/components/schemas/Code"}},"isActive":{"type":"boolean"},"isBlocked":{"type":"boolean"},"token":{"type":"string"}}},"Boat":{"type":"object","properties":{"isDeleted":{"type":"boolean"},"createdAt":{"type":"string","format":"date-time"},"updatedAt":{"type":"string","format":"date-time"},"boatId":{"type":"integer","format":"int64"},"boatName":{"type":"string"},"boatTypeId":{"type":"integer","format":"int64"},"boatType":{"$ref":"#/components/schemas/BoatType"},"status":{"type":"integer","format":"int32"}}},"BoatType":{"type":"object","properties":{"isDeleted":{"type":"boolean"},"createdAt":{"type":"string","format":"date-time"},"updatedAt":{"type":"string","format":"date-time"},"boatTypeId":{"type":"integer","format":"int64"},"boatTypeName":{"type":"string"},"boatTypeDescription":{"type":"string"}}},"Dock":{"type":"object","properties":{"isDeleted":{"type":"boolean"},"createdAt":{"type":"string","format":"date-time"},"updatedAt":{"type":"string","format":"date-time"},"dockId":{"type":"integer","format":"int64"},"dockName":{"type":"string"},"dockLocation":{"type":"string"}}},"Ticket":{"type":"object","properties":{"isDeleted":{"type":"boolean"},"createdAt":{"type":"string","format":"date-time"},"updatedAt":{"type":"string","format":"date-time"},"ticketId":{"type":"integer","format":"int64"},"userId":{"type":"integer","format":"int64"},"user":{"$ref":"#/components/schemas/User"},"boatId":{"type":"integer","format":"int64"},"boat":{"$ref":"#/components/schemas/Boat"},"startTime":{"type":"string","format":"date-time"},"endTime":{"type":"string","format":"date-time"},"departureDock":{"$ref":"#/components/schemas/Dock"},"destinationDock":{"$ref":"#/components/schemas/Dock"},"price":{"type":"number"},"remainingTickets":{"type":"integer","format":"int32"}}},"Order":{"type":"object","properties":{"isDeleted":{"type":"boolean"},"createdAt":{"type":"string","format":"date-time"},"updatedAt":{"type":"string","format":"date-time"},"orderId":{"type":"integer","format":"int64"},"userId":{"type":"integer","format":"int64"},"user":{"$ref":"#/components/schemas/User"},"ticketId":{"type":"integer","format":"int64"},"ticket":{"$ref":"#/components/schemas/Ticket"},"totalAmount":{"type":"number"},"paymentStatus":{"type":"integer","format":"int32"}}},"Payment":{"type":"object","properties":{"isDeleted":{"type":"boolean"},"createdAt":{"type":"string","format":"date-time"},"updatedAt":{"type":"string","format":"date-time"},"paymentId":{"type":"integer","format":"int64"},"order":{"$ref":"#/components/schemas/Order"},"paymentTime":{"type":"string","format":"date-time"},"amount":{"type":"number"},"paymentMethod":{"type":"integer","format":"int32"}}},"Alert":{"type":"object","properties":{"isDeleted":{"type":"boolean"},"createdAt":{"type":"string","format":"date-time"},"updatedAt":{"type":"string","format":"date-time"},"alertId":{"type":"integer","format":"int64"},"boatId":{"type":"integer","format":"int64"},"boat":{"$ref":"#/components/schemas/Boat"},"alertType":{"type":"string"},"alertTime":{"type":"string","format":"date-time"},"description":{"type":"string"},"status":{"type":"integer","format":"int32"}}},"AuthRequestDTO":{"type":"object","properties":{"username":{"type":"string"},"password":{"type":"string"}},"description":"Login request"},"ResponseTokenVO":{"type":"object","properties":{"code":{"type":"integer","format":"int32"},"message":{"type":"string"},"data":{"$ref":"#/components/schemas/TokenVO"},"time":{"type":"integer","format":"int32"}}},"TokenVO":{"type":"object","properties":{"token":{"type":"string"}}},"NameRequestDTO":{"type":"object","properties":{"username":{"type":"string"}},"description":"Username request"},"ResponseString":{"type":"object","properties":{"code":{"type":"integer","format":"int32"},"message":{"type":"string"},"data":{"type":"string"},"time":{"type":"integer","format":"int32"}}},"ResponseBoolean":{"type":"object","properties":{"code":{"type":"integer","format":"int32"},"message":{"type":"string"},"data":{"type":"boolean"},"time":{"type":"integer","format":"int32"}}},"PageUser":{"type":"object","properties":{"records":{"type":"array","items":{"$ref":"#/components/schemas/User"}},"pageNumber":{"type":"integer","format":"int64"},"pageSize":{"type":"integer","format":"int64"},"totalPage":{"type":"integer","format":"int64"},"totalRow":{"type":"integer","format":"int64"},"optimizeCountQuery":{"type":"boolean","writeOnly":true}}},"PageTicket":{"type":"object","properties":{"records":{"type":"array","items":{"$ref":"#/components/schemas/Ticket"}},"pageNumber":{"type":"integer","format":"int64"},"pageSize":{"type":"integer","format":"int64"},"totalPage":{"type":"integer","format":"int64"},"totalRow":{"type":"integer","format":"int64"},"optimizeCountQuery":{"type":"boolean","writeOnly":true}}},"PagePayment":{"type":"object","properties":{"records":{"type":"array","items":{"$ref":"#/components/schemas/Payment"}},"pageNumber":{"type":"integer","format":"int64"},"pageSize":{"type":"integer","format":"int64"},"totalPage":{"type":"integer","format":"int64"},"totalRow":{"type":"integer","format":"int64"},"optimizeCountQuery":{"type":"boolean","writeOnly":true}}},"PageOrder":{"type":"object","properties":{"records":{"type":"array","items":{"$ref":"#/components/schemas/Order"}},"pageNumber":{"type":"integer","format":"int64"},"pageSize":{"type":"integer","format":"int64"},"totalPage":{"type":"integer","format":"int64"},"totalRow":{"type":"integer","format":"int64"},"optimizeCountQuery":{"type":"boolean","writeOnly":true}}},"PageDock":{"type":"object","properties":{"records":{"type":"array","items":{"$ref":"#/components/schemas/Dock"}},"pageNumber":{"type":"integer","format":"int64"},"pageSize":{"type":"integer","format":"int64"},"totalPage":{"type":"integer","format":"int64"},"totalRow":{"type":"integer","format":"int64"},"optimizeCountQuery":{"type":"boolean","writeOnly":true}}},"PageBoat":{"type":"object","properties":{"records":{"type":"array","items":{"$ref":"#/components/schemas/Boat"}},"pageNumber":{"type":"integer","format":"int64"},"pageSize":{"type":"integer","format":"int64"},"totalPage":{"type":"integer","format":"int64"},"totalRow":{"type":"integer","format":"int64"},"optimizeCountQuery":{"type":"boolean","writeOnly":true}}},"PageBoatType":{"type":"object","properties":{"records":{"type":"array","items":{"$ref":"#/components/schemas/BoatType"}},"pageNumber":{"type":"integer","format":"int64"},"pageSize":{"type":"integer","format":"int64"},"totalPage":{"type":"integer","format":"int64"},"totalRow":{"type":"integer","format":"int64"},"optimizeCountQuery":{"type":"boolean","writeOnly":true}}},"PageAlert":{"type":"object","properties":{"records":{"type":"array","items":{"$ref":"#/components/schemas/Alert"}},"pageNumber":{"type":"integer","format":"int64"},"pageSize":{"type":"integer","format":"int64"},"totalPage":{"type":"integer","format":"int64"},"totalRow":{"type":"integer","format":"int64"},"optimizeCountQuery":{"type":"boolean","writeOnly":true}}}}},"x-openapi":{"x-setting":{"customCode":200,"language":"zh-CN","enableSwaggerModels":true,"swaggerModelName":"Swagger Models","enableReloadCacheParameter":false,"enableAfterScript":true,"enableDocumentManage":true,"enableVersion":false,"enableRequestCache":true,"enableFilterMultipartApis":false,"enableFilterMultipartApiMethodType":"POST","enableHost":false,"enableHostText":"","enableDynamicParameter":false,"enableDebug":true,"enableFooter":true,"enableFooterCustom":false,"enableSearch":true,"enableOpenApi":true,"enableHomeCustom":false,"enableGroup":true,"enableResponseCode":true},"x-markdownFiles":[]}}
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication"
+    }
+  ],
+  "paths": {
+    "/users/update": {
+      "put": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "update",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tickets/update": {
+      "put": {
+        "tags": [
+          "ticket-controller"
+        ],
+        "operationId": "update_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Ticket"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/update": {
+      "put": {
+        "tags": [
+          "payment-controller"
+        ],
+        "operationId": "update_2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Payment"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/update": {
+      "put": {
+        "tags": [
+          "order-controller"
+        ],
+        "operationId": "update_3",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/docks/update": {
+      "put": {
+        "tags": [
+          "dock-controller"
+        ],
+        "operationId": "update_4",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Dock"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/boats/update": {
+      "put": {
+        "tags": [
+          "boat-controller"
+        ],
+        "operationId": "update_5",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Boat"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/boatTypes/update": {
+      "put": {
+        "tags": [
+          "boat-type-controller"
+        ],
+        "operationId": "update_6",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BoatType"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alerts/update": {
+      "put": {
+        "tags": [
+          "alert-controller"
+        ],
+        "operationId": "update_7",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Alert"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/save": {
+      "post": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "save",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tickets/save": {
+      "post": {
+        "tags": [
+          "ticket-controller"
+        ],
+        "operationId": "save_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Ticket"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/save": {
+      "post": {
+        "tags": [
+          "payment-controller"
+        ],
+        "operationId": "save_2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Payment"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/save": {
+      "post": {
+        "tags": [
+          "order-controller"
+        ],
+        "operationId": "save_3",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/docks/save": {
+      "post": {
+        "tags": [
+          "dock-controller"
+        ],
+        "operationId": "save_4",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Dock"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/boats/save": {
+      "post": {
+        "tags": [
+          "boat-controller"
+        ],
+        "operationId": "save_5",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Boat"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/boatTypes/save": {
+      "post": {
+        "tags": [
+          "boat-type-controller"
+        ],
+        "operationId": "save_6",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BoatType"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register",
+        "operationId": "registerWithPassword",
+        "parameters": [
+          {
+            "name": "authRequestDTO",
+            "in": "query",
+            "description": "Register request",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseTokenVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login",
+        "operationId": "loginWithPassword",
+        "parameters": [
+          {
+            "name": "authRequestDTO",
+            "in": "query",
+            "description": "Login request",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseTokenVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login/code": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login by code",
+        "operationId": "loginByCode",
+        "parameters": [
+          {
+            "name": "authRequestDTO",
+            "in": "query",
+            "description": "Login request",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseTokenVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/code": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Send code",
+        "operationId": "sendCode",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NameRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseString"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/availability": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Check Username availability",
+        "operationId": "checkAvailability",
+        "parameters": [
+          {
+            "name": "nameRequestDTO",
+            "in": "query",
+            "description": "Username request",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NameRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseBoolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alerts/save": {
+      "post": {
+        "tags": [
+          "alert-controller"
+        ],
+        "operationId": "save_7",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Alert"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/page": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "page",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PageUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageUser"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/list": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "list",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/getInfo/{id}": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "getInfo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tickets/page": {
+      "get": {
+        "tags": [
+          "ticket-controller"
+        ],
+        "operationId": "page_1",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PageTicket"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageTicket"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tickets/list": {
+      "get": {
+        "tags": [
+          "ticket-controller"
+        ],
+        "operationId": "list_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Ticket"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tickets/getInfo/{id}": {
+      "get": {
+        "tags": [
+          "ticket-controller"
+        ],
+        "operationId": "getInfo_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ticket"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/page": {
+      "get": {
+        "tags": [
+          "payment-controller"
+        ],
+        "operationId": "page_2",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PagePayment"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagePayment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/list": {
+      "get": {
+        "tags": [
+          "payment-controller"
+        ],
+        "operationId": "list_2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Payment"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/getInfo/{id}": {
+      "get": {
+        "tags": [
+          "payment-controller"
+        ],
+        "operationId": "getInfo_2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/page": {
+      "get": {
+        "tags": [
+          "order-controller"
+        ],
+        "operationId": "page_3",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PageOrder"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageOrder"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/list": {
+      "get": {
+        "tags": [
+          "order-controller"
+        ],
+        "operationId": "list_3",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Order"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/getInfo/{id}": {
+      "get": {
+        "tags": [
+          "order-controller"
+        ],
+        "operationId": "getInfo_3",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/docks/page": {
+      "get": {
+        "tags": [
+          "dock-controller"
+        ],
+        "operationId": "page_4",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PageDock"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageDock"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/docks/list": {
+      "get": {
+        "tags": [
+          "dock-controller"
+        ],
+        "operationId": "list_4",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Dock"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/docks/getInfo/{id}": {
+      "get": {
+        "tags": [
+          "dock-controller"
+        ],
+        "operationId": "getInfo_4",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dock"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/boats/page": {
+      "get": {
+        "tags": [
+          "boat-controller"
+        ],
+        "operationId": "page_5",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PageBoat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageBoat"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/boats/list": {
+      "get": {
+        "tags": [
+          "boat-controller"
+        ],
+        "operationId": "list_5",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Boat"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/boats/getInfo/{id}": {
+      "get": {
+        "tags": [
+          "boat-controller"
+        ],
+        "operationId": "getInfo_5",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Boat"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/boatTypes/page": {
+      "get": {
+        "tags": [
+          "boat-type-controller"
+        ],
+        "operationId": "page_6",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PageBoatType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageBoatType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/boatTypes/list": {
+      "get": {
+        "tags": [
+          "boat-type-controller"
+        ],
+        "operationId": "list_6",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BoatType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/boatTypes/getInfo/{id}": {
+      "get": {
+        "tags": [
+          "boat-type-controller"
+        ],
+        "operationId": "getInfo_6",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoatType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alerts/page": {
+      "get": {
+        "tags": [
+          "alert-controller"
+        ],
+        "operationId": "page_7",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PageAlert"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageAlert"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alerts/list": {
+      "get": {
+        "tags": [
+          "alert-controller"
+        ],
+        "operationId": "list_7",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Alert"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alerts/getInfo/{id}": {
+      "get": {
+        "tags": [
+          "alert-controller"
+        ],
+        "operationId": "getInfo_7",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Alert"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/remove/{id}": {
+      "delete": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "remove",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tickets/remove/{id}": {
+      "delete": {
+        "tags": [
+          "ticket-controller"
+        ],
+        "operationId": "remove_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/remove/{id}": {
+      "delete": {
+        "tags": [
+          "payment-controller"
+        ],
+        "operationId": "remove_2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/remove/{id}": {
+      "delete": {
+        "tags": [
+          "order-controller"
+        ],
+        "operationId": "remove_3",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/docks/remove/{id}": {
+      "delete": {
+        "tags": [
+          "dock-controller"
+        ],
+        "operationId": "remove_4",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/boats/remove/{id}": {
+      "delete": {
+        "tags": [
+          "boat-controller"
+        ],
+        "operationId": "remove_5",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/boatTypes/remove/{id}": {
+      "delete": {
+        "tags": [
+          "boat-type-controller"
+        ],
+        "operationId": "remove_6",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alerts/remove/{id}": {
+      "delete": {
+        "tags": [
+          "alert-controller"
+        ],
+        "operationId": "remove_7",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Code": {
+        "type": "object",
+        "properties": {
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "code": {
+            "type": "string"
+          },
+          "requestTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expirationTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "uuid": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "USER",
+              "ADMIN"
+            ]
+          },
+          "codeIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "codes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Code"
+            }
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isBlocked": {
+            "type": "boolean"
+          },
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "Boat": {
+        "type": "object",
+        "properties": {
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "boatId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "boatName": {
+            "type": "string"
+          },
+          "boatTypeId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "boatType": {
+            "$ref": "#/components/schemas/BoatType"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "BoatType": {
+        "type": "object",
+        "properties": {
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "boatTypeId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "boatTypeName": {
+            "type": "string"
+          },
+          "boatTypeDescription": {
+            "type": "string"
+          }
+        }
+      },
+      "Dock": {
+        "type": "object",
+        "properties": {
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dockId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "dockName": {
+            "type": "string"
+          },
+          "dockLocation": {
+            "type": "string"
+          }
+        }
+      },
+      "Ticket": {
+        "type": "object",
+        "properties": {
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ticketId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "boatId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "boat": {
+            "$ref": "#/components/schemas/Boat"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "departureDock": {
+            "$ref": "#/components/schemas/Dock"
+          },
+          "destinationDock": {
+            "$ref": "#/components/schemas/Dock"
+          },
+          "price": {
+            "type": "number"
+          },
+          "remainingTickets": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "orderId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "ticketId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ticket": {
+            "$ref": "#/components/schemas/Ticket"
+          },
+          "totalAmount": {
+            "type": "number"
+          },
+          "paymentStatus": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Payment": {
+        "type": "object",
+        "properties": {
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "paymentId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "order": {
+            "$ref": "#/components/schemas/Order"
+          },
+          "paymentTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "paymentMethod": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Alert": {
+        "type": "object",
+        "properties": {
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "alertId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "boatId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "boat": {
+            "$ref": "#/components/schemas/Boat"
+          },
+          "alertType": {
+            "type": "string"
+          },
+          "alertTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AuthRequestDTO": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "description": "Login request"
+      },
+      "ResponseTokenVO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/TokenVO"
+          },
+          "time": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "TokenVO": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "NameRequestDTO": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          }
+        },
+        "description": "Username request"
+      },
+      "ResponseString": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "string"
+          },
+          "time": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ResponseBoolean": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "boolean"
+          },
+          "time": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PageUser": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPage": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalRow": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "optimizeCountQuery": {
+            "type": "boolean",
+            "writeOnly": true
+          }
+        }
+      },
+      "PageTicket": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Ticket"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPage": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalRow": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "optimizeCountQuery": {
+            "type": "boolean",
+            "writeOnly": true
+          }
+        }
+      },
+      "PagePayment": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Payment"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPage": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalRow": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "optimizeCountQuery": {
+            "type": "boolean",
+            "writeOnly": true
+          }
+        }
+      },
+      "PageOrder": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Order"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPage": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalRow": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "optimizeCountQuery": {
+            "type": "boolean",
+            "writeOnly": true
+          }
+        }
+      },
+      "PageDock": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Dock"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPage": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalRow": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "optimizeCountQuery": {
+            "type": "boolean",
+            "writeOnly": true
+          }
+        }
+      },
+      "PageBoat": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Boat"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPage": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalRow": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "optimizeCountQuery": {
+            "type": "boolean",
+            "writeOnly": true
+          }
+        }
+      },
+      "PageBoatType": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BoatType"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPage": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalRow": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "optimizeCountQuery": {
+            "type": "boolean",
+            "writeOnly": true
+          }
+        }
+      },
+      "PageAlert": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Alert"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPage": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalRow": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "optimizeCountQuery": {
+            "type": "boolean",
+            "writeOnly": true
+          }
+        }
+      }
+    }
+  },
+  "x-openapi": {
+    "x-setting": {
+      "customCode": 200,
+      "language": "zh-CN",
+      "enableSwaggerModels": true,
+      "swaggerModelName": "Swagger Models",
+      "enableReloadCacheParameter": false,
+      "enableAfterScript": true,
+      "enableDocumentManage": true,
+      "enableVersion": false,
+      "enableRequestCache": true,
+      "enableFilterMultipartApis": false,
+      "enableFilterMultipartApiMethodType": "POST",
+      "enableHost": false,
+      "enableHostText": "",
+      "enableDynamicParameter": false,
+      "enableDebug": true,
+      "enableFooter": true,
+      "enableFooterCustom": false,
+      "enableSearch": true,
+      "enableOpenApi": true,
+      "enableHomeCustom": false,
+      "enableGroup": true,
+      "enableResponseCode": true
+    },
+    "x-markdownFiles": []
+  }
+}

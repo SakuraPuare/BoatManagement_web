@@ -22,4 +22,4 @@ export function Advantages() {
       </div>
     </div>
   );
-} 
+}

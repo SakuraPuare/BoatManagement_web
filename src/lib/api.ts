@@ -1,69 +1,110 @@
-import { Configuration, AuthApi } from '@/api';
-import { useUserStore } from '@/stores/user';
-import { API_URL } from '@/config';
-// import { ApiResponse, ResponseCode } from '@/lib/types/api';
+import type { paths } from "@/types/api";
+import createClient from "openapi-fetch";
+import { useUserStore } from "@/stores/user";
+import { toast } from "sonner";
 
-// API基础配置
-const createConfig = () => {
-  const config = new Configuration({
-    basePath: API_URL,
-    baseOptions: {
-      headers: {
-        'Content-Type': 'application/json',
-      },
+// 定义请求配置接口
+interface RequestConfig {
+  headers?: Record<string, string>;
+  params?: Record<string, string>;
+  body?: unknown;
+}
+
+// 定义响应接口
+interface ApiResponse<T> {
+  code: number;
+  data: T;
+  message: string;
+  time: number;
+}
+
+// 创建API实例
+const createApiClient = () => {
+  const client = createClient<paths>({
+    baseUrl: process.env.BACKEND_URL || "http://localhost:8080",
+    headers: {
+      "Content-Type": "application/json",
     },
   });
 
-  // 添加响应拦截器
-  // config.baseOptions.responseInterceptor = async (response: ApiResponse) => {
-  //   // 如果响应正常，直接返回
-  //   const data = response.data as ApiResponse;
-  //   if (data.code === ResponseCode.CODE_SUCCESS) {
-  //     return data.data; // 直接返回数据部分
-  //   } else if (data.code === ResponseCode.CODE_UNAUTHORIZED) {
-  //     // 如果响应状态码为401，则清除token
-  //     useUserStore.getState().clearToken();
-  //     throw new Error(data.message);
-  //   } else {
-  //     throw new Error(data.message);
-  //   }
-  // };
+  // 请求拦截器
+  const requestInterceptor = async (config: RequestConfig) => {
+    const token = useUserStore.getState().token;
+    if (token) {
+      config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${token}`,
+      };
+    }
+    return config;
+  };
 
-  // 添加认证token
-  const token = useUserStore.getState().token;
-  if (token) {
-    config.apiKey = () => {
-      return "Bearer " + token;
-    };
-  }
+  // 响应拦截器
+  const responseInterceptor = async (response: {
+    data: ApiResponse<unknown>;
+    response: Response;
+  }) => {
+    const result = response.data as ApiResponse<unknown>;
 
-  return config;
+    // 判断业务状态码
+    if (result.code === 200) {
+      return result;
+    }
+
+    // 显示错误消息
+    throw new Error(result.message || "Request failed");
+  };
+
+  // 封装请求方法
+  const request = async <T>(
+    method: keyof typeof client,
+    path: string,
+    options?: RequestConfig,
+  ): Promise<T> => {
+    try {
+      const config = await requestInterceptor(options || {});
+      const response = await (
+        client[method] as (
+          path: string,
+          config: RequestConfig,
+        ) => Promise<{
+          data: ApiResponse<unknown>;
+          response: Response;
+        }>
+      )(path, config);
+      const result = await responseInterceptor(response);
+      return result.data as T;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+        throw error;
+      }
+      toast.error("发生未知错误");
+      throw new Error("Unknown error occurred");
+    }
+  };
+
+  return {
+    get: <T>(path: string, options?: RequestConfig) =>
+      request<T>("GET", path, options),
+    post: <T>(path: string, options?: RequestConfig) =>
+      request<T>("POST", path, options),
+    put: <T>(path: string, options?: RequestConfig) =>
+      request<T>("PUT", path, options),
+    patch: <T>(path: string, options?: RequestConfig) =>
+      request<T>("PATCH", path, options),
+    delete: <T>(path: string, options?: RequestConfig) =>
+      request<T>("DELETE", path, options),
+  };
 };
 
-// API客户端实例
-class ApiClient {
-  private static instance: ApiClient;
-  private config: Configuration;
-  
-  public auth: AuthApi;
+// 导出API实例
+export const api = createApiClient();
 
-  private constructor() {
-    this.config = createConfig();
-    this.auth = new AuthApi(this.config);
-  }
-
-  public static getInstance(): ApiClient {
-    if (!ApiClient.instance) {
-      ApiClient.instance = new ApiClient();
-    }
-    return ApiClient.instance;
-  }
-}
-
-// 初始化API客户端
-export const initializeApi = () => {
-  return ApiClient.getInstance();
-}
-
-// 导出API实例供使用
-export const api = ApiClient.getInstance();
+// 使用示例:
+// try {
+//	const data = await api.get<UserData>('/users/1');
+//	console.log(data); // 直接是UserData类型
+// } catch (error) {
+//	console.error(error.message);
+// }

@@ -1,40 +1,71 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Ship, User, Lock } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useUserStore } from "@/stores/user";
+import { Lock, Ship, User } from "lucide-react";
 import { api } from "@/lib/api";
 import { debounce } from "lodash";
+import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function RegisterPage() {
-  const router = useRouter();
+  const { register } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [verifyCode, setVerifyCode] = useState("");
-  const [error, setError] = useState("");
   const [usernameError, setUsernameError] = useState("");
-
-  const { setToken } = useUserStore();
-  const [isLoading, setIsLoading] = useState(false);
   const [showVerifyCode, setShowVerifyCode] = useState(false);
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (usernameError) return;
+
+    if (password !== confirmPassword) {
+      toast.error("两次输入的密码不一致");
+      return false;
+    }
+
+    setIsLoading(true);
+    try {
+      await register({
+        username: username.trim(),
+        password,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyCode = async () => {
+    console.log("handleVerifyCode");
+  };
 
   const needVerifyCode = (username: string) => {
     // mail and phone
-    return username.match(/^(?:0|86|\+86)?1[3-9]\d{9}$/) !== null || username.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) !== null;
+    return (
+      username.match(/^(?:0|86|\+86)?1[3-9]\d{9}$/) !== null ||
+      username.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) !==
+        null
+    );
   };
 
   const checkUsername = useCallback(
     debounce(async (username: string) => {
       if (!username) return;
-      
+
       try {
-        const response = await api.auth.checkAvailability({ username: username.trim() });
-        if (!response.data.data) {
+        const response = await api.post("/auth/availability", {
+          body: {
+            username: username.trim(),
+          },
+        });
+        console.log(response);
+
+        if (!response) {
           setUsernameError("用户名已被使用");
         } else {
           setUsernameError("");
@@ -42,65 +73,9 @@ export default function RegisterPage() {
       } catch (err) {
         console.error("检查用户名失败:", err);
       }
-    }, 500),
-    [setUsernameError]
+    }, 300),
+    [setUsernameError],
   );
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (usernameError) {
-      setError(usernameError);
-      return;
-    }
-
-    // 验证密码
-    if (password !== confirmPassword) {
-      setError("两次输入的密码不一致");
-      return;
-    }
-
-    // 验证密码长度
-    if (password.length < 6) {
-      setError("密码长度不能少于6位");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const response = await api.auth.registerWithPassword({
-        username: username.trim(),
-        password: password.trim(),
-      });
-
-      if (response.data.code !== 200) {
-        setError(response.data.message || "注册失败");
-        return;
-      }
-
-      const token = response.data.data?.token;
-
-      if (token) {
-        setToken(token);
-        router.push("/"); // 注册并登录成功后跳转
-      }
-    } catch (error) {
-      console.error("注册失败:", error);
-      if (error instanceof Error) {
-        setError(error.message || "注册失败，请稍后重试");
-      } else {
-        setError("注册失败，请稍后重试");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleVerifyCode = async () => {
-    // 获取验证码
-    console.log("获取验证码");
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -117,16 +92,13 @@ export default function RegisterPage() {
         </div>
 
         <form onSubmit={handleRegister} className="mt-8 space-y-6">
-          {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
-          )}
           <div className="space-y-4">
             <div className="relative">
               <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
               <Input
                 type="text"
                 placeholder="用户名/邮箱/手机号"
-                className={`pl-10 ${usernameError ? 'border-red-500' : ''}`}
+                className={`pl-10 ${usernameError ? "border-red-500" : ""}`}
                 required
                 value={username}
                 onChange={(e) => {
@@ -140,7 +112,7 @@ export default function RegisterPage() {
                 <div className="text-red-500 text-sm mt-1">{usernameError}</div>
               )}
             </div>
-            
+
             {showVerifyCode && (
               <div className="flex gap-4">
                 <Input
@@ -151,7 +123,12 @@ export default function RegisterPage() {
                   value={verifyCode}
                   onChange={(e) => setVerifyCode(e.target.value.trim())}
                 />
-                <Button type="button" variant="outline" className="w-32" onClick={handleVerifyCode}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-32"
+                  onClick={handleVerifyCode}
+                >
                   获取验证码
                 </Button>
               </div>
@@ -193,15 +170,22 @@ export default function RegisterPage() {
               我已阅读并同意{" "}
               <Link href="/terms" className="text-blue-600 hover:text-blue-500">
                 服务条款
-              </Link>
-              {" "}和{" "}
-              <Link href="/privacy" className="text-blue-600 hover:text-blue-500">
+              </Link>{" "}
+              和{" "}
+              <Link
+                href="/privacy"
+                className="text-blue-600 hover:text-blue-500"
+              >
                 隐私政策
               </Link>
             </label>
           </div>
 
-          <Button type="submit" className="w-full" disabled={isLoading || !!usernameError}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading || !!usernameError}
+          >
             {isLoading ? "注册中..." : "注册"}
           </Button>
         </form>

@@ -14,9 +14,21 @@ export function Footer() {
           <div>
             <h3 className="text-white font-bold mb-4">快速链接</h3>
             <ul className="space-y-2">
-              <li><Link href="/about" className="hover:text-white">关于我们</Link></li>
-              <li><Link href="/service" className="hover:text-white">服务内容</Link></li>
-              <li><Link href="/contact" className="hover:text-white">联系方式</Link></li>
+              <li>
+                <Link href="/about" className="hover:text-white">
+                  关于我们
+                </Link>
+              </li>
+              <li>
+                <Link href="/service" className="hover:text-white">
+                  服务内容
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-white">
+                  联系方式
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
@@ -30,4 +42,4 @@ export function Footer() {
       </div>
     </footer>
   );
-} 
+}

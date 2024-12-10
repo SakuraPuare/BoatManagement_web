@@ -5,16 +5,12 @@ import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Ship, Smartphone, User, Lock, QrCode } from "lucide-react";
+import { Lock, QrCode, Ship, Smartphone, User as UserIcon } from "lucide-react";
 
-import { api } from "@/lib/api";
-import { useUserStore } from "@/stores/user";
-import { useRouter } from "next/navigation";
-import { AuthRequestDto } from "@/api/models/auth-request-dto";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { setToken } = useUserStore();
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -23,20 +19,9 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const loginData: AuthRequestDto = {
-        username: username,
-        password: password,
-      };
-
-      const response: any = await api.auth.loginWithPassword(loginData);
-      const data = response.data.data;
-      
-      setToken(data?.token);
-      console.log(data?.token);  
-      
-      router.push("/");
-    } catch (error) {
-      console.error("登录失败:", error);
+      await login({ username, password });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -68,7 +53,7 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="mt-8 space-y-6">
               <div className="space-y-4">
                 <div className="relative">
-                  <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                  <UserIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                   <Input
                     type="text"
                     placeholder="用户名/邮箱"

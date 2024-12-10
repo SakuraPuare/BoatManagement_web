@@ -1,12 +1,7 @@
-"use client"
-
-import { useUserStore } from '@/stores/user'
-import { usePathname, useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import React from 'react';
+import React from "react";
 import localFont from "next/font/local";
 import "./globals.css";
-import { initializeApi } from '@/lib/api';
+import { Toaster } from "sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -24,25 +19,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { token } = useUserStore()
-  const router = useRouter()
-  const pathname = usePathname()
-  
-  useEffect(() => {
-    const publicPaths = ['/', '/login', '/register']
-    if (!token && !publicPaths.includes(pathname)) {
-      router.push('/login')
-    }
-  }, [token, pathname])
-
-  initializeApi();
-  
   return (
-    <html lang="en">
+    <html lang="zh">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <Toaster richColors position="top-center" />
+        <main>{children}</main>
       </body>
     </html>
   );

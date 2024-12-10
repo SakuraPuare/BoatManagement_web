@@ -41,7 +41,7 @@ export const useAuth = () => {
         await updateUser();
 
         toast.success("登录成功");
-        router.push('/dashboard')
+        router.push('/')
 
         // 将 user 和 permissions 存储到 cookie
         Cookies.set("user", JSON.stringify(user));

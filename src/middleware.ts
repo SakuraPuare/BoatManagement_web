@@ -31,10 +31,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 认证路由检查
-  if (!isLoggedIn && authRoutes.some((route) => pathname.startsWith(route))) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
+  // // 认证路由检查
+  // if (!isLoggedIn && authRoutes.some((route) => pathname.startsWith(route))) {
+  //   return NextResponse.redirect(new URL("/login", request.url));
+  // }
 
   // 检查用户权限
   // const userPermissions = request.cookies.get('user-permissions')?.value;

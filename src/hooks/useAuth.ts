@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { toast } from "sonner";
 import type { UserSelf } from "@/types/user";
 import Cookies from "js-cookie";
+import { getRoleEnglishNames } from "@/lib/role";
 
 interface Credentials {
   username: string;
@@ -20,11 +21,7 @@ export const useAuth = () => {
     const user = await api.get<UserSelf>("/user/me");
     setUser(user);
 
-    const permissions = [];
-    if (user.role & 1) permissions.push("user");
-    if (user.role & (1 << 1)) permissions.push("merchant");
-    if (user.role & (1 << 2)) permissions.push("vendor");
-    if (user.role & (1 << 3)) permissions.push("admin");
+    const permissions = getRoleEnglishNames(user.role);
     setPermissions(permissions);
   }, [setPermissions, setUser]);
 

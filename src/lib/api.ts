@@ -41,18 +41,47 @@ const createApiClient = () => {
 
   // 响应拦截器
   const responseInterceptor = async (response: {
-    data: ApiResponse<unknown>;
+    data: ApiResponse<unknown> | unknown;
     response: Response;
   }) => {
-    const result = response.data as ApiResponse<unknown>;
-
-    // 判断业务状态码
-    if (result.code === 200) {
-      return result;
+    console.log(response);
+    if (response.response.status !== 200) {
+      throw new Error(response.response.statusText);
+    } else {
+      // 如果返回只有一个true
+      if (response.data === true) {
+        return {
+          code: 200,
+          data: true,
+          message: "success",
+          time: Date.now(),
+        } as ApiResponse<unknown>;
+      }
+      // 检查是否包含time属性来判断是否为ApiResponse类型
+      else if ("time" in response.data) {
+        // 作为ApiResponse处理
+        const result = response.data as ApiResponse<unknown>;
+        if (result.code === 200) {
+          return result;
+        }
+        throw new Error(result.message || "Request failed");
+      } else if ("timestamp" in response.data) {
+        // 作为普通响应处理
+        return {
+          code: response.status,
+          data: null,
+          message: response.error,
+          time: Date.now(),
+        } as ApiResponse<unknown>;
+      }
+      // 作为普通响应处理
+      return {
+        code: 200,
+        data: response.data,
+        message: "success",
+        time: Date.now(),
+      } as ApiResponse<unknown>;
     }
-
-    // 显示错误消息
-    throw new Error(result.message || "Request failed");
   };
 
   // 封装请求方法

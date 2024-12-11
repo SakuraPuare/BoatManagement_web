@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -43,6 +43,16 @@ import type { User } from "./types";
 import { getUserStatus } from "@/lib/userStatus";
 import { toast } from "sonner";
 import { RoleDialog } from "./role-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -54,8 +64,9 @@ export default function UsersPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
-  const fetchUsersPagination = async () => {
+  const fetchUsersPagination = useCallback(async () => {
     const data = await api.get<{
       records: User[];
       totalRow: number;
@@ -68,9 +79,9 @@ export default function UsersPage() {
     });
 
     return data;
-  };
+  }, [page, pageSize, searchQuery]);
 
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await fetchUsersPagination();
@@ -82,7 +93,7 @@ export default function UsersPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [fetchUsersPagination]);
 
   const handleSearch = (value: string) => {
     setSearchQuery(value);
@@ -91,7 +102,7 @@ export default function UsersPage() {
 
   useEffect(() => {
     loadUsers();
-  }, [page, pageSize, searchQuery]);
+  }, [loadUsers, page, pageSize, searchQuery]);
 
   const handleAdd = () => {
     setSelectedUser(null);
@@ -103,9 +114,23 @@ export default function UsersPage() {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = async (userId: number) => {
-    await api.delete(`/admin/users/remove/${userId}`);
-    loadUsers();
+  const handleDeleteClick = (user: User) => {
+    setUserToDelete(user);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!userToDelete?.userId) return;
+
+    try {
+      await api.delete(`/admin/users/remove/${userToDelete.userId}`);
+      toast.success("用户删除成功");
+      loadUsers();
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+      toast.error("用户删除失败");
+    } finally {
+      setUserToDelete(null);
+    }
   };
 
   const handleSetRole = (user: User) => {
@@ -144,6 +169,7 @@ export default function UsersPage() {
               <TableHead>用户名</TableHead>
               <TableHead>邮箱</TableHead>
               <TableHead>手机号</TableHead>
+              <TableHead>权限</TableHead>
               <TableHead>状态</TableHead>
               <TableHead>创建时间</TableHead>
               <TableHead>更新时间</TableHead>
@@ -231,15 +257,13 @@ export default function UsersPage() {
                           <Pencil className="h-4 w-4 mr-2" />
                           编辑
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleDelete(user.userId)}
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          删除
-                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleSetRole(user)}>
                           <UserCog className="h-4 w-4 mr-2" />
                           权限设置
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDeleteClick(user)}>
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          删除
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -307,6 +331,27 @@ export default function UsersPage() {
         }}
         user={selectedUser}
       />
+
+      <AlertDialog open={!!userToDelete} onOpenChange={(open) => !open && setUserToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>确认删除用户</AlertDialogTitle>
+            <AlertDialogDescription>
+              你确定要删除用户 "{userToDelete?.username || userToDelete?.email || userToDelete?.phone}" 吗？
+              此操作不可撤销。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              删除
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

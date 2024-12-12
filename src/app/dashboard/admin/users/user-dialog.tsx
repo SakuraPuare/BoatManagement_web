@@ -1,239 +1,236 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import type { User } from "./types";
-import { api } from "@/lib/api";
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { UserSelf } from "@/types/user";
 import { toast } from "sonner";
+import {
+  ROLE_CHINESE_NAMES,
+  ROLE_COLORS,
+  ROLE_MASKS,
+} from "@/lib/constants/role";
+import { cn } from "@/lib/utils";
+import { createUser, updateUser } from "@/services/admin/users";
+
+const userFormSchema = z
+  .object({
+    username: z
+      .string()
+      .min(2, "用户名至少需要2个字符")
+      .max(50, "用户名不能超过50个字符")
+      .regex(
+        /^[a-zA-Z0-9_\u4e00-\u9fa5]+$/,
+        "用户名只能包含字母、数字、下划线和中文",
+      )
+      .optional()
+      .or(z.literal("")),
+    email: z
+      .string()
+      .email("请输入有效的邮箱地址")
+      .optional()
+      .or(z.literal("")),
+    phone: z
+      .string()
+      .regex(/^1[3-9]\d{9}$/, "请输入有效的手机号码")
+      .optional()
+      .or(z.literal("")),
+    roles: z.number(),
+    isActive: z.boolean(),
+  })
+  .refine(
+    (data) => {
+      return !!(data.username || data.email || data.phone);
+    },
+    {
+      message: "用户名、邮箱、手机号至少填写一项",
+      path: ["username"],
+    },
+  );
+
+type FormValues = z.infer<typeof userFormSchema>;
 
 interface UserDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  user: User | null;
+  user: UserSelf;
 }
 
-const initialFormData = {
-  username: "",
-  email: "",
-  phone: "",
-  isActive: true,
-  isBlocked: false,
-};
+export function UserDialog({ open, onOpenChange, user }: UserDialogProps) {
+  const form = useForm<z.infer<typeof userFormSchema>>({
+    resolver: zodResolver(userFormSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      phone: "",
+      roles: ROLE_MASKS.USER,
+      isActive: true,
+    },
+    values: {
+      username: user?.username || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+      roles: user?.role || ROLE_MASKS.USER,
+      isActive: user?.isActive || true,
+    },
+  });
 
-export function UserDialog({
-  open,
-  onOpenChange,
-  user = null,
-}: UserDialogProps) {
-  const [formData, setFormData] = useState(initialFormData);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const roles = form.watch("roles");
 
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        username: user.username ?? "",
-        email: user.email ?? "",
-        phone: user.phone ?? "",
-        isActive: user.isActive ?? true,
-        isBlocked: user.isBlocked ?? false,
-      });
-    } else {
-      setFormData(initialFormData);
-    }
-    setErrors({});
-  }, [user, open]);
-
-  const createUser = async (data: typeof formData) => {
-    const response = await api.post("/admin/users/save", {
-      body: data,
-    });
-    return response;
+  const toggleRole = (roleValue: number) => {
+    const currentRoles = form.getValues("roles");
+    form.setValue("roles", currentRoles ^ roleValue, { shouldValidate: true });
   };
 
-  const updateUser = async (data: typeof formData) => {
-    if (!user?.userId) return;
-    
-    const response = await api.put(`/admin/users/update`, {
-      body: {
-        userId: user.userId,
-        ...data,
-      },
-    });
-    return response;
+  const hasRole = (roleValue: number) => {
+    return (roles & roleValue) === roleValue;
   };
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-    
-    if (!formData.username && !formData.email && !formData.phone) {
-      newErrors.form = "用户名、邮箱、手机号至少填写一项";
-    }
-
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "请输入有效的邮箱地址";
-    }
-
-    if (formData.phone && !/^1[3-9]\d{9}$/.test(formData.phone)) {
-      newErrors.phone = "请输入有效的手机号";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
+  const onSubmit = async (values: FormValues) => {
     try {
-      if (user?.uuid) {
-        await updateUser(formData);
-        toast.success("用户更新成功");
+      if (user.userId) {
+        await updateUser(user.userId, values);
       } else {
-        await createUser(formData);
-        toast.success("用户创建成功");
+        await createUser(values);
       }
       onOpenChange(false);
+      form.reset();
     } catch (error) {
-      console.error("Failed to save user:", error);
-      toast.error(user ? "用户更新失败" : "用户创建失败");
-    } finally {
-      setIsSubmitting(false);
+      console.error("操作失败:", error);
+      toast.error(
+        "操作失败: " + (error instanceof Error ? error.message : "未知错误"),
+      );
     }
-  };
-
-  const handleClose = () => {
-    setFormData(initialFormData);
-    onOpenChange(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>{user ? "编辑用户" : "添加用户"}</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {errors.form && (
-            <div className="text-sm text-red-500">{errors.form}</div>
-          )}
-          
-          <div className="space-y-2">
-            <Label htmlFor="username">用户名</Label>
-            <Input
-              id="username"
-              value={formData.username}
-              onChange={(e) =>
-                setFormData({ ...formData, username: e.target.value })
-              }
-              className={errors.username ? "border-red-500" : ""}
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent className="sm:max-w-[425px]">
+        <AlertDialogHeader>
+          <AlertDialogTitle>{user ? "编辑用户" : "添加用户"}</AlertDialogTitle>
+        </AlertDialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>用户名</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="请输入用户名" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email">邮箱</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              className={errors.email ? "border-red-500" : ""}
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>邮箱</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="请输入邮箱地址"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {errors.email && (
-              <div className="text-sm text-red-500">{errors.email}</div>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="phone">手机号</Label>
-            <Input
-              id="phone"
-              value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
-              className={errors.phone ? "border-red-500" : ""}
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>手机号码</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="请输入手机号码" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {errors.phone && (
-              <div className="text-sm text-red-500">{errors.phone}</div>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="status">账号状态</Label>
-            <Select
-              value={formData.isActive ? "active" : "inactive"}
-              onValueChange={(value) =>
-                setFormData({ ...formData, isActive: value === "active" })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="选择状态" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="active">已激活</SelectItem>
-                <SelectItem value="inactive">未激活</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="blocked">封禁状态</Label>
-            <Select
-              value={formData.isBlocked ? "blocked" : "unblocked"}
-              onValueChange={(value) =>
-                setFormData({ ...formData, isBlocked: value === "blocked" })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="选择状态" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="unblocked">正常</SelectItem>
-                <SelectItem value="blocked">已封��</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex justify-end space-x-4 pt-4">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={handleClose}
-              disabled={isSubmitting}
-            >
-              取消
-            </Button>
-            <Button 
-              type="submit"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "保存中..." : "保存"}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+            <FormField
+              control={form.control}
+              name="roles"
+              render={() => (
+                <FormItem>
+                  <FormLabel>用户角色</FormLabel>
+                  <div className="flex flex-wrap gap-2">
+                    {Object.entries(ROLE_MASKS).map(([roleName, roleValue]) => (
+                      <Button
+                        key={roleValue}
+                        type="button"
+                        variant={hasRole(roleValue) ? "default" : "outline"}
+                        onClick={() => toggleRole(roleValue)}
+                        className={cn(
+                          "h-8",
+                          hasRole(roleValue) && ROLE_COLORS[roleValue],
+                        )}
+                      >
+                        {ROLE_CHINESE_NAMES[roleValue]}
+                      </Button>
+                    ))}
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="isActive"
+              render={({ field }) => (
+                <FormItem className="flex items-center gap-2">
+                  <FormLabel>启用状态</FormLabel>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <AlertDialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                type="button"
+              >
+                取消
+              </Button>
+              <Button type="submit">
+                {form.formState.isSubmitting
+                  ? "提交中..."
+                  : user
+                    ? "更新"
+                    : "创建"}
+              </Button>
+            </AlertDialogFooter>
+          </form>
+        </Form>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

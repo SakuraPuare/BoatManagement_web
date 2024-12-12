@@ -1,119 +1,140 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import type { User } from "./types";
-import { api } from "@/lib/api";
+import {
+  Form,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
+import { UserSelf } from "@/types/user";
 import { toast } from "sonner";
-import { ROLE_MASKS, ROLE_CHINESE_NAMES } from "@/lib/role";
+import {
+  ROLE_CHINESE_NAMES,
+  ROLE_COLORS,
+  ROLE_DESCRIPTIONS,
+  ROLE_MASKS,
+} from "@/lib/constants/role";
+import { cn } from "@/lib/utils";
+import { updateUserRoles } from "@/services/admin/users";
+
+const RoleFormSchema = z.object({
+  roles: z.number(),
+});
+
+type FormValues = z.infer<typeof RoleFormSchema>;
 
 interface RoleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  user: User | null;
+  user: UserSelf;
 }
 
 export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedRoles, setSelectedRoles] = useState<number[]>([]);
-
-  // 当对话框打开时，根据用户当前角色设置选中状态
-  useEffect(() => {
-    if (user?.role) {
-      const roles: number[] = [];
-      Object.entries(ROLE_MASKS).forEach(([_, mask]) => {
-        if (user.role & mask) {
-          roles.push(mask);
-        }
-      });
-      setSelectedRoles(roles);
-      console.log(roles);
+  const form = useForm<FormValues>({
+    resolver: zodResolver(RoleFormSchema),
+    defaultValues: {
+      roles: user?.role || ROLE_MASKS.USER,
+    },
+    values: {
+      roles: user?.role || ROLE_MASKS.USER,
     }
-  }, [user]);
+  });
 
-  const handleRoleToggle = (roleMask: number) => {
-    setSelectedRoles((current) => {
-      if (current.includes(roleMask)) {
-        return current.filter((r) => r !== roleMask);
-      } else {
-        return [...current, roleMask];
-      }
-    });
+  const roles = form.watch("roles");
+
+  const toggleRole = (roleValue: number) => {
+    const currentRoles = form.getValues("roles");
+    form.setValue("roles", currentRoles ^ roleValue, { shouldValidate: true });
   };
 
-  const handleSubmit = async () => {
-    if (!user?.userId) return;
+  const hasRole = (roleValue: number) => {
+    return (roles & roleValue) === roleValue;
+  };
 
-    setIsSubmitting(true);
+  const onSubmit = async (values: FormValues) => {
     try {
-      // 计算新的角色掩码
-      const newRole = selectedRoles.reduce((acc, curr) => acc | curr, 0);
-
-      await api.put("/admin/users/update", {
-        body: {
-          userId: user.userId,
-          role: newRole,
-        },
-      });
-
-      toast.success("权限更新成功");
+      await updateUserRoles(user.userId, values.roles);
       onOpenChange(false);
+      form.reset();
     } catch (error) {
-      console.error("Failed to update user roles:", error);
-      toast.error("权限更新失败");
-    } finally {
-      setIsSubmitting(false);
+      console.error("更新权限失败:", error);
+      toast.error(
+        "更新权限失败: " +
+          (error instanceof Error ? error.message : "未知错误"),
+      );
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>设置用户权限</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div className="text-sm text-gray-500">
-            用户：{user?.username || user?.email || user?.phone}
-          </div>
-
-          <div className="space-y-4">
-            {Object.entries(ROLE_MASKS).map(([key, mask]) => (
-              <div key={key} className="flex items-center space-x-2">
-                <Checkbox
-                  id={key}
-                  checked={selectedRoles.includes(mask)}
-                  onCheckedChange={() => handleRoleToggle(mask)}
-                  disabled={isSubmitting}
-                />
-                <Label htmlFor={key}>{ROLE_CHINESE_NAMES[mask]}</Label>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex justify-end space-x-4 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={isSubmitting}
-            >
-              取消
-            </Button>
-            <Button onClick={handleSubmit} disabled={isSubmitting}>
-              {isSubmitting ? "保存中..." : "保存"}
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent className="sm:max-w-[525px]">
+        <AlertDialogHeader>
+          <AlertDialogTitle>权限设置 - {user.username}</AlertDialogTitle>
+        </AlertDialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="roles"
+              render={() => (
+                <FormItem>
+                  <FormLabel>用户角色</FormLabel>
+                  <FormDescription>
+                    选择要分配给用户的角色。用户可以同时拥有多个角色。
+                  </FormDescription>
+                  <div className="space-y-4">
+                    {Object.entries(ROLE_MASKS).map(([roleName, roleValue]) => (
+                      <div
+                        key={roleValue}
+                        className="flex items-start space-x-4"
+                      >
+                        <Button
+                          type="button"
+                          variant={hasRole(roleValue) ? "default" : "outline"}
+                          onClick={() => toggleRole(roleValue)}
+                          className={cn(
+                            "min-w-[100px]",
+                            hasRole(roleValue) && ROLE_COLORS[roleValue],
+                          )}
+                        >
+                          {ROLE_CHINESE_NAMES[roleValue]}
+                        </Button>
+                        <FormDescription className="mt-2">
+                          {ROLE_DESCRIPTIONS[roleValue]}
+                        </FormDescription>
+                      </div>
+                    ))}
+                  </div>
+                </FormItem>
+              )}
+            />
+            <AlertDialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                type="button"
+              >
+                取消
+              </Button>
+              <Button type="submit">
+                {form.formState.isSubmitting ? "更新中..." : "更新权限"}
+              </Button>
+            </AlertDialogFooter>
+          </form>
+        </Form>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

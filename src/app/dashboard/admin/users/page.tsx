@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useCallback, useEffect, useState } from "react";
+import { format } from "date-fns";
 import {
   Table,
   TableBody,
@@ -18,130 +17,138 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Search,
-  Plus,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Ban,
+  Mail,
   MoreVertical,
   Pencil,
+  Plus,
+  RefreshCcw,
+  Search,
+  Shield,
   Trash2,
-  UserCog,
+  Users,
 } from "lucide-react";
+import { UserSelf } from "@/types/user";
 import { UserDialog } from "./user-dialog";
+import { DataPagination } from "@/components/ui/data-pagination";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-
-import { api } from "@/lib/api";
-import { ROLE_MASKS, ROLE_CHINESE_NAMES, ROLE_COLORS } from "@/lib/role";
-
-import type { User } from "./types";
-import { getUserStatus } from "@/lib/userStatus";
-import { toast } from "sonner";
+  getRoleChineseNames,
+  getRoleColors,
+  ROLE_MASKS,
+} from "@/lib/constants/role";
 import { RoleDialog } from "./role-dialog";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  deleteUser,
+  fetchUserList,
+  updateUserBlockStatus,
+} from "@/services/admin/users";
+
+const ITEMS_PER_PAGE = 10;
+const defaultUser: UserSelf = {
+  userId: 0,
+  uuid: "",
+  username: "",
+  email: "",
+  phone: "",
+  role: ROLE_MASKS.USER,
+  isActive: true,
+  isBlocked: false,
+  createdAt: "",
+  updatedAt: "",
+};
 
 export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
-  const [total, setTotal] = useState(0);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<UserSelf[]>([]);
+  const [selectedUser, setSelectedUser] = useState<UserSelf | null>(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "blocked" | "inactive"
+  >("all");
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
-  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const fetchUsersPagination = useCallback(async () => {
-    const data = await api.get<{
-      records: User[];
-      totalRow: number;
-    }>("/admin/users/page", {
-      params: {
-        page: page.toString(),
-        pageSize: pageSize.toString(),
-        search: searchQuery,
-      },
-    });
-
-    return data;
-  }, [page, pageSize, searchQuery]);
-
-  const loadUsers = useCallback(async () => {
+  const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     try {
-      const data = await fetchUsersPagination();
-      setUsers(data.records);
-      setTotal(data.totalRow);
+      const response = await fetchUserList(currentPage, ITEMS_PER_PAGE);
+      setUsers(response.records);
+      setTotalPages(response.totalPage);
     } catch (error) {
-      console.error("Failed to fetch users:", error);
-      toast.error("加载用户列表失败");
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
-  }, [fetchUsersPagination]);
-
-  const handleSearch = (value: string) => {
-    setSearchQuery(value);
-    setPage(1);
-  };
-
-  useEffect(() => {
-    loadUsers();
-  }, [loadUsers, page, pageSize, searchQuery]);
+  }, [currentPage]);
 
   const handleAdd = () => {
-    setSelectedUser(null);
+    setSelectedUser(defaultUser);
     setIsDialogOpen(true);
   };
 
-  const handleEdit = (user: User) => {
-    setSelectedUser(user);
-    setIsDialogOpen(true);
-  };
-
-  const handleDeleteClick = (user: User) => {
-    setUserToDelete(user);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!userToDelete?.userId) return;
-
-    try {
-      await api.delete(`/admin/users/remove/${userToDelete.userId}`);
-      toast.success("用户删除成功");
-      loadUsers();
-    } catch (error) {
-      console.error("Failed to delete user:", error);
-      toast.error("用户删除失败");
-    } finally {
-      setUserToDelete(null);
+  const handleDialogClose = (shouldRefresh?: boolean) => {
+    setIsDialogOpen(false);
+    if (shouldRefresh) {
+      fetchUsers();
     }
   };
 
-  const handleSetRole = (user: User) => {
+  const handleEdit = (user: UserSelf) => {
     setSelectedUser(user);
-    setIsRoleDialogOpen(true);
+    setIsDialogOpen(true);
   };
+
+  const handleDelete = async (userId: number) => {
+    try {
+      await deleteUser(userId);
+      fetchUsers();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleBlock = async (userId: number) => {
+    const isBlocked = users.find((user) => user.userId === userId)?.isBlocked;
+    try {
+      await updateUserBlockStatus(userId, !!isBlocked);
+      fetchUsers();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleRoleDialogClose = (shouldRefresh?: boolean) => {
+    setIsRoleDialogOpen(false);
+    if (shouldRefresh) {
+      fetchUsers();
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold">用户管理</h1>
+        <div className="flex items-center gap-2">
+          <Users className="h-6 w-6" />
+          <h1 className="text-2xl font-semibold">用户管理</h1>
+        </div>
         <Button onClick={handleAdd}>
           <Plus className="h-4 w-4 mr-2" />
           添加用户
@@ -152,24 +159,39 @@ export default function UsersPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
           <Input
-            placeholder="搜索用户名、邮箱或手机号..."
+            placeholder="搜索用户名、邮箱或电话..."
             value={searchQuery}
-            onChange={(e) => handleSearch(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
           />
         </div>
+        <Select
+          value={statusFilter}
+          onValueChange={(value: "all" | "active" | "blocked" | "inactive") =>
+            setStatusFilter(value)
+          }
+        >
+          <SelectTrigger className="w-[160px]">
+            <SelectValue placeholder="选择状态" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">全部状态</SelectItem>
+            <SelectItem value="active">正常</SelectItem>
+            <SelectItem value="blocked">已封禁</SelectItem>
+            <SelectItem value="inactive">未激活</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
             <TableRow>
-              {/* <TableHead>UUID</TableHead> */}
               <TableHead>用户ID</TableHead>
               <TableHead>用户名</TableHead>
               <TableHead>邮箱</TableHead>
-              <TableHead>手机号</TableHead>
-              <TableHead>权限</TableHead>
+              <TableHead>电话</TableHead>
+              <TableHead>角色</TableHead>
               <TableHead>状态</TableHead>
               <TableHead>创建时间</TableHead>
               <TableHead>更新时间</TableHead>
@@ -183,7 +205,7 @@ export default function UsersPage() {
                   加载中...
                 </TableCell>
               </TableRow>
-            ) : users.length === 0 ? (
+            ) : (users?.length || 0) === 0 ? (
               <TableRow>
                 <TableCell colSpan={9} className="text-center py-10">
                   暂无数据
@@ -192,58 +214,46 @@ export default function UsersPage() {
             ) : (
               users.map((user) => (
                 <TableRow key={user.userId}>
-                  {/* <TableCell className="font-mono text-xs">
-                    {user.uuid}
-                  </TableCell> */}
-                  <TableCell>{user.userId}</TableCell>
-                  <TableCell>{user.username}</TableCell>
+                  <TableCell className="font-medium">{user.userId}</TableCell>
+                  <TableCell className="font-medium">{user.username}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.phone}</TableCell>
                   <TableCell>
-                    <div className="flex gap-1 flex-wrap">
-                      {Object.entries(ROLE_MASKS).map(([_, mask]) => {
-                        if (user.role & mask) {
-                          return (
-                            <span
-                              key={mask}
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ROLE_COLORS[mask]}`}
-                            >
-                              {ROLE_CHINESE_NAMES[mask]}
-                            </span>
-                          );
-                        }
-                        return null;
-                      })}
+                    <div className="flex gap-1">
+                      {getRoleChineseNames(user.role).map((name, index) => (
+                        <span
+                          key={index}
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColors(user.role)[index]}`}
+                        >
+                          {name}
+                        </span>
+                      ))}
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1 flex-wrap">
+                    <div className="flex items-center gap-2">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          getUserStatus(
-                            user.isBlocked ?? false,
-                            user.isActive ?? false,
-                          ).className
+                          user.isBlocked
+                            ? "bg-red-100 text-red-800"
+                            : user.isActive
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-100 text-gray-800"
                         }`}
                       >
-                        {
-                          getUserStatus(
-                            user.isBlocked ?? false,
-                            user.isActive ?? false,
-                          ).label
-                        }
+                        {user.isBlocked
+                          ? "已封禁"
+                          : user.isActive
+                            ? "正常"
+                            : "未激活"}
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    {user.createdAt
-                      ? new Date(user.createdAt).toLocaleString("zh-CN")
-                      : "-"}
+                  <TableCell>
+                    {format(new Date(user.createdAt), "yyyy-MM-dd HH:mm:ss")}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    {user.updatedAt
-                      ? new Date(user.updatedAt).toLocaleString("zh-CN")
-                      : "-"}
+                  <TableCell>
+                    {format(new Date(user.updatedAt), "yyyy-MM-dd HH:mm:ss")}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -257,13 +267,34 @@ export default function UsersPage() {
                           <Pencil className="h-4 w-4 mr-2" />
                           编辑
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleSetRole(user)}>
-                          <UserCog className="h-4 w-4 mr-2" />
-                          权限设置
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDeleteClick(user)}>
+                        <DropdownMenuItem
+                          onClick={() => handleDelete(user.userId)}
+                        >
                           <Trash2 className="h-4 w-4 mr-2" />
                           删除
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleBlock(user.userId)}
+                        >
+                          <Ban className="h-4 w-4 mr-2" />
+                          {user.isBlocked ? "解除封禁" : "封禁"}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <RefreshCcw className="h-4 w-4 mr-2" />
+                          重置密码
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Mail className="h-4 w-4 mr-2" />
+                          发送邮件
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setIsRoleDialogOpen(true);
+                          }}
+                        >
+                          <Shield className="h-4 w-4 mr-2" />
+                          权限设置
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -275,83 +306,34 @@ export default function UsersPage() {
         </Table>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-gray-500">共 {total} 条记录</div>
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-              />
-            </PaginationItem>
-            {Array.from({
-              length: Math.min(5, Math.ceil(total / pageSize)),
-            }).map((_, i) => (
-              <PaginationItem key={i}>
-                <PaginationLink
-                  onClick={() => setPage(i + 1)}
-                  isActive={page === i + 1}
-                >
-                  {i + 1}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-            {Math.ceil(total / pageSize) > 5 && <PaginationEllipsis />}
-            <PaginationItem>
-              <PaginationNext
-                onClick={() =>
-                  setPage((p) => Math.min(Math.ceil(total / pageSize), p + 1))
-                }
-                disabled={page >= Math.ceil(total / pageSize)}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
+      <DataPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={users?.length || 0}
+        onPageChange={setCurrentPage}
+      />
 
       <UserDialog
         open={isDialogOpen}
         onOpenChange={(open) => {
-          setIsDialogOpen(open);
           if (!open) {
-            loadUsers();
+            handleDialogClose(true);
           }
+          setIsDialogOpen(open);
         }}
-        user={selectedUser}
+        user={selectedUser || defaultUser}
       />
 
       <RoleDialog
         open={isRoleDialogOpen}
         onOpenChange={(open) => {
-          setIsRoleDialogOpen(open);
           if (!open) {
-            loadUsers();
+            handleRoleDialogClose(true);
           }
+          setIsRoleDialogOpen(open);
         }}
-        user={selectedUser}
+        user={selectedUser || defaultUser}
       />
-
-      <AlertDialog open={!!userToDelete} onOpenChange={(open) => !open && setUserToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>确认删除用户</AlertDialogTitle>
-            <AlertDialogDescription>
-              你确定要删除用户 "{userToDelete?.username || userToDelete?.email || userToDelete?.phone}" 吗？
-              此操作不可撤销。
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>取消</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteConfirm}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              删除
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

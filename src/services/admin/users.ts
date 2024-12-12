@@ -109,7 +109,7 @@ export async function updateUserBlockStatus(
 /**
  * 更新用户权限
  */
-export async function updateUserPermissions(userId: number, role: number) {
+export async function updateUserRoles(userId: number, role: number) {
   const response = await api.put<boolean>("/admin/users/update", {
     body: {
       userId,

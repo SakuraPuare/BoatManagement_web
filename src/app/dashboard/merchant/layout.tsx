@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Home, Package, ShoppingCart, Store } from "lucide-react"
-import { DashboardLayout } from "@/components/layouts/DashboardLayout"
+import { Home, Package, ShoppingCart, Store } from "lucide-react";
+import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 
 const sidebarItems = [
   {
@@ -24,16 +24,16 @@ const sidebarItems = [
     path: "/dashboard/merchant/store",
     icon: <Store className="w-5 h-5" />,
   },
-]
+];
 
 export default function MerchantLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <DashboardLayout title="商家平台" sidebarItems={sidebarItems}>
       {children}
     </DashboardLayout>
-  )
-} 
+  );
+}

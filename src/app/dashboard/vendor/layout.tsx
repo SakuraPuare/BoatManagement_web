@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Home, Package, ShoppingCart, Settings } from "lucide-react"
-import { DashboardLayout } from "@/components/layouts/DashboardLayout"
+import { Home, Package, Settings, ShoppingCart } from "lucide-react";
+import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 
 const sidebarItems = [
   {
@@ -24,16 +24,16 @@ const sidebarItems = [
     path: "/dashboard/vendor/settings",
     icon: <Settings className="w-5 h-5" />,
   },
-]
+];
 
 export default function VendorLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <DashboardLayout title="供应商平台" sidebarItems={sidebarItems}>
       {children}
     </DashboardLayout>
-  )
-} 
+  );
+}

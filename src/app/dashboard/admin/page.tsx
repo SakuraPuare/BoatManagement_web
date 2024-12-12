@@ -1,16 +1,7 @@
-"use client"
+"use client";
 
-import { Card } from "@/components/ui/card"
-import {
-  Users,
-  Ship,
-  Ticket,
-  ShoppingBag,
-  Radio,
-  Anchor,
-  Bell,
-  FileText,
-} from "lucide-react"
+import { Card } from "@/components/ui/card";
+import { Bell, Ship, ShoppingBag, Users } from "lucide-react";
 
 const stats = [
   {
@@ -37,13 +28,13 @@ const stats = [
     icon: Bell,
     trend: "-15%",
   },
-]
+];
 
 export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold">管理员仪表板</h1>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
           <Card key={stat.title} className="p-6">
@@ -51,9 +42,13 @@ export default function AdminDashboard() {
               <div>
                 <p className="text-sm text-gray-500">{stat.title}</p>
                 <h3 className="text-2xl font-semibold mt-1">{stat.value}</h3>
-                <p className={`text-sm mt-1 ${
-                  stat.trend.startsWith('+') ? 'text-green-600' : 'text-red-600'
-                }`}>
+                <p
+                  className={`text-sm mt-1 ${
+                    stat.trend.startsWith("+")
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
                   {stat.trend} 较上月
                 </p>
               </div>
@@ -65,5 +60,5 @@ export default function AdminDashboard() {
 
       {/* 这里可以添加更多的图表和数据可视化组件 */}
     </div>
-  )
-} 
+  );
+}

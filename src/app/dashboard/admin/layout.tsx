@@ -1,17 +1,16 @@
-import { DashboardLayout } from "@/components/layouts/DashboardLayout"
-import { 
-  Users, 
-  Ship, 
-  Ticket, 
-  ShoppingBag,
-  Radio,
+import { DashboardLayout } from "@/components/layouts/DashboardLayout";
+import {
   Anchor,
+  BarChart,
   Bell,
   FileText,
+  Radio,
   Settings,
-  BarChart,
-} from "lucide-react"
-import { Toaster } from "sonner"
+  Ship,
+  ShoppingBag,
+  Ticket,
+  Users,
+} from "lucide-react";
 
 const sidebarItems = [
   {
@@ -64,19 +63,16 @@ const sidebarItems = [
     path: "/dashboard/admin/logs",
     icon: <FileText className="h-4 w-4" />,
   },
-]
+];
 
 export default function AdminLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <DashboardLayout 
-      sidebarItems={sidebarItems}
-      title="管理员控制台"
-    >
+    <DashboardLayout sidebarItems={sidebarItems} title="管理员控制台">
       {children}
     </DashboardLayout>
-  )
-} 
+  );
+}

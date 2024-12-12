@@ -1,11 +1,11 @@
 import { useCallback } from "react";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 import { useUserStore } from "@/stores/user";
-import { api } from "@/libs/api";
+import { api } from "@/lib/api";
 import { toast } from "sonner";
 import type { User } from "@/types/user";
 import Cookies from "js-cookie";
-import { getRoleEnglishNames } from "@/libs/constants/role";
+import { getRoleEnglishNames } from "@/lib/constants/role";
 
 interface Credentials {
   username: string;
@@ -13,7 +13,7 @@ interface Credentials {
 }
 
 export const useAuth = () => {
-  const router = useRouter()
+  const router = useRouter();
   const { user, setUser, permissions, setPermissions, setToken } =
     useUserStore();
 
@@ -38,7 +38,7 @@ export const useAuth = () => {
         await updateUser();
 
         toast.success("登录成功");
-        router.push('/')
+        router.push("/");
 
         // 将 user 和 permissions 存储到 cookie
         Cookies.set("user", JSON.stringify(user));
@@ -72,7 +72,7 @@ export const useAuth = () => {
         await updateUser();
 
         toast.success("注册成功");
-        router.push('/')
+        router.push("/");
         return true;
       } catch (error) {
         console.error("Registration error:", error);
@@ -91,11 +91,11 @@ export const useAuth = () => {
 
       Cookies.remove("user");
       Cookies.remove("permissions");
-      
-      toast.success('已成功退出登录');
+
+      toast.success("已成功退出登录");
     } catch (err: any) {
       console.error(err);
-      toast.error(err?.message || '退出登录失败');
+      toast.error(err?.message || "退出登录失败");
     }
   }, [setUser, setPermissions, setToken]);
 

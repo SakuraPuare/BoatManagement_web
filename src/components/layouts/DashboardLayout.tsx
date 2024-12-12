@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Menu, X, ChevronLeft } from "lucide-react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/libs/utils"
+import { useState } from "react";
+import { ChevronLeft, Menu, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 interface SidebarItem {
-  title: string
-  path: string
-  icon: React.ReactNode
+  title: string;
+  path: string;
+  icon: React.ReactNode;
 }
 
 interface DashboardLayoutProps {
-  children: React.ReactNode
-  sidebarItems: SidebarItem[]
-  title: string
+  children: React.ReactNode;
+  sidebarItems: SidebarItem[];
+  title: string;
 }
 
 export function DashboardLayout({
@@ -23,8 +23,8 @@ export function DashboardLayout({
   sidebarItems,
   title,
 }: DashboardLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(true)
-  const pathname = usePathname()
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const pathname = usePathname();
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
@@ -32,16 +32,17 @@ export function DashboardLayout({
       <aside
         className={cn(
           "fixed lg:static inset-y-0 left-0 z-50 flex flex-col w-64 transition-transform duration-300 ease-in-out bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700",
-          !sidebarOpen && "transform -translate-x-full lg:translate-x-0 lg:w-20"
+          !sidebarOpen &&
+            "transform -translate-x-full lg:translate-x-0 lg:w-20",
         )}
       >
         {/* 侧边栏头部 */}
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
-          <Link 
-            href="/dashboard" 
+          <Link
+            href="/dashboard"
             className={cn(
               "flex items-center space-x-3 text-gray-800 dark:text-white font-semibold",
-              !sidebarOpen && "lg:justify-center"
+              !sidebarOpen && "lg:justify-center",
             )}
           >
             {!sidebarOpen ? (
@@ -73,7 +74,7 @@ export function DashboardLayout({
                     !sidebarOpen && "lg:justify-center lg:px-2",
                     pathname === item.path
                       ? "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground"
-                      : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                      : "hover:bg-gray-100 dark:hover:bg-gray-700",
                   )}
                 >
                   <span className="flex items-center justify-center w-5 h-5">
@@ -95,7 +96,7 @@ export function DashboardLayout({
             <ChevronLeft
               className={cn(
                 "w-5 h-5 transition-transform",
-                !sidebarOpen && "transform rotate-180"
+                !sidebarOpen && "transform rotate-180",
               )}
             />
           </button>
@@ -123,11 +124,9 @@ export function DashboardLayout({
 
         {/* 页面内容 */}
         <main className="flex-1 p-6 overflow-y-auto">
-          <div className="max-w-7xl mx-auto">
-            {children}
-          </div>
+          <div className="max-w-7xl mx-auto">{children}</div>
         </main>
       </div>
     </div>
-  )
-} 
+  );
+}

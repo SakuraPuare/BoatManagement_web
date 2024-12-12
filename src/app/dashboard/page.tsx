@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { Building2, ShieldCheck, Store, User } from "lucide-react"
-import { useRouter } from "next/navigation"  // 注意这里改用 next/navigation
-import { useState } from "react"
-import { cn } from "@/libs/utils"
+import { Building2, ShieldCheck, Store, User } from "lucide-react";
+import { useRouter } from "next/navigation"; // 注意这里改用 next/navigation
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface RoleCard {
-  title: string
-  description: string
-  icon: React.ReactNode
-  path: string
-  gradient: string
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  path: string;
+  gradient: string;
 }
 
 export default function DashboardPage() {
-  const router = useRouter()
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null)
+  const router = useRouter();
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   const roles: RoleCard[] = [
     {
@@ -46,7 +46,7 @@ export default function DashboardPage() {
       path: "/dashboard/admin",
       gradient: "from-green-500 to-emerald-400",
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
@@ -66,7 +66,7 @@ export default function DashboardPage() {
               key={role.title}
               className={cn(
                 "relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 hover:shadow-2xl cursor-pointer border border-gray-100 dark:border-gray-700 w-[280px]",
-                hoveredCard === role.title ? "transform -translate-y-2" : ""
+                hoveredCard === role.title ? "transform -translate-y-2" : "",
               )}
               onMouseEnter={() => setHoveredCard(role.title)}
               onMouseLeave={() => setHoveredCard(null)}
@@ -76,14 +76,14 @@ export default function DashboardPage() {
                 className={cn(
                   "absolute inset-0 opacity-0 transition-opacity duration-300",
                   hoveredCard === role.title ? "opacity-10" : "",
-                  `bg-gradient-to-br ${role.gradient}`
+                  `bg-gradient-to-br ${role.gradient}`,
                 )}
               />
               <div className="p-8 relative z-10 flex flex-col items-center text-center">
                 <div
                   className={cn(
                     "w-20 h-20 rounded-full flex items-center justify-center mb-6",
-                    `bg-gradient-to-br ${role.gradient}`
+                    `bg-gradient-to-br ${role.gradient}`,
                   )}
                 >
                   <div className="text-white">{role.icon}</div>
@@ -100,5 +100,5 @@ export default function DashboardPage() {
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}

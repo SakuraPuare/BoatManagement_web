@@ -1,5 +1,5 @@
-import { DashboardLayout } from "@/components/layouts/DashboardLayout"
-import { Home, Ticket, ShoppingBag, User, Bell } from "lucide-react"
+import { DashboardLayout } from "@/components/layouts/DashboardLayout";
+import { Bell, Home, ShoppingBag, Ticket, User } from "lucide-react";
 
 const sidebarItems = [
   {
@@ -27,19 +27,16 @@ const sidebarItems = [
     path: "/dashboard/user/notifications",
     icon: <Bell className="h-4 w-4" />,
   },
-]
+];
 
 export default function UserLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <DashboardLayout 
-      sidebarItems={sidebarItems}
-      title="用户中心"
-    >
+    <DashboardLayout sidebarItems={sidebarItems} title="用户中心">
       {children}
     </DashboardLayout>
-  )
-} 
+  );
+}

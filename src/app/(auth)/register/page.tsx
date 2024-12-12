@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Lock, Ship, User } from "lucide-react";
-import { api } from "@/libs/api";
+import { api } from "@/lib/api";
 import { debounce } from "lodash";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";

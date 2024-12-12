@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Building2, Home, Monitor, Settings } from "lucide-react"
-import { DashboardLayout } from "@/components/layouts/DashboardLayout"
+import { Building2, Home, Monitor, Settings } from "lucide-react";
+import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 
 const sidebarItems = [
   {
@@ -24,7 +24,7 @@ const sidebarItems = [
     path: "/dashboard/vendor/settings",
     icon: <Settings className="w-5 h-5" />,
   },
-]
+];
 
 export default function VendorDashboard() {
   return (
@@ -36,5 +36,5 @@ export default function VendorDashboard() {
         </p>
       </div>
     </DashboardLayout>
-  )
-} 
+  );
+}

@@ -1,7 +1,6 @@
 import type { paths } from "@/types/api";
 import createClient from "openapi-fetch";
 import { useUserStore } from "@/stores/user";
-import { toast } from "sonner";
 
 // 定义请求配置接口
 interface RequestConfig {

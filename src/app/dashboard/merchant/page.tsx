@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 export default function MerchantDashboard() {
   return (
@@ -8,5 +8,5 @@ export default function MerchantDashboard() {
         这里是商家平台控制台主页
       </p>
     </div>
-  )
-} 
+  );
+}

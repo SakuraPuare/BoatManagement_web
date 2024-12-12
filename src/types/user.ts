@@ -6,6 +6,7 @@ export interface User {
 }
 
 export interface UserSelf {
+  uuid: string;
   userId: number;
   username: string;
   email: string;
@@ -17,8 +18,26 @@ export interface UserSelf {
   updatedAt: string;
 }
 
+export interface UserRequest {
+  userId: number;
+  username: string;
+  email: string;
+  phone: string;
+  role: number;
+  isActive: boolean;
+  isBlocked: boolean;
+}
+
 export interface AuthState {
   user: User | null;
   isLoading: boolean;
   error: string | null;
+}
+
+export interface UserPageResponse {
+  records: UserSelf[];
+  pageNumber: number;
+  pageSize: number;
+  totalPage: number;
+  totalRow: number;
 }

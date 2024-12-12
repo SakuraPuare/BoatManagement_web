@@ -1,7 +1,6 @@
 "use client";
 
 import { Home, Settings, User } from "lucide-react";
-import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 
 const sidebarItems = [
   {

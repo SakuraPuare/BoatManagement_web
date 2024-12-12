@@ -45,7 +45,7 @@ const createApiClient = () => {
     response: Response;
   }) => {
     console.log(response);
-    if (response.response.status !== 200) {
+    if (!response.response.ok) {
       throw new Error(response.response.statusText);
     } else {
       // 如果返回只有一个true
@@ -104,12 +104,7 @@ const createApiClient = () => {
       const result = await responseInterceptor(response);
       return result.data as T;
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-        throw error;
-      }
-      toast.error("发生未知错误");
-      throw new Error("Unknown error occurred");
+      throw error;
     }
   };
 

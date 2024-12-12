@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Menu, X, ChevronLeft } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
+import { cn } from "@/libs/utils"
 
 interface SidebarItem {
   title: string

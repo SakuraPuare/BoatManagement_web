@@ -1,11 +1,11 @@
 import { useCallback } from "react";
 import { useRouter } from 'next/navigation'
 import { useUserStore } from "@/stores/user";
-import { api } from "@/lib/api";
+import { api } from "@/libs/api";
 import { toast } from "sonner";
-import type { UserSelf } from "@/types/user";
+import type { User } from "@/types/user";
 import Cookies from "js-cookie";
-import { getRoleEnglishNames } from "@/lib/role";
+import { getRoleEnglishNames } from "@/libs/constants/role";
 
 interface Credentials {
   username: string;
@@ -18,7 +18,7 @@ export const useAuth = () => {
     useUserStore();
 
   const updateUser = useCallback(async () => {
-    const user = await api.get<UserSelf>("/user/me");
+    const user = await api.get<User>("/user/me");
     setUser(user);
 
     const permissions = getRoleEnglishNames(user.role);
@@ -47,7 +47,8 @@ export const useAuth = () => {
         return true;
       } catch (error) {
         console.error("Login error:", error);
-        toast.error("登录失败");
+        // toast.error("登录失败");
+        toast.error("用户名或密码错误");
         return false;
       }
     },
@@ -71,7 +72,7 @@ export const useAuth = () => {
         await updateUser();
 
         toast.success("注册成功");
-        // router.push('/dashboard')
+        router.push('/')
         return true;
       } catch (error) {
         console.error("Registration error:", error);
@@ -79,17 +80,23 @@ export const useAuth = () => {
         return false;
       }
     },
-    [setToken, updateUser],
+    [router, setToken, updateUser],
   );
 
-  const logout = useCallback(() => {
-    setUser(null);
-    setPermissions([]);
-    setToken(null);
+  const logout = useCallback(async () => {
+    try {
+      setUser(null);
+      setPermissions([]);
+      setToken(null);
 
-    Cookies.remove("user");
-    Cookies.remove("permissions");
-    // router.push('/login')
+      Cookies.remove("user");
+      Cookies.remove("permissions");
+      
+      toast.success('已成功退出登录');
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.message || '退出登录失败');
+    }
   }, [setUser, setPermissions, setToken]);
 
   const checkAuth = useCallback(async () => {

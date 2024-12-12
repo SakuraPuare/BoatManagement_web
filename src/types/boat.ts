@@ -1,12 +1,12 @@
-export type ShipStatus = "active" | "maintenance" | "inactive"
-export type ShipType = "passenger" | "cargo" | "ferry"
+export type BoatStatus = "active" | "maintenance" | "inactive"
+export type BoatType = "passenger" | "cargo" | "ferry"
 
-export interface Ship {
+export interface Boat {
   id: string
   name: string
-  type: ShipType
+  type: BoatType
   capacity: number
-  status: ShipStatus
+  status: BoatStatus
   registrationNumber: string
   buildYear: number
   lastMaintenance: string
@@ -14,7 +14,7 @@ export interface Ship {
   currentPort: string
 }
 
-export interface ShipTypeDetail {
+export interface BoatTypeDetail {
   id: string
   name: string
   code: string

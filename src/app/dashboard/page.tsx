@@ -3,7 +3,7 @@
 import { Building2, ShieldCheck, Store, User } from "lucide-react"
 import { useRouter } from "next/navigation"  // 注意这里改用 next/navigation
 import { useState } from "react"
-import { cn } from "@/lib/utils"
+import { cn } from "@/libs/utils"
 
 interface RoleCard {
   title: string

@@ -11,6 +11,7 @@ import {
   Settings,
   BarChart,
 } from "lucide-react"
+import { Toaster } from "sonner"
 
 const sidebarItems = [
   {
@@ -30,7 +31,7 @@ const sidebarItems = [
   },
   {
     title: "船只类型",
-    path: "/dashboard/admin/ship-types",
+    path: "/dashboard/admin/boat-types",
     icon: <Settings className="h-4 w-4" />,
   },
   {

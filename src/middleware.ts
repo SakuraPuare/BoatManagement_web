@@ -5,7 +5,7 @@ import {
   authRoutes,
   DEFAULT_LOGIN_REDIRECT,
   publicRoutes,
-} from "@/config/routes";
+} from "@/configs/routes";
 import Cookies from "js-cookie";
 
 export function middleware(request: NextRequest) {

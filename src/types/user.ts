@@ -33,11 +33,3 @@ export interface AuthState {
   isLoading: boolean;
   error: string | null;
 }
-
-export interface UserPageResponse {
-  records: UserSelf[];
-  pageNumber: number;
-  pageSize: number;
-  totalPage: number;
-  totalRow: number;
-}

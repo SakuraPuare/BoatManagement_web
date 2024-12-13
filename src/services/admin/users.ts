@@ -1,5 +1,6 @@
 import {api} from "@/lib/api";
-import {UserPageResponse, UserSelf} from "@/types/user";
+import {UserSelf} from "@/types/user";
+import {PaginatedResponse} from "@/types/pagination";
 import {toast} from "sonner";
 
 /**
@@ -7,7 +8,7 @@ import {toast} from "sonner";
  */
 export async function fetchUserList(pageNumber: number, pageSize: number) {
   try {
-    const response = await api.get<UserPageResponse>("/admin/users/page", {
+    const response = await api.get<PaginatedResponse>("/admin/users/page", {
       params: {
         pageNumber: pageNumber.toString(),
         pageSize: pageSize.toString(),

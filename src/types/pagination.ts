@@ -1,8 +1,7 @@
 export interface PaginatedResponse<T> {
   records: T[];
-  total: number;
-  size: number;
-  current: number;
-  pages: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPage: number;
   totalRow: number;
 }

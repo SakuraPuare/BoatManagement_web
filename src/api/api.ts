@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/admin/users/update": {
+    "/logs/update": {
         parameters: {
             query?: never;
             header?: never;
@@ -20,7 +20,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/tickets/update": {
+    "/admin/users/update": {
         parameters: {
             query?: never;
             header?: never;
@@ -36,7 +36,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/payments/update": {
+    "/admin/tickets/update": {
         parameters: {
             query?: never;
             header?: never;
@@ -52,7 +52,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/orders/update": {
+    "/admin/payments/update": {
         parameters: {
             query?: never;
             header?: never;
@@ -68,7 +68,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/docks/update": {
+    "/admin/orders/update": {
         parameters: {
             query?: never;
             header?: never;
@@ -84,7 +84,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/boats/update": {
+    "/admin/docks/update": {
         parameters: {
             query?: never;
             header?: never;
@@ -100,7 +100,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/boatTypes/update": {
+    "/admin/codes/update": {
         parameters: {
             query?: never;
             header?: never;
@@ -116,7 +116,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/alerts/update": {
+    "/admin/boats/update": {
         parameters: {
             query?: never;
             header?: never;
@@ -126,6 +126,54 @@ export interface paths {
         get?: never;
         put: operations["update_7"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/boatTypes/update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["update_8"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/alerts/update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["update_9"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/save": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["save"];
         delete?: never;
         options?: never;
         head?: never;
@@ -226,7 +274,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["save"];
+        post: operations["save_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -242,7 +290,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["save_1"];
+        post: operations["save_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -258,7 +306,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["save_2"];
+        post: operations["save_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -274,7 +322,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["save_3"];
+        post: operations["save_4"];
         delete?: never;
         options?: never;
         head?: never;
@@ -290,22 +338,6 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["save_4"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/admin/boats/save": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
         post: operations["save_5"];
         delete?: never;
         options?: never;
@@ -313,7 +345,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/boatTypes/save": {
+    "/admin/codes/save": {
         parameters: {
             query?: never;
             header?: never;
@@ -329,7 +361,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/alerts/save": {
+    "/admin/boats/save": {
         parameters: {
             query?: never;
             header?: never;
@@ -339,6 +371,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["save_7"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/boatTypes/save": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["save_8"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/alerts/save": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["save_9"];
         delete?: never;
         options?: never;
         head?: never;
@@ -377,7 +441,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/users/page": {
+    "/logs/page": {
         parameters: {
             query?: never;
             header?: never;
@@ -393,7 +457,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/users/list": {
+    "/logs/list": {
         parameters: {
             query?: never;
             header?: never;
@@ -409,7 +473,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/users/getInfo/{id}": {
+    "/logs/getInfo/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -425,7 +489,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/tickets/page": {
+    "/admin/users/page": {
         parameters: {
             query?: never;
             header?: never;
@@ -441,7 +505,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/tickets/list": {
+    "/admin/users/list": {
         parameters: {
             query?: never;
             header?: never;
@@ -457,7 +521,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/tickets/getInfo/{id}": {
+    "/admin/users/getInfo/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -473,7 +537,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/payments/page": {
+    "/admin/tickets/page": {
         parameters: {
             query?: never;
             header?: never;
@@ -489,7 +553,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/payments/list": {
+    "/admin/tickets/list": {
         parameters: {
             query?: never;
             header?: never;
@@ -505,7 +569,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/payments/getInfo/{id}": {
+    "/admin/tickets/getInfo/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -521,7 +585,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/orders/page": {
+    "/admin/payments/page": {
         parameters: {
             query?: never;
             header?: never;
@@ -537,7 +601,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/orders/list": {
+    "/admin/payments/list": {
         parameters: {
             query?: never;
             header?: never;
@@ -553,7 +617,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/orders/getInfo/{id}": {
+    "/admin/payments/getInfo/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -569,7 +633,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/docks/page": {
+    "/admin/orders/page": {
         parameters: {
             query?: never;
             header?: never;
@@ -585,7 +649,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/docks/list": {
+    "/admin/orders/list": {
         parameters: {
             query?: never;
             header?: never;
@@ -601,7 +665,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/docks/getInfo/{id}": {
+    "/admin/orders/getInfo/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -617,7 +681,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/boats/page": {
+    "/admin/docks/page": {
         parameters: {
             query?: never;
             header?: never;
@@ -633,7 +697,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/boats/list": {
+    "/admin/docks/list": {
         parameters: {
             query?: never;
             header?: never;
@@ -649,7 +713,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/boats/getInfo/{id}": {
+    "/admin/docks/getInfo/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -665,7 +729,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/boatTypes/page": {
+    "/admin/codes/page": {
         parameters: {
             query?: never;
             header?: never;
@@ -681,7 +745,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/boatTypes/list": {
+    "/admin/codes/list": {
         parameters: {
             query?: never;
             header?: never;
@@ -697,7 +761,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/boatTypes/getInfo/{id}": {
+    "/admin/codes/getInfo/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -713,7 +777,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/alerts/page": {
+    "/admin/boats/page": {
         parameters: {
             query?: never;
             header?: never;
@@ -729,7 +793,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/alerts/list": {
+    "/admin/boats/list": {
         parameters: {
             query?: never;
             header?: never;
@@ -745,7 +809,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/alerts/getInfo/{id}": {
+    "/admin/boats/getInfo/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -761,7 +825,103 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/users/remove/{id}": {
+    "/admin/boatTypes/page": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["page_8"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/boatTypes/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_8"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/boatTypes/getInfo/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getInfo_8"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/alerts/page": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["page_9"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/alerts/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_9"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/alerts/getInfo/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getInfo_9"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/logs/remove/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -777,7 +937,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/tickets/remove/{id}": {
+    "/admin/users/remove/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -793,7 +953,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/payments/remove/{id}": {
+    "/admin/tickets/remove/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -809,7 +969,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/orders/remove/{id}": {
+    "/admin/payments/remove/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -825,7 +985,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/docks/remove/{id}": {
+    "/admin/orders/remove/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -841,7 +1001,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/boats/remove/{id}": {
+    "/admin/docks/remove/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -857,7 +1017,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/boatTypes/remove/{id}": {
+    "/admin/codes/remove/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -873,7 +1033,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/alerts/remove/{id}": {
+    "/admin/boats/remove/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -889,28 +1049,61 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/boatTypes/remove/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["remove_8"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/alerts/remove/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["remove_9"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        Code: {
+        Logs: {
             isDeleted?: boolean;
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
             updatedAt?: string;
             /** Format: int64 */
-            id?: number;
+            logId?: number;
+            tableName?: string;
+            operation?: string;
             /** Format: int64 */
-            userId?: number;
-            user?: components["schemas"]["User"];
-            code?: string;
-            /** Format: date-time */
-            requestTime?: string;
-            /** Format: date-time */
-            expirationTime?: string;
+            recordId?: number;
+            /** Format: int64 */
+            operatorId?: number;
+            oldData?: string;
+            newData?: string;
+            ipAddress?: string;
         };
-        User: {
+        Users: {
             isDeleted?: boolean;
             /** Format: date-time */
             createdAt?: string;
@@ -923,48 +1116,69 @@ export interface components {
             password?: string;
             email?: string;
             phone?: string;
-            /** Format: int32 */
+            /** Format: int64 */
             role?: number;
-            codeIds?: number[];
-            codes?: components["schemas"]["Code"][];
             isActive?: boolean;
             isBlocked?: boolean;
             token?: string;
         };
-        Boat: {
+        Tickets: {
             isDeleted?: boolean;
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
             updatedAt?: string;
+            /** Format: int64 */
+            ticketId?: number;
+            /** Format: int64 */
+            userId?: number;
             /** Format: int64 */
             boatId?: number;
-            boatName?: string;
+            /** Format: date-time */
+            startTime?: string;
+            /** Format: date-time */
+            endTime?: string;
             /** Format: int64 */
-            boatTypeId?: number;
-            boatType?: components["schemas"]["BoatType"];
-            /** Format: int32 */
-            status?: number;
+            departureDockId?: number;
+            /** Format: int64 */
+            destinationDockId?: number;
+            price?: number;
+            /** Format: int64 */
+            remainingTickets?: number;
         };
-        BoatType: {
+        Payments: {
             isDeleted?: boolean;
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
             updatedAt?: string;
             /** Format: int64 */
-            boatTypeId?: number;
-            typeName?: string;
-            typeCode?: string;
-            /** Format: double */
-            maxCapacity?: number;
-            /** Format: double */
-            maxSpeed?: number;
-            fuelType?: string;
+            paymentId?: number;
+            /** Format: int64 */
+            orderId?: number;
+            /** Format: date-time */
+            paymentTime?: string;
+            amount?: number;
             /** Format: int32 */
-            status?: number;
+            paymentMethod?: number;
         };
-        Dock: {
+        Orders: {
+            isDeleted?: boolean;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            orderId?: number;
+            /** Format: int64 */
+            userId?: number;
+            /** Format: int64 */
+            ticketId?: number;
+            totalAmount?: number;
+            /** Format: int32 */
+            paymentStatus?: number;
+        };
+        Docks: {
             isDeleted?: boolean;
             /** Format: date-time */
             createdAt?: string;
@@ -975,64 +1189,62 @@ export interface components {
             dockName?: string;
             dockLocation?: string;
         };
-        Ticket: {
+        Codes: {
             isDeleted?: boolean;
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
             updatedAt?: string;
             /** Format: int64 */
-            ticketId?: number;
+            id?: number;
             /** Format: int64 */
             userId?: number;
-            user?: components["schemas"]["User"];
+            code?: string;
+            /** Format: date-time */
+            requestTime?: string;
+            /** Format: date-time */
+            expirationTime?: string;
+        };
+        Boats: {
+            isDeleted?: boolean;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
             /** Format: int64 */
             boatId?: number;
-            boat?: components["schemas"]["Boat"];
-            /** Format: date-time */
-            startTime?: string;
-            /** Format: date-time */
-            endTime?: string;
-            departureDock?: components["schemas"]["Dock"];
-            destinationDock?: components["schemas"]["Dock"];
-            price?: number;
+            boatName?: string;
+            /** Format: int64 */
+            boatTypeId?: number;
+            registrationNumber?: string;
             /** Format: int32 */
-            remainingTickets?: number;
+            buildYear?: number;
+            /** Format: date-time */
+            lastMaintenance?: string;
+            /** Format: date-time */
+            nextMaintenance?: string;
+            /** Format: int64 */
+            currentDockId?: number;
+            /** Format: int32 */
+            status?: number;
         };
-        Order: {
+        BoatTypes: {
             isDeleted?: boolean;
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
             updatedAt?: string;
             /** Format: int64 */
-            orderId?: number;
-            /** Format: int64 */
-            userId?: number;
-            user?: components["schemas"]["User"];
-            /** Format: int64 */
-            ticketId?: number;
-            ticket?: components["schemas"]["Ticket"];
-            totalAmount?: number;
+            boatTypeId?: number;
+            typeName?: string;
+            typeCode?: string;
+            maxCapacity?: number;
+            maxSpeed?: number;
+            fuelType?: string;
             /** Format: int32 */
-            paymentStatus?: number;
+            status?: number;
         };
-        Payment: {
-            isDeleted?: boolean;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            /** Format: int64 */
-            paymentId?: number;
-            order?: components["schemas"]["Order"];
-            /** Format: date-time */
-            paymentTime?: string;
-            amount?: number;
-            /** Format: int32 */
-            paymentMethod?: number;
-        };
-        Alert: {
+        Alerts: {
             isDeleted?: boolean;
             /** Format: date-time */
             createdAt?: string;
@@ -1042,7 +1254,6 @@ export interface components {
             alertId?: number;
             /** Format: int64 */
             boatId?: number;
-            boat?: components["schemas"]["Boat"];
             alertType?: string;
             /** Format: date-time */
             alertTime?: string;
@@ -1116,8 +1327,8 @@ export interface components {
             /** Format: date-time */
             updatedAt?: string;
         };
-        PageUser: {
-            records?: components["schemas"]["User"][];
+        PageLogs: {
+            records?: components["schemas"]["Logs"][];
             /** Format: int64 */
             pageNumber?: number;
             /** Format: int64 */
@@ -1128,8 +1339,8 @@ export interface components {
             totalRow?: number;
             optimizeCountQuery?: boolean;
         };
-        PageTicket: {
-            records?: components["schemas"]["Ticket"][];
+        PageUsers: {
+            records?: components["schemas"]["Users"][];
             /** Format: int64 */
             pageNumber?: number;
             /** Format: int64 */
@@ -1140,8 +1351,8 @@ export interface components {
             totalRow?: number;
             optimizeCountQuery?: boolean;
         };
-        PagePayment: {
-            records?: components["schemas"]["Payment"][];
+        PageTickets: {
+            records?: components["schemas"]["Tickets"][];
             /** Format: int64 */
             pageNumber?: number;
             /** Format: int64 */
@@ -1152,8 +1363,8 @@ export interface components {
             totalRow?: number;
             optimizeCountQuery?: boolean;
         };
-        PageOrder: {
-            records?: components["schemas"]["Order"][];
+        PagePayments: {
+            records?: components["schemas"]["Payments"][];
             /** Format: int64 */
             pageNumber?: number;
             /** Format: int64 */
@@ -1164,8 +1375,8 @@ export interface components {
             totalRow?: number;
             optimizeCountQuery?: boolean;
         };
-        PageDock: {
-            records?: components["schemas"]["Dock"][];
+        PageOrders: {
+            records?: components["schemas"]["Orders"][];
             /** Format: int64 */
             pageNumber?: number;
             /** Format: int64 */
@@ -1176,8 +1387,8 @@ export interface components {
             totalRow?: number;
             optimizeCountQuery?: boolean;
         };
-        PageBoat: {
-            records?: components["schemas"]["Boat"][];
+        PageDocks: {
+            records?: components["schemas"]["Docks"][];
             /** Format: int64 */
             pageNumber?: number;
             /** Format: int64 */
@@ -1188,8 +1399,8 @@ export interface components {
             totalRow?: number;
             optimizeCountQuery?: boolean;
         };
-        PageBoatType: {
-            records?: components["schemas"]["BoatType"][];
+        PageCodes: {
+            records?: components["schemas"]["Codes"][];
             /** Format: int64 */
             pageNumber?: number;
             /** Format: int64 */
@@ -1200,8 +1411,32 @@ export interface components {
             totalRow?: number;
             optimizeCountQuery?: boolean;
         };
-        PageAlert: {
-            records?: components["schemas"]["Alert"][];
+        PageBoats: {
+            records?: components["schemas"]["Boats"][];
+            /** Format: int64 */
+            pageNumber?: number;
+            /** Format: int64 */
+            pageSize?: number;
+            /** Format: int64 */
+            totalPage?: number;
+            /** Format: int64 */
+            totalRow?: number;
+            optimizeCountQuery?: boolean;
+        };
+        PageBoatTypes: {
+            records?: components["schemas"]["BoatTypes"][];
+            /** Format: int64 */
+            pageNumber?: number;
+            /** Format: int64 */
+            pageSize?: number;
+            /** Format: int64 */
+            totalPage?: number;
+            /** Format: int64 */
+            totalRow?: number;
+            optimizeCountQuery?: boolean;
+        };
+        PageAlerts: {
+            records?: components["schemas"]["Alerts"][];
             /** Format: int64 */
             pageNumber?: number;
             /** Format: int64 */
@@ -1230,7 +1465,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["User"];
+                "application/json": components["schemas"]["Logs"];
             };
         };
         responses: {
@@ -1254,7 +1489,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Ticket"];
+                "application/json": components["schemas"]["Users"];
             };
         };
         responses: {
@@ -1278,7 +1513,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Payment"];
+                "application/json": components["schemas"]["Tickets"];
             };
         };
         responses: {
@@ -1302,7 +1537,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Order"];
+                "application/json": components["schemas"]["Payments"];
             };
         };
         responses: {
@@ -1326,7 +1561,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Dock"];
+                "application/json": components["schemas"]["Orders"];
             };
         };
         responses: {
@@ -1350,7 +1585,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Boat"];
+                "application/json": components["schemas"]["Docks"];
             };
         };
         responses: {
@@ -1374,7 +1609,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BoatType"];
+                "application/json": components["schemas"]["Codes"];
             };
         };
         responses: {
@@ -1398,7 +1633,79 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Alert"];
+                "application/json": components["schemas"]["Boats"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": boolean;
+                };
+            };
+        };
+    };
+    update_8: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BoatTypes"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": boolean;
+                };
+            };
+        };
+    };
+    update_9: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Alerts"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": boolean;
+                };
+            };
+        };
+    };
+    save: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Logs"];
             };
         };
         responses: {
@@ -1533,30 +1840,6 @@ export interface operations {
             };
         };
     };
-    save: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["User"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": boolean;
-                };
-            };
-        };
-    };
     save_1: {
         parameters: {
             query?: never;
@@ -1566,7 +1849,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Ticket"];
+                "application/json": components["schemas"]["Users"];
             };
         };
         responses: {
@@ -1590,7 +1873,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Payment"];
+                "application/json": components["schemas"]["Tickets"];
             };
         };
         responses: {
@@ -1614,7 +1897,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Order"];
+                "application/json": components["schemas"]["Payments"];
             };
         };
         responses: {
@@ -1638,7 +1921,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Dock"];
+                "application/json": components["schemas"]["Orders"];
             };
         };
         responses: {
@@ -1662,7 +1945,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Boat"];
+                "application/json": components["schemas"]["Docks"];
             };
         };
         responses: {
@@ -1686,7 +1969,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BoatType"];
+                "application/json": components["schemas"]["Codes"];
             };
         };
         responses: {
@@ -1710,7 +1993,55 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Alert"];
+                "application/json": components["schemas"]["Boats"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": boolean;
+                };
+            };
+        };
+    };
+    save_8: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BoatTypes"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": boolean;
+                };
+            };
+        };
+    };
+    save_9: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Alerts"];
             };
         };
         responses: {
@@ -1770,7 +2101,7 @@ export interface operations {
     page: {
         parameters: {
             query: {
-                page: components["schemas"]["PageUser"];
+                page: components["schemas"]["PageLogs"];
             };
             header?: never;
             path?: never;
@@ -1784,7 +2115,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["PageUser"];
+                    "*/*": components["schemas"]["PageLogs"];
                 };
             };
         };
@@ -1804,7 +2135,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["User"][];
+                    "*/*": components["schemas"]["Logs"][];
                 };
             };
         };
@@ -1826,7 +2157,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["User"];
+                    "*/*": components["schemas"]["Logs"];
                 };
             };
         };
@@ -1834,7 +2165,7 @@ export interface operations {
     page_1: {
         parameters: {
             query: {
-                page: components["schemas"]["PageTicket"];
+                page: components["schemas"]["PageUsers"];
             };
             header?: never;
             path?: never;
@@ -1848,7 +2179,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["PageTicket"];
+                    "*/*": components["schemas"]["PageUsers"];
                 };
             };
         };
@@ -1868,7 +2199,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["Ticket"][];
+                    "*/*": components["schemas"]["Users"][];
                 };
             };
         };
@@ -1890,7 +2221,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["Ticket"];
+                    "*/*": components["schemas"]["Users"];
                 };
             };
         };
@@ -1898,7 +2229,7 @@ export interface operations {
     page_2: {
         parameters: {
             query: {
-                page: components["schemas"]["PagePayment"];
+                page: components["schemas"]["PageTickets"];
             };
             header?: never;
             path?: never;
@@ -1912,7 +2243,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["PagePayment"];
+                    "*/*": components["schemas"]["PageTickets"];
                 };
             };
         };
@@ -1932,7 +2263,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["Payment"][];
+                    "*/*": components["schemas"]["Tickets"][];
                 };
             };
         };
@@ -1954,7 +2285,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["Payment"];
+                    "*/*": components["schemas"]["Tickets"];
                 };
             };
         };
@@ -1962,7 +2293,7 @@ export interface operations {
     page_3: {
         parameters: {
             query: {
-                page: components["schemas"]["PageOrder"];
+                page: components["schemas"]["PagePayments"];
             };
             header?: never;
             path?: never;
@@ -1976,7 +2307,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["PageOrder"];
+                    "*/*": components["schemas"]["PagePayments"];
                 };
             };
         };
@@ -1996,7 +2327,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["Order"][];
+                    "*/*": components["schemas"]["Payments"][];
                 };
             };
         };
@@ -2018,7 +2349,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["Order"];
+                    "*/*": components["schemas"]["Payments"];
                 };
             };
         };
@@ -2026,7 +2357,7 @@ export interface operations {
     page_4: {
         parameters: {
             query: {
-                page: components["schemas"]["PageDock"];
+                page: components["schemas"]["PageOrders"];
             };
             header?: never;
             path?: never;
@@ -2040,7 +2371,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["PageDock"];
+                    "*/*": components["schemas"]["PageOrders"];
                 };
             };
         };
@@ -2060,7 +2391,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["Dock"][];
+                    "*/*": components["schemas"]["Orders"][];
                 };
             };
         };
@@ -2082,7 +2413,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["Dock"];
+                    "*/*": components["schemas"]["Orders"];
                 };
             };
         };
@@ -2090,7 +2421,7 @@ export interface operations {
     page_5: {
         parameters: {
             query: {
-                page: components["schemas"]["PageBoat"];
+                page: components["schemas"]["PageDocks"];
             };
             header?: never;
             path?: never;
@@ -2104,7 +2435,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["PageBoat"];
+                    "*/*": components["schemas"]["PageDocks"];
                 };
             };
         };
@@ -2124,7 +2455,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["Boat"][];
+                    "*/*": components["schemas"]["Docks"][];
                 };
             };
         };
@@ -2146,7 +2477,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["Boat"];
+                    "*/*": components["schemas"]["Docks"];
                 };
             };
         };
@@ -2154,7 +2485,7 @@ export interface operations {
     page_6: {
         parameters: {
             query: {
-                page: components["schemas"]["PageBoatType"];
+                page: components["schemas"]["PageCodes"];
             };
             header?: never;
             path?: never;
@@ -2168,7 +2499,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["PageBoatType"];
+                    "*/*": components["schemas"]["PageCodes"];
                 };
             };
         };
@@ -2188,7 +2519,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["BoatType"][];
+                    "*/*": components["schemas"]["Codes"][];
                 };
             };
         };
@@ -2210,7 +2541,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["BoatType"];
+                    "*/*": components["schemas"]["Codes"];
                 };
             };
         };
@@ -2218,7 +2549,7 @@ export interface operations {
     page_7: {
         parameters: {
             query: {
-                page: components["schemas"]["PageAlert"];
+                page: components["schemas"]["PageBoats"];
             };
             header?: never;
             path?: never;
@@ -2232,7 +2563,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["PageAlert"];
+                    "*/*": components["schemas"]["PageBoats"];
                 };
             };
         };
@@ -2252,7 +2583,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["Alert"][];
+                    "*/*": components["schemas"]["Boats"][];
                 };
             };
         };
@@ -2274,7 +2605,135 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["Alert"];
+                    "*/*": components["schemas"]["Boats"];
+                };
+            };
+        };
+    };
+    page_8: {
+        parameters: {
+            query: {
+                page: components["schemas"]["PageBoatTypes"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageBoatTypes"];
+                };
+            };
+        };
+    };
+    list_8: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BoatTypes"][];
+                };
+            };
+        };
+    };
+    getInfo_8: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BoatTypes"];
+                };
+            };
+        };
+    };
+    page_9: {
+        parameters: {
+            query: {
+                page: components["schemas"]["PageAlerts"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageAlerts"];
+                };
+            };
+        };
+    };
+    list_9: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["Alerts"][];
+                };
+            };
+        };
+    };
+    getInfo_9: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["Alerts"];
                 };
             };
         };
@@ -2434,6 +2893,50 @@ export interface operations {
         };
     };
     remove_7: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": boolean;
+                };
+            };
+        };
+    };
+    remove_8: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": boolean;
+                };
+            };
+        };
+    };
+    remove_9: {
         parameters: {
             query?: never;
             header?: never;

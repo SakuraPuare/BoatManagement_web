@@ -53,7 +53,7 @@ const userFormSchema = z
       .regex(/^1[3-9]\d{9}$/, "请输入有效的手机号码")
       .optional()
       .or(z.literal("")),
-    roles: z.number(),
+    role: z.number(),
     isActive: z.boolean(),
   })
   .refine(
@@ -81,27 +81,27 @@ export function UserDialog({ open, onOpenChange, user }: UserDialogProps) {
       username: "",
       email: "",
       phone: "",
-      roles: ROLE_MASKS.USER,
+      role: ROLE_MASKS.USER,
       isActive: true,
     },
     values: {
       username: user?.username || "",
       email: user?.email || "",
       phone: user?.phone || "",
-      roles: user?.role || ROLE_MASKS.USER,
+      role: user?.role || ROLE_MASKS.USER,
       isActive: user?.isActive || true,
     },
   });
 
-  const roles = form.watch("roles");
+  const role = form.watch("role");
 
   const toggleRole = (roleValue: number) => {
-    const currentRoles = form.getValues("roles");
-    form.setValue("roles", currentRoles ^ roleValue, { shouldValidate: true });
+    const currentRoles = form.getValues("role");
+    form.setValue("role", currentRoles ^ roleValue, { shouldValidate: true });
   };
 
   const hasRole = (roleValue: number) => {
-    return (roles & roleValue) === roleValue;
+    return (role & roleValue) === roleValue;
   };
 
   const onSubmit = async (values: FormValues) => {
@@ -174,7 +174,7 @@ export function UserDialog({ open, onOpenChange, user }: UserDialogProps) {
             />
             <FormField
               control={form.control}
-              name="roles"
+              name="role"
               render={() => (
                 <FormItem>
                   <FormLabel>用户角色</FormLabel>

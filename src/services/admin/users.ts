@@ -8,10 +8,12 @@ import {toast} from "sonner";
  */
 export async function fetchUserList(pageNumber: number, pageSize: number) {
   try {
-    const response = await api.get<PaginatedResponse>("/admin/users/page", {
-      params: {
-        pageNumber: pageNumber.toString(),
-        pageSize: pageSize.toString(),
+    const response = await api.get<PaginatedResponse<UserSelf>>(
+      "/admin/users/page",
+      {
+        params: {
+          pageNumber: pageNumber.toString(),
+          pageSize: pageSize.toString(),
       },
     });
     return response;

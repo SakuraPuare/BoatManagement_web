@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
 import { updateUserRoles } from "@/services/admin/users";
 
 const RoleFormSchema = z.object({
-  roles: z.number(),
+  role: z.number(),
 });
 
 type FormValues = z.infer<typeof RoleFormSchema>;
@@ -45,27 +45,27 @@ export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(RoleFormSchema),
     defaultValues: {
-      roles: user?.role || ROLE_MASKS.USER,
+      role: user?.role || ROLE_MASKS.USER,
     },
     values: {
-      roles: user?.role || ROLE_MASKS.USER,
+      role: user?.role || ROLE_MASKS.USER,
     }
   });
 
-  const roles = form.watch("roles");
+  const role = form.watch("role");
 
   const toggleRole = (roleValue: number) => {
-    const currentRoles = form.getValues("roles");
-    form.setValue("roles", currentRoles ^ roleValue, { shouldValidate: true });
+    const currentRoles = form.getValues("role");
+    form.setValue("role", currentRoles ^ roleValue, { shouldValidate: true });
   };
 
   const hasRole = (roleValue: number) => {
-    return (roles & roleValue) === roleValue;
+    return (role & roleValue) === roleValue;
   };
 
   const onSubmit = async (values: FormValues) => {
     try {
-      await updateUserRoles(user.userId, values.roles);
+      await updateUserRoles(user.userId, values.role);
       onOpenChange(false);
       form.reset();
     } catch (error) {
@@ -87,7 +87,7 @@ export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="roles"
+              name="role"
               render={() => (
                 <FormItem>
                   <FormLabel>用户角色</FormLabel>

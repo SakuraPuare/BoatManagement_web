@@ -28,7 +28,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { BoatType } from "@/types/boat-type";
-import { BoatTypeDialog } from "./boat-type-dialog";
+import { BoatTypeDialog } from "@/app/dashboard/admin/boat-types/boat-type-dialog";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { deleteBoatType, fetchBoatTypeList, updateBoatTypeBlockStatus } from "@/services/admin/boat-types";
 import { Badge } from "@/components/ui/badge";

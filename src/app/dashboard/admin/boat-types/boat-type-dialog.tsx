@@ -44,13 +44,15 @@ const boatTypeFormSchema = z.object({
     .min(1, "船型代码不能为空")
     .max(20, "船型代码不能超过20个字符"),
   maxCapacity: z
+    .coerce
     .number()
-    .transform(Number)
-    .pipe(z.number().min(1, "容量必须大于0")),
+    .min(1, "最大容量不能小于1")
+    .max(10000, "最大容量不能大于10000"),
   maxSpeed: z
+    .coerce
     .number()
-    .transform(Number)
-    .pipe(z.number().min(0, "速度不能为负")),
+    .min(0, "最大速度不能小于0")
+    .max(100, "最大速度不能大于100"),
   fuelType: z.string().min(1, "燃料类型不能为空"),
   status: z.number().min(0).max(1),
 });

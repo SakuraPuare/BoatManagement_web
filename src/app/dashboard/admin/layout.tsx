@@ -25,7 +25,7 @@ const sidebarItems = [
   },
   {
     title: "船只管理",
-    path: "/dashboard/admin/ships",
+    path: "/dashboard/admin/boats",
     icon: <Ship className="h-4 w-4" />,
   },
   {

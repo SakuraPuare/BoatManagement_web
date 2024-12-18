@@ -16,6 +16,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,35 +34,35 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-import { BoatType } from "@/types/boat-type";
-import { BoatTypeDialog } from "@/app/dashboard/admin/boat-types/boat-type-dialog";
+import { Dock } from "@/types/dock";
+import { DockDialog } from "./dock-dialog";
 import { DataPagination } from "@/components/ui/data-pagination";
 import {
-  deleteBoatType,
-  fetchBoatTypeListPage,
-  updateBoatTypeBlockStatus,
-} from "@/services/admin/boat-types";
+  deleteDock,
+  fetchDockListPage,
+  updateDockStatus,
+} from "@/services/admin/docks";
+import { STATUS_CODES, STATUS_NAMES } from "@/lib/constants/status";
 
 const ITEMS_PER_PAGE = 10;
 
-export default function BoatTypesPage() {
-  const [boatTypes, setBoatTypes] = useState<BoatType[]>([]);
-  const [selectedBoatType, setSelectedBoatType] = useState<BoatType | null>(
-    null,
-  );
-
+export default function DocksPage() {
+  const [docks, setDocks] = useState<Dock[]>([]);
+  const [selectedDock, setSelectedDock] = useState<Dock | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>(
+    STATUS_CODES.ACTIVE.toString(),
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchBoatTypes = useCallback(async () => {
+  const fetchDocks = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetchBoatTypeListPage(currentPage, ITEMS_PER_PAGE);
-      setBoatTypes(response.records);
+      const response = await fetchDockListPage(currentPage, ITEMS_PER_PAGE);
+      setDocks(response.records);
       setTotalPages(response.totalPage);
     } catch (error) {
       console.error(error);
@@ -65,19 +72,19 @@ export default function BoatTypesPage() {
   }, [currentPage]);
 
   const handleAdd = () => {
-    setSelectedBoatType(null);
+    setSelectedDock(null);
     setIsDialogOpen(true);
   };
 
-  const handleEdit = (boatType: BoatType) => {
-    setSelectedBoatType(boatType);
+  const handleEdit = (dock: Dock) => {
+    setSelectedDock(dock);
     setIsDialogOpen(true);
   };
 
-  const handleDelete = async (boatTypeId: number) => {
+  const handleDelete = async (dockId: number) => {
     try {
-      await deleteBoatType(boatTypeId);
-      fetchBoatTypes();
+      await deleteDock(dockId);
+      fetchDocks();
     } catch (error) {
       console.error(error);
     }
@@ -86,33 +93,39 @@ export default function BoatTypesPage() {
   const handleDialogClose = (shouldRefresh?: boolean) => {
     setIsDialogOpen(false);
     if (shouldRefresh) {
-      fetchBoatTypes();
-    }
-  };
-
-  const handleStatus = async (boatTypeId: number, status: number) => {
-    try {
-      await updateBoatTypeBlockStatus(boatTypeId, status);
-      fetchBoatTypes();
-    } catch (error) {
-      console.error(error);
+      fetchDocks();
     }
   };
 
   useEffect(() => {
-    fetchBoatTypes();
-  }, [fetchBoatTypes]);
+    fetchDocks();
+  }, [fetchDocks]);
+
+  const handleToggleStatus = async (dockId: number) => {
+    const isActive =
+      docks.find((dock) => dock.dockId === dockId)?.status ===
+      STATUS_CODES.ACTIVE;
+    try {
+      await updateDockStatus(
+        dockId,
+        isActive ? STATUS_CODES.INACTIVE : STATUS_CODES.ACTIVE,
+      );
+      fetchDocks();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <Anchor className="h-6 w-6" />
-          <h1 className="text-2xl font-semibold">船型管理</h1>
+          <h1 className="text-2xl font-semibold">码头管理</h1>
         </div>
         <Button onClick={handleAdd}>
           <Plus className="h-4 w-4 mr-2" />
-          添加船型
+          添加码头
         </Button>
       </div>
 
@@ -120,24 +133,35 @@ export default function BoatTypesPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
           <Input
-            placeholder="搜索船型名称..."
+            placeholder="搜索码头名称、代码或地址..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
           />
         </div>
+        <Select
+          value={statusFilter.toString()}
+          onValueChange={(value: string) => setStatusFilter(value)}
+        >
+          <SelectTrigger className="w-[160px]">
+            <SelectValue placeholder="选择状态" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={STATUS_CODES.ACTIVE.toString()}>正常</SelectItem>
+            <SelectItem value={STATUS_CODES.INACTIVE.toString()}>
+              停用
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
+              <TableHead>码头ID</TableHead>
               <TableHead>名称</TableHead>
-              <TableHead>代码</TableHead>
-              <TableHead>最大容量</TableHead>
-              <TableHead>最大速度</TableHead>
-              <TableHead>燃料类型</TableHead>
+              <TableHead>位置</TableHead>
               <TableHead>状态</TableHead>
               <TableHead>创建时间</TableHead>
               <TableHead>更新时间</TableHead>
@@ -147,53 +171,40 @@ export default function BoatTypesPage() {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={10} className="text-center py-10">
+                <TableCell colSpan={6} className="text-center py-10">
                   加载中...
                 </TableCell>
               </TableRow>
-            ) : (boatTypes?.length || 0) === 0 ? (
+            ) : (docks?.length || 0) === 0 ? (
               <TableRow>
-                <TableCell colSpan={10} className="text-center py-10">
+                <TableCell colSpan={6} className="text-center py-10">
                   暂无数据
                 </TableCell>
               </TableRow>
             ) : (
-              boatTypes.map((boatType) => (
-                <TableRow key={boatType.boatTypeId}>
-                  <TableCell>{boatType.boatTypeId}</TableCell>
-                  <TableCell className="font-medium">
-                    {boatType.typeName}
-                  </TableCell>
-                  <TableCell>{boatType.typeCode}</TableCell>
-                  <TableCell>{boatType.maxCapacity}</TableCell>
-                  <TableCell>{boatType.maxSpeed}</TableCell>
-                  <TableCell>{boatType.fuelType}</TableCell>
+              docks.map((dock) => (
+                <TableRow key={dock.dockId}>
+                  <TableCell className="font-medium">{dock.dockId}</TableCell>
+                  <TableCell>{dock.dockName}</TableCell>
+                  <TableCell>{dock.dockLocation}</TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          boatType.status === 1
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {boatType.status === 1 ? "启用" : "禁用"}
-                      </span>
-                    </div>
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        dock.status === STATUS_CODES.ACTIVE
+                          ? "bg-green-100 text-green-800"
+                          : dock.status === STATUS_CODES.INACTIVE
+                            ? "bg-red-100 text-red-800"
+                            : ""
+                      }`}
+                    >
+                      {STATUS_NAMES[dock.status]}
+                    </span>
                   </TableCell>
                   <TableCell>
-                    {boatType.createdAt &&
-                      format(
-                        new Date(boatType.createdAt),
-                        "yyyy-MM-dd HH:mm:ss",
-                      )}
+                    {format(new Date(dock.createdAt), "yyyy-MM-dd HH:mm:ss")}
                   </TableCell>
                   <TableCell>
-                    {boatType.updatedAt &&
-                      format(
-                        new Date(boatType.updatedAt),
-                        "yyyy-MM-dd HH:mm:ss",
-                      )}
+                    {format(new Date(dock.updatedAt), "yyyy-MM-dd HH:mm:ss")}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -203,20 +214,20 @@ export default function BoatTypesPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEdit(boatType)}>
+                        <DropdownMenuItem onClick={() => handleEdit(dock)}>
                           <Pencil className="h-4 w-4 mr-2" />
                           编辑
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() =>
-                            handleStatus(boatType.boatTypeId, boatType.status)
-                          }
+                          onClick={() => handleToggleStatus(dock.dockId)}
                         >
                           <Ban className="h-4 w-4 mr-2" />
-                          {boatType.status === 1 ? "禁用" : "启用"}
+                          {dock.status === STATUS_CODES.ACTIVE
+                            ? "停用"
+                            : "启用"}
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => handleDelete(boatType.boatTypeId)}
+                          onClick={() => handleDelete(dock.dockId)}
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
                           删除
@@ -234,11 +245,11 @@ export default function BoatTypesPage() {
       <DataPagination
         currentPage={currentPage}
         totalPages={totalPages}
-        totalItems={boatTypes?.length || 0}
+        totalItems={docks?.length || 0}
         onPageChange={setCurrentPage}
       />
 
-      <BoatTypeDialog
+      <DockDialog
         open={isDialogOpen}
         onOpenChange={(open) => {
           if (!open) {
@@ -246,7 +257,7 @@ export default function BoatTypesPage() {
           }
           setIsDialogOpen(open);
         }}
-        boatType={selectedBoatType}
+        dock={selectedDock}
       />
     </div>
   );

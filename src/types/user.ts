@@ -1,35 +1,9 @@
-export interface User {
-  id: string;
-  email: string;
-  role: "admin" | "merchant";
-  name: string;
-}
+import { components } from "@/api/api";
 
-export interface UserSelf {
-  uuid: string;
-  userId: number;
-  username: string;
-  email: string;
-  phone: string;
-  role: number;
-  isActive: boolean;
-  isBlocked: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface UserRequest {
-  userId: number;
-  username: string;
-  email: string;
-  phone: string;
-  role: number;
-  isActive: boolean;
-  isBlocked: boolean;
-}
+export type UserSelf = components["schemas"]["UserSelfVO"];
 
 export interface AuthState {
-  user: User | null;
+  user: UserSelf | null;
   isLoading: boolean;
   error: string | null;
 }

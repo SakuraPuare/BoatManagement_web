@@ -20,58 +20,56 @@ import {
 } from "@/components/ui/form";
 import { UserSelf } from "@/types/user";
 import { toast } from "sonner";
-import {
-  ROLE_CHINESE_NAMES,
-  ROLE_COLORS,
-  ROLE_DESCRIPTIONS,
-  ROLE_MASKS,
-} from "@/lib/constants/role";
 import { cn } from "@/lib/utils";
-import { updateUserRoles } from "@/services/admin/users";
+import { BOAT_STATUS_CODES, BOAT_STATUS_NAMES, BOAT_STATUS_DESCRIPTIONS, BOAT_STATUS_COLORS } from "@/lib/constants/boat-type";
+import { Boat } from "@/types/boat";
+import { updateBoatStatus } from "@/services/admin/boats";
 
-const RoleFormSchema = z.object({
-  role: z.number(),
+
+const StatusFormSchema = z.object({
+  status: z.number(),
 });
 
-type FormValues = z.infer<typeof RoleFormSchema>;
+type FormValues = z.infer<typeof StatusFormSchema>;
 
-interface RoleDialogProps {
+interface BoatStatusDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  user: UserSelf;
+  boat: Boat;
 }
 
-export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
+export function BoatStatusDialog({ open, onOpenChange, boat }: BoatStatusDialogProps) {
   const form = useForm<FormValues>({
-    resolver: zodResolver(RoleFormSchema),
+    resolver: zodResolver(StatusFormSchema),
     defaultValues: {
-      role: user?.role || ROLE_MASKS.USER,
+      status: boat?.status || BOAT_STATUS_CODES.ACTIVE,
     },
     values: {
-      role: user?.role || ROLE_MASKS.USER,
+      status: boat?.status || BOAT_STATUS_CODES.ACTIVE,
     },
   });
 
-  const role = form.watch("role");
+  const status = form.watch("status");
 
-  const toggleRole = (roleValue: number) => {
-    const currentRoles = form.getValues("role");
-    form.setValue("role", currentRoles ^ roleValue, { shouldValidate: true });
+  const setStatus = (statusValue: number) => {
+    form.setValue("status", statusValue, { shouldValidate: true });
   };
 
-  const hasRole = (roleValue: number) => {
-    return (role & roleValue) === roleValue;
+  const hasStatus = (statusValue: number) => {
+    return status === statusValue;
   };
 
   const onSubmit = async (values: FormValues) => {
     try {
-      await updateUserRoles(user.userId, values.role);
+      if (!boat?.boatId) {
+        throw new Error("船只ID不存在");
+      }
+      await updateBoatStatus(boat.boatId, values.status);
       onOpenChange(false);
-      form.reset();
     } catch (error) {
-      console.error("更新权限失败:", error);
+      console.error("更新状态失败:", error);
       toast.error(
-        "更新权限失败: " +
+        "更新状态失败: " +
           (error instanceof Error ? error.message : "未知错误"),
       );
     }
@@ -81,38 +79,38 @@ export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="sm:max-w-[525px]">
         <AlertDialogHeader>
-          <AlertDialogTitle>权限设置 - {user.username}</AlertDialogTitle>
+          <AlertDialogTitle>状态设置 - {boat?.boatName}</AlertDialogTitle>
         </AlertDialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="role"
+              name="status"
               render={() => (
                 <FormItem>
-                  <FormLabel>用户角色</FormLabel>
+                  <FormLabel>船舶状态</FormLabel>
                   <FormDescription>
-                    选择要分配给用户的角色。用户可以同时拥有多个角色。
+                    选择船舶当前的运行状态。一个船舶同一时间只能处于一种状态。
                   </FormDescription>
                   <div className="space-y-4">
-                    {Object.entries(ROLE_MASKS).map(([roleName, roleValue]) => (
+                    {Object.entries(BOAT_STATUS_CODES).map(([statusName, statusValue]) => (
                       <div
-                        key={roleValue}
+                        key={statusValue}
                         className="flex items-start space-x-4"
                       >
                         <Button
                           type="button"
-                          variant={hasRole(roleValue) ? "default" : "outline"}
-                          onClick={() => toggleRole(roleValue)}
+                          variant={hasStatus(statusValue) ? "default" : "outline"}
+                          onClick={() => setStatus(statusValue)}
                           className={cn(
                             "min-w-[100px]",
-                            hasRole(roleValue) && ROLE_COLORS[roleValue],
+                            hasStatus(statusValue) && BOAT_STATUS_COLORS[statusValue],
                           )}
                         >
-                          {ROLE_CHINESE_NAMES[roleValue]}
+                          {BOAT_STATUS_NAMES[statusValue]}
                         </Button>
                         <FormDescription className="mt-2">
-                          {ROLE_DESCRIPTIONS[roleValue]}
+                          {BOAT_STATUS_DESCRIPTIONS[statusValue]}
                         </FormDescription>
                       </div>
                     ))}
@@ -129,7 +127,7 @@ export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
                 取消
               </Button>
               <Button type="submit">
-                {form.formState.isSubmitting ? "更新中..." : "更新权限"}
+                {form.formState.isSubmitting ? "更新中..." : "更新状态"}
               </Button>
             </AlertDialogFooter>
           </form>
@@ -137,4 +135,4 @@ export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
       </AlertDialogContent>
     </AlertDialog>
   );
-}
+} 

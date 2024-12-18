@@ -3,17 +3,28 @@ import { BoatType } from "@/types/boat-type";
 import { PaginatedResponse } from "@/types/pagination";
 import { toast } from "sonner";
 
+export async function fetchBoatTypeList() {
+  const response = await api.get<BoatType[]>("/admin/boatTypes/list");
+  return response;
+}
+
 /**
  * 获取船型列表
  */
-export async function fetchBoatTypeList(pageNumber: number, pageSize: number) {
+export async function fetchBoatTypeListPage(
+  pageNumber: number,
+  pageSize: number,
+) {
   try {
-    const response = await api.get<PaginatedResponse<BoatType>>("/admin/boatTypes/page", {
-      params: {
-        pageNumber: pageNumber.toString(),
-        pageSize: pageSize.toString(),
+    const response = await api.get<PaginatedResponse<BoatType>>(
+      "/admin/boatTypes/page",
+      {
+        params: {
+          pageNumber: pageNumber.toString(),
+          pageSize: pageSize.toString(),
+        },
       },
-    });
+    );
     return response;
   } catch (error) {
     console.error(error);
@@ -45,7 +56,10 @@ export async function createBoatType(data: Partial<BoatType>) {
 /**
  * 更新船型信息
  */
-export async function updateBoatType(boatTypeId: number, data: Partial<BoatType>) {
+export async function updateBoatType(
+  boatTypeId: number,
+  data: Partial<BoatType>,
+) {
   const response = await api.put<boolean>("/admin/boatTypes/update", {
     body: {
       boatTypeId,

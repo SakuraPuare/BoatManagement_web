@@ -10,7 +10,7 @@ export type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
 
 export interface User {
   id: string;
-  roles: number;
+  role: number;
   name: string;
   email: string;
 }

@@ -3,10 +3,15 @@ import {UserSelf} from "@/types/user";
 import {PaginatedResponse} from "@/types/pagination";
 import {toast} from "sonner";
 
+export async function fetchUserList() {
+  const response = await api.get<UserSelf[]>("/admin/users/list");
+  return response;
+}
+
 /**
  * 获取用户列表
  */
-export async function fetchUserList(pageNumber: number, pageSize: number) {
+export async function fetchUserListPage(pageNumber: number, pageSize: number) {
   try {
     const response = await api.get<PaginatedResponse<UserSelf>>(
       "/admin/users/page",
@@ -14,8 +19,9 @@ export async function fetchUserList(pageNumber: number, pageSize: number) {
         params: {
           pageNumber: pageNumber.toString(),
           pageSize: pageSize.toString(),
+        },
       },
-    });
+    );
     return response;
   } catch (error) {
     console.error(error);

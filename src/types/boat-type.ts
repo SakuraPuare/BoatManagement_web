@@ -1,20 +1,3 @@
-export interface BoatType {
-  boatTypeId: number;
-  typeName: string;
-  typeCode: string;
-  maxCapacity: number;
-  maxSpeed: number;
-  fuelType: string;
-  status: number;
-  createdAt?: string;
-  updatedAt?: string;
-}
+import { components } from "@/api/api";
 
-export interface BoatTypeFormData {
-  typeName: string;
-  typeCode: string;
-  maxCapacity: number;
-  maxSpeed: number;
-  fuelType: string;
-  status: number;
-}
+export type BoatType = components["schemas"]["BoatTypes"];

@@ -48,14 +48,13 @@ import {
 import { RoleDialog } from "./role-dialog";
 import {
   deleteUser,
-  fetchUserList,
+  fetchUserListPage,
   updateUserBlockStatus,
 } from "@/services/admin/users";
 
 const ITEMS_PER_PAGE = 10;
 const defaultUser: UserSelf = {
   userId: 0,
-  uuid: "",
   username: "",
   email: "",
   phone: "",
@@ -85,7 +84,7 @@ export default function UsersPage() {
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetchUserList(currentPage, ITEMS_PER_PAGE);
+      const response = await fetchUserListPage(currentPage, ITEMS_PER_PAGE);
       setUsers(response.records);
       setTotalPages(response.totalPage);
     } catch (error) {
@@ -220,10 +219,10 @@ export default function UsersPage() {
                   <TableCell>{user.phone}</TableCell>
                   <TableCell>
                     <div className="flex gap-1">
-                      {getRoleChineseNames(user.role).map((name, index) => (
+                      {getRoleChineseNames(user.role || 0).map((name, index) => (
                         <span
                           key={index}
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColors(user.role)[index]}`}
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColors(user.role || 0)[index]}`}
                         >
                           {name}
                         </span>
@@ -250,10 +249,10 @@ export default function UsersPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {format(new Date(user.createdAt), "yyyy-MM-dd HH:mm:ss")}
+                    {format(new Date(user.createdAt || ""), "yyyy-MM-dd HH:mm:ss")}
                   </TableCell>
                   <TableCell>
-                    {format(new Date(user.updatedAt), "yyyy-MM-dd HH:mm:ss")}
+                    {format(new Date(user.updatedAt || ""), "yyyy-MM-dd HH:mm:ss")}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -268,13 +267,13 @@ export default function UsersPage() {
                           编辑
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => handleDelete(user.userId)}
+                          onClick={() => handleDelete(user.userId || 0)}
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
                           删除
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => handleBlock(user.userId)}
+                          onClick={() => handleBlock(user.userId || 0)}
                         >
                           <Ban className="h-4 w-4 mr-2" />
                           {user.isBlocked ? "解除封禁" : "封禁"}

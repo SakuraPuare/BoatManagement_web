@@ -1,28 +1,9 @@
-export type BoatStatus = "active" | "maintenance" | "inactive";
-export type BoatType = "passenger" | "cargo" | "ferry";
+import { BOAT_STATUS_CODES, BOAT_TYPE_CODES } from "@/lib/constants/boat-type";
+import { components } from "@/api/api";
 
-export interface Boat {
-  id: string;
-  name: string;
-  type: BoatType;
-  capacity: number;
-  status: BoatStatus;
-  registrationNumber: string;
-  buildYear: number;
-  lastMaintenance: string;
-  nextMaintenance: string;
-  currentPort: string;
-}
+export type BoatType = (typeof BOAT_TYPE_CODES)[keyof typeof BOAT_TYPE_CODES];
 
-export interface BoatTypeDetail {
-  id: string;
-  name: string;
-  code: string;
-  description: string;
-  maxCapacity: number;
-  maxSpeed: number;
-  fuelType: string;
-  createdAt: string;
-  updatedAt: string;
-  isActive: boolean;
-}
+export type BoatStatus =
+  (typeof BOAT_STATUS_CODES)[keyof typeof BOAT_STATUS_CODES];
+
+export type Boat = components["schemas"]["Boats"];

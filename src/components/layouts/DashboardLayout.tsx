@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, Menu, X } from "lucide-react";
+import { ChevronLeft, Menu, MonitorCheck, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -46,10 +46,11 @@ export function DashboardLayout({
             )}
           >
             {!sidebarOpen ? (
-              <span className="text-xl">🚀</span>
+              <MonitorCheck className="h-6 w-6" />
             ) : (
               <>
-                <span className="text-xl">🚀</span>
+                <MonitorCheck className="h-6 w-6" />
+
                 <span className="text-lg">控制台</span>
               </>
             )}

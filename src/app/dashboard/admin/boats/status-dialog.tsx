@@ -18,13 +18,16 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { UserSelf } from "@/types/user";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { BOAT_STATUS_CODES, BOAT_STATUS_NAMES, BOAT_STATUS_DESCRIPTIONS, BOAT_STATUS_COLORS } from "@/lib/constants/boat-type";
+import {
+  BOAT_STATUS_CODES,
+  BOAT_STATUS_COLORS,
+  BOAT_STATUS_DESCRIPTIONS,
+  BOAT_STATUS_NAMES,
+} from "@/lib/constants/boat-type";
 import { Boat } from "@/types/boat";
 import { updateBoatStatus } from "@/services/admin/boats";
-
 
 const StatusFormSchema = z.object({
   status: z.number(),
@@ -38,7 +41,11 @@ interface BoatStatusDialogProps {
   boat: Boat;
 }
 
-export function BoatStatusDialog({ open, onOpenChange, boat }: BoatStatusDialogProps) {
+export function BoatStatusDialog({
+  open,
+  onOpenChange,
+  boat,
+}: BoatStatusDialogProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(StatusFormSchema),
     defaultValues: {
@@ -93,27 +100,32 @@ export function BoatStatusDialog({ open, onOpenChange, boat }: BoatStatusDialogP
                     选择船舶当前的运行状态。一个船舶同一时间只能处于一种状态。
                   </FormDescription>
                   <div className="space-y-4">
-                    {Object.entries(BOAT_STATUS_CODES).map(([statusName, statusValue]) => (
-                      <div
-                        key={statusValue}
-                        className="flex items-start space-x-4"
-                      >
-                        <Button
-                          type="button"
-                          variant={hasStatus(statusValue) ? "default" : "outline"}
-                          onClick={() => setStatus(statusValue)}
-                          className={cn(
-                            "min-w-[100px]",
-                            hasStatus(statusValue) && BOAT_STATUS_COLORS[statusValue],
-                          )}
+                    {Object.entries(BOAT_STATUS_CODES).map(
+                      ([statusName, statusValue]) => (
+                        <div
+                          key={statusValue}
+                          className="flex items-start space-x-4"
                         >
-                          {BOAT_STATUS_NAMES[statusValue]}
-                        </Button>
-                        <FormDescription className="mt-2">
-                          {BOAT_STATUS_DESCRIPTIONS[statusValue]}
-                        </FormDescription>
-                      </div>
-                    ))}
+                          <Button
+                            type="button"
+                            variant={
+                              hasStatus(statusValue) ? "default" : "outline"
+                            }
+                            onClick={() => setStatus(statusValue)}
+                            className={cn(
+                              "min-w-[100px]",
+                              hasStatus(statusValue) &&
+                                BOAT_STATUS_COLORS[statusValue],
+                            )}
+                          >
+                            {BOAT_STATUS_NAMES[statusValue]}
+                          </Button>
+                          <FormDescription className="mt-2">
+                            {BOAT_STATUS_DESCRIPTIONS[statusValue]}
+                          </FormDescription>
+                        </div>
+                      ),
+                    )}
                   </div>
                 </FormItem>
               )}
@@ -135,4 +147,4 @@ export function BoatStatusDialog({ open, onOpenChange, boat }: BoatStatusDialogP
       </AlertDialogContent>
     </AlertDialog>
   );
-} 
+}

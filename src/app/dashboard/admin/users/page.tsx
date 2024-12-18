@@ -219,14 +219,16 @@ export default function UsersPage() {
                   <TableCell>{user.phone}</TableCell>
                   <TableCell>
                     <div className="flex gap-1">
-                      {getRoleChineseNames(user.role || 0).map((name, index) => (
-                        <span
-                          key={index}
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColors(user.role || 0)[index]}`}
-                        >
-                          {name}
-                        </span>
-                      ))}
+                      {getRoleChineseNames(user.role || 0).map(
+                        (name, index) => (
+                          <span
+                            key={index}
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColors(user.role || 0)[index]}`}
+                          >
+                            {name}
+                          </span>
+                        ),
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -249,10 +251,16 @@ export default function UsersPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {format(new Date(user.createdAt || ""), "yyyy-MM-dd HH:mm:ss")}
+                    {format(
+                      new Date(user.createdAt || ""),
+                      "yyyy-MM-dd HH:mm:ss",
+                    )}
                   </TableCell>
                   <TableCell>
-                    {format(new Date(user.updatedAt || ""), "yyyy-MM-dd HH:mm:ss")}
+                    {format(
+                      new Date(user.updatedAt || ""),
+                      "yyyy-MM-dd HH:mm:ss",
+                    )}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>

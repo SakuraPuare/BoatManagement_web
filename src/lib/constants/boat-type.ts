@@ -22,7 +22,6 @@ export const BOAT_STATUS_NAMES = {
   [BOAT_STATUS_CODES.INACTIVE]: "停用",
 } as const;
 
-
 // 状态的描述
 export const BOAT_STATUS_DESCRIPTIONS: Record<number, string> = {
   [BOAT_STATUS_CODES.ACTIVE]: "船舶处于正常运行状态，可以接受新的任务",

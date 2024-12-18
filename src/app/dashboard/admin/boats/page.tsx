@@ -34,18 +34,14 @@ import {
   Ship,
   Trash2,
 } from "lucide-react";
-import { Boat, BoatStatus } from "@/types/boat";
+import { Boat } from "@/types/boat";
 import {
   BOAT_STATUS_CODES,
   BOAT_STATUS_NAMES,
 } from "@/lib/constants/boat-type";
 import { BoatDialog } from "./boat-dialog";
 import { DataPagination } from "@/components/ui/data-pagination";
-import {
-  deleteBoat,
-  fetchBoatListPage,
-  updateBoatStatus,
-} from "@/services/admin/boats";
+import { deleteBoat, fetchBoatListPage } from "@/services/admin/boats";
 import { BoatType } from "@/types/boat-type";
 import { fetchBoatTypeList } from "@/services/admin/boat-types";
 import { Dock } from "@/types/dock";
@@ -228,7 +224,11 @@ export default function BoatsPage() {
                               : "bg-red-100 text-red-800"
                       }`}
                     >
-                      {boat.status !== undefined ? BOAT_STATUS_NAMES[boat.status as keyof typeof BOAT_STATUS_NAMES] : '未知状态'}
+                      {boat.status !== undefined
+                        ? BOAT_STATUS_NAMES[
+                            boat.status as keyof typeof BOAT_STATUS_NAMES
+                          ]
+                        : "未知状态"}
                     </span>
                   </TableCell>
                   <TableCell>{boat.registrationNumber}</TableCell>
@@ -240,10 +240,14 @@ export default function BoatsPage() {
                     }
                   </TableCell>
                   <TableCell>
-                    {boat.lastMaintenance ? format(new Date(boat.lastMaintenance), "yyyy-MM-dd") : '-'}
+                    {boat.lastMaintenance
+                      ? format(new Date(boat.lastMaintenance), "yyyy-MM-dd")
+                      : "-"}
                   </TableCell>
                   <TableCell>
-                    {boat.nextMaintenance ? format(new Date(boat.nextMaintenance), "yyyy-MM-dd") : '-'}
+                    {boat.nextMaintenance
+                      ? format(new Date(boat.nextMaintenance), "yyyy-MM-dd")
+                      : "-"}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>

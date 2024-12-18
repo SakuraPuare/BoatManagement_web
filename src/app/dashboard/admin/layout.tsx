@@ -24,14 +24,19 @@ const sidebarItems = [
     icon: <Users className="h-4 w-4" />,
   },
   {
-    title: "船只管理",
-    path: "/dashboard/admin/boats",
-    icon: <Ship className="h-4 w-4" />,
+    title: "码头管理",
+    path: "/dashboard/admin/docks",
+    icon: <Anchor className="h-4 w-4" />,
   },
   {
     title: "船只类型",
     path: "/dashboard/admin/boat-types",
     icon: <Settings className="h-4 w-4" />,
+  },
+  {
+    title: "船只管理",
+    path: "/dashboard/admin/boats",
+    icon: <Ship className="h-4 w-4" />,
   },
   {
     title: "船票管理",
@@ -47,11 +52,6 @@ const sidebarItems = [
     title: "设备管理",
     path: "/dashboard/admin/devices",
     icon: <Radio className="h-4 w-4" />,
-  },
-  {
-    title: "码头管理",
-    path: "/dashboard/admin/docks",
-    icon: <Anchor className="h-4 w-4" />,
   },
   {
     title: "告警管理",

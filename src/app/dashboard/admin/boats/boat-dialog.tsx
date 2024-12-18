@@ -41,7 +41,6 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
-import { BOAT_STATUS_CODES } from "@/lib/constants/boat-type";
 
 const boatFormSchema = z.object({
   boatName: z.string().min(1, "请输入船名"),
@@ -230,8 +229,8 @@ export function BoatDialog({
                             <SelectItem
                               key={dock.dockId}
                               value={dock.dockId.toString()}
-                        >
-                          {dock.dockName}
+                            >
+                              {dock.dockName}
                             </SelectItem>
                           );
                       })}

@@ -1,7 +1,7 @@
-import {api} from "@/lib/api";
-import {UserSelf} from "@/types/user";
-import {PaginatedResponse} from "@/types/pagination";
-import {toast} from "sonner";
+import { api } from "@/lib/api";
+import { UserSelf } from "@/types/user";
+import { PaginatedResponse } from "@/types/pagination";
+import { toast } from "sonner";
 
 export async function fetchUserList() {
   const response = await api.get<UserSelf[]>("/admin/users/list");

@@ -104,4 +104,4 @@ export const updateBoatStatus = async (boatId: number, status: number) => {
     toast.error("状态更新失败");
   }
   return response;
-}
+};

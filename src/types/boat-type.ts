@@ -1,3 +1,3 @@
-import { components } from "@/api/api";
+import {components} from "@/api/api";
 
 export type BoatType = components["schemas"]["BoatTypes"];

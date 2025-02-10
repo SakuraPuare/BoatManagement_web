@@ -40,7 +40,6 @@ export default function Home() {
 }
 ```
 
-
 ```tsx
 import { User } from "@/types/user";
 import {

@@ -18,9 +18,9 @@ export async function addMerchantsGoods(
 }
 
 /** 获取商品详情 GET /merchant/goods/${param0} */
-export async function getGoodsById(
+export async function getGoods(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getGoodsByIdParams,
+  params: API.getGoodsParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -65,7 +65,7 @@ export async function deleteMerchantsGoods(
 }
 
 /** 获取商家商品列表 POST /merchant/goods/list */
-export async function getGoods(
+export async function getMerchantGoodsListQuery(
   body: API.BaseGoodsDTO,
   options?: { [key: string]: any }
 ) {
@@ -80,9 +80,9 @@ export async function getGoods(
 }
 
 /** 获取商家商品列表分页 POST /merchant/goods/page */
-export async function getGoodsPage(
+export async function getMerchantGoodsPageQuery(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getGoodsPageParams,
+  params: API.getMerchantGoodsPageQueryParams,
   body: API.BaseGoodsDTO,
   options?: { [key: string]: any }
 ) {

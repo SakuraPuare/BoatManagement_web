@@ -3,7 +3,7 @@ import type { API } from "./typings";
 import request from "@/utils/request";
 
 /** 添加码头 POST /admin/dock/ */
-export async function addDocks(
+export async function addAdminDocks(
   body: API.BaseDocksDTO,
   options?: { [key: string]: any }
 ) {
@@ -18,9 +18,9 @@ export async function addDocks(
 }
 
 /** 获取码头详情 GET /admin/dock/${param0} */
-export async function getDocksById(
+export async function getAdminDocks(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getDocksByIdParams,
+  params: API.getAdminDocksParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -32,9 +32,9 @@ export async function getDocksById(
 }
 
 /** 更新码头 PUT /admin/dock/${param0} */
-export async function updateDocks(
+export async function updateAdminDocks(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.updateDocksParams,
+  params: API.updateAdminDocksParams,
   body: API.BaseDocksDTO,
   options?: { [key: string]: any }
 ) {
@@ -51,9 +51,9 @@ export async function updateDocks(
 }
 
 /** 删除码头 DELETE /admin/dock/${param0} */
-export async function deleteDocks(
+export async function deleteAdminDocks(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.deleteDocksParams,
+  params: API.deleteAdminDocksParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -65,7 +65,7 @@ export async function deleteDocks(
 }
 
 /** 获取码头列表 POST /admin/dock/list */
-export async function getDocks(
+export async function getAdminDocksListQuery(
   body: API.BaseDocksDTO,
   options?: { [key: string]: any }
 ) {
@@ -80,9 +80,9 @@ export async function getDocks(
 }
 
 /** 获取码头列表分页 POST /admin/dock/page */
-export async function getDocksPage(
+export async function getAdminDocksPageQuery(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getDocksPageParams,
+  params: API.getAdminDocksPageQueryParams,
   body: API.BaseDocksDTO,
   options?: { [key: string]: any }
 ) {

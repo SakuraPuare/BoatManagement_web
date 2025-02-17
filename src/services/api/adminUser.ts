@@ -3,7 +3,7 @@ import type { API } from "./typings";
 import request from "@/utils/request";
 
 /** 创建用户 POST /admin/user/ */
-export async function create1(
+export async function createAdminAccount(
   body: API.BaseAccountsDTO,
   options?: { [key: string]: any }
 ) {
@@ -18,9 +18,9 @@ export async function create1(
 }
 
 /** 获取用户详情 GET /admin/user/${param0} */
-export async function get1(
+export async function getAdminUser(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.get1Params,
+  params: API.getAdminUserParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -32,9 +32,9 @@ export async function get1(
 }
 
 /** 更新用户 PUT /admin/user/${param0} */
-export async function update1(
+export async function updateAdminAccount(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.update1Params,
+  params: API.updateAdminAccountParams,
   body: API.BaseAccountsDTO,
   options?: { [key: string]: any }
 ) {
@@ -51,9 +51,9 @@ export async function update1(
 }
 
 /** 删除用户 DELETE /admin/user/${param0} */
-export async function delete1(
+export async function deleteAdminAccount(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.delete1Params,
+  params: API.deleteAdminAccountParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -65,7 +65,7 @@ export async function delete1(
 }
 
 /** 获取用户列表 POST /admin/user/list */
-export async function list1(
+export async function getAdminUserListQuery(
   body: API.BaseAccountsDTO,
   options?: { [key: string]: any }
 ) {
@@ -80,9 +80,9 @@ export async function list1(
 }
 
 /** 获取用户列表分页 POST /admin/user/page */
-export async function listPage1(
+export async function getAdminUserPageQuery(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.listPage1Params,
+  params: API.getAdminUserPageQueryParams,
   body: API.BaseAccountsDTO,
   options?: { [key: string]: any }
 ) {

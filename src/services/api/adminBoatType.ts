@@ -3,7 +3,7 @@ import type { API } from "./typings";
 import request from "@/utils/request";
 
 /** 创建船舶类型 POST /admin/boat-type/ */
-export async function create4(
+export async function createAdminBoatType(
   body: API.BaseBoatTypesDTO,
   options?: { [key: string]: any }
 ) {
@@ -18,9 +18,9 @@ export async function create4(
 }
 
 /** 获取船舶类型详情 GET /admin/boat-type/${param0} */
-export async function get4(
+export async function getAdminBoatType(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.get4Params,
+  params: API.getAdminBoatTypeParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -32,9 +32,9 @@ export async function get4(
 }
 
 /** 更新船舶类型 PUT /admin/boat-type/${param0} */
-export async function update4(
+export async function updateAdminBoatType(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.update4Params,
+  params: API.updateAdminBoatTypeParams,
   body: API.BaseBoatTypesDTO,
   options?: { [key: string]: any }
 ) {
@@ -51,9 +51,9 @@ export async function update4(
 }
 
 /** 删除船舶类型 DELETE /admin/boat-type/${param0} */
-export async function delete4(
+export async function deleteAdminBoatType(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.delete4Params,
+  params: API.deleteAdminBoatTypeParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -65,7 +65,7 @@ export async function delete4(
 }
 
 /** 获取船舶类型列表 POST /admin/boat-type/list */
-export async function list4(
+export async function getAdminBoatTypeListQuery(
   body: API.BaseBoatTypesDTO,
   options?: { [key: string]: any }
 ) {
@@ -80,9 +80,9 @@ export async function list4(
 }
 
 /** 获取船舶类型列表分页 POST /admin/boat-type/page */
-export async function listPage4(
+export async function getAdminBoatTypePageQuery(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.listPage4Params,
+  params: API.getAdminBoatTypePageQueryParams,
   body: API.BaseBoatTypesDTO,
   options?: { [key: string]: any }
 ) {

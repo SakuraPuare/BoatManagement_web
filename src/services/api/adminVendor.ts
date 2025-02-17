@@ -65,7 +65,7 @@ export async function deleteUsingDelete(
 }
 
 /** 获取供应商列表 POST /admin/vendor/list */
-export async function list(
+export async function getAdminVendorListQuery(
   body: API.BaseVendorsDTO,
   options?: { [key: string]: any }
 ) {
@@ -80,9 +80,9 @@ export async function list(
 }
 
 /** 获取供应商列表分页 POST /admin/vendor/page */
-export async function listPage(
+export async function getAdminVendorPageQuery(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.listPageParams,
+  params: API.getAdminVendorPageQueryParams,
   body: API.BaseVendorsDTO,
   options?: { [key: string]: any }
 ) {

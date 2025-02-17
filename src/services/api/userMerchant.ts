@@ -3,9 +3,9 @@ import type { API } from "./typings";
 import request from "@/utils/request";
 
 /** 获取商家详情 GET /user/merchant/${param0} */
-export async function getUserMerchantById(
+export async function getUserMerchant(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getUserMerchantByIdParams,
+  params: API.getUserMerchantParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;

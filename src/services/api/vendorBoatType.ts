@@ -65,7 +65,7 @@ export async function deleteVendorBoatType(
 }
 
 /** 获取供应商船舶类型列表 POST /vendor/boat-type/list */
-export async function getVendorBoatTypes(
+export async function getVendorBoatTypesListQuery(
   body: API.BaseBoatTypesDTO,
   options?: { [key: string]: any }
 ) {
@@ -80,9 +80,9 @@ export async function getVendorBoatTypes(
 }
 
 /** 获取供应商船舶列表分页 POST /vendor/boat-type/page */
-export async function getVendorBoatTypesPage(
+export async function getVendorBoatTypesPageQuery(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getVendorBoatTypesPageParams,
+  params: API.getVendorBoatTypesPageQueryParams,
   body: API.BaseBoatTypesDTO,
   options?: { [key: string]: any }
 ) {

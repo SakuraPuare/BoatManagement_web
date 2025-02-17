@@ -3,7 +3,7 @@ import type { API } from "./typings";
 import request from "@/utils/request";
 
 /** 创建商户 POST /admin/merchant/ */
-export async function create2(
+export async function createAdminMerchant(
   body: API.BaseMerchantsDTO,
   options?: { [key: string]: any }
 ) {
@@ -18,9 +18,9 @@ export async function create2(
 }
 
 /** 获取商户详情 GET /admin/merchant/${param0} */
-export async function get2(
+export async function getAdminMerchant(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.get2Params,
+  params: API.getAdminMerchantParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -32,9 +32,9 @@ export async function get2(
 }
 
 /** 更新商户 PUT /admin/merchant/${param0} */
-export async function update2(
+export async function updateAdminMerchant(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.update2Params,
+  params: API.updateAdminMerchantParams,
   body: API.BaseMerchantsDTO,
   options?: { [key: string]: any }
 ) {
@@ -51,9 +51,9 @@ export async function update2(
 }
 
 /** 删除商户 DELETE /admin/merchant/${param0} */
-export async function delete2(
+export async function deleteAdminMerchant(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.delete2Params,
+  params: API.deleteAdminMerchantParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -65,7 +65,7 @@ export async function delete2(
 }
 
 /** 获取商户列表 POST /admin/merchant/list */
-export async function list2(
+export async function getAdminMerchantListQuery(
   body: API.BaseMerchantsDTO,
   options?: { [key: string]: any }
 ) {
@@ -80,9 +80,9 @@ export async function list2(
 }
 
 /** 获取商户列表分页 POST /admin/merchant/page */
-export async function listPage2(
+export async function getAdminMerchantPageQuery(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.listPage2Params,
+  params: API.getAdminMerchantPageQueryParams,
   body: API.BaseMerchantsDTO,
   options?: { [key: string]: any }
 ) {

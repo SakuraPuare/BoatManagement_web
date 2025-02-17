@@ -31,7 +31,7 @@ export async function completeOrder1(
 }
 
 /** 获取商家订单列表 POST /merchant/order/list */
-export async function getMerchantOrders(
+export async function getMerchantOrdersListQuery(
   body: API.BaseGoodsOrdersDTO,
   options?: { [key: string]: any }
 ) {
@@ -46,9 +46,9 @@ export async function getMerchantOrders(
 }
 
 /** 获取商家订单列表分页 POST /merchant/order/page */
-export async function getMerchantOrdersPage(
+export async function getMerchantOrdersPageQuery(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getMerchantOrdersPageParams,
+  params: API.getMerchantOrdersPageQueryParams,
   body: API.BaseGoodsOrdersDTO,
   options?: { [key: string]: any }
 ) {

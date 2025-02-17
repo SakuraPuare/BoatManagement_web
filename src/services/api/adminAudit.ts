@@ -3,9 +3,9 @@ import type { API } from "./typings";
 import request from "@/utils/request";
 
 /** 审核操作 PUT /admin/audit/unit/${param0} */
-export async function audit(
+export async function auditAdminUnit(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.auditParams,
+  params: API.auditAdminUnitParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -19,7 +19,7 @@ export async function audit(
 }
 
 /** 获取所有单位认证列表 POST /admin/audit/unit/list */
-export async function list5(
+export async function getAdminUnitListQuery(
   body: API.CertifyQueryDTO,
   options?: { [key: string]: any }
 ) {
@@ -34,9 +34,9 @@ export async function list5(
 }
 
 /** 获取所有单位认证列表分页 POST /admin/audit/unit/page */
-export async function listPage5(
+export async function getAdminUnitPageQuery(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.listPage5Params,
+  params: API.getAdminUnitPageQueryParams,
   body: API.CertifyQueryDTO,
   options?: { [key: string]: any }
 ) {
@@ -58,9 +58,9 @@ export async function listPage5(
 }
 
 /** 审核操作 PUT /admin/audit/user/${param0} */
-export async function auditUser(
+export async function auditAdminUser(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.auditUserParams,
+  params: API.auditAdminUserParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -74,7 +74,7 @@ export async function auditUser(
 }
 
 /** 获取所有用户认证列表 POST /admin/audit/user/list */
-export async function listUser(
+export async function getAdminUserListQuery1(
   body: API.CertifyQueryDTO,
   options?: { [key: string]: any }
 ) {
@@ -89,9 +89,9 @@ export async function listUser(
 }
 
 /** 获取所有用户认证列表分页 POST /admin/audit/user/page */
-export async function listUserPage(
+export async function getAdminUserPageQuery1(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.listUserPageParams,
+  params: API.getAdminUserPageQuery1Params,
   body: API.CertifyQueryDTO,
   options?: { [key: string]: any }
 ) {

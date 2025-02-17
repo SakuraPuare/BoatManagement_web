@@ -1,10 +1,10 @@
 declare namespace API {
-  type auditParams = {
+  type auditAdminUnitParams = {
     id: number;
     types: string;
   };
 
-  type auditUserParams = {
+  type auditAdminUserParams = {
     id: number;
     types: string;
   };
@@ -305,23 +305,23 @@ declare namespace API {
     merchantId: number;
   };
 
-  type delete1Params = {
+  type deleteAdminAccountParams = {
     id: number;
   };
 
-  type delete2Params = {
+  type deleteAdminBoatParams = {
     id: number;
   };
 
-  type delete3Params = {
+  type deleteAdminBoatTypeParams = {
     id: number;
   };
 
-  type delete4Params = {
+  type deleteAdminDocksParams = {
     id: number;
   };
 
-  type deleteDocksParams = {
+  type deleteAdminMerchantParams = {
     id: number;
   };
 
@@ -341,41 +341,76 @@ declare namespace API {
     id: number;
   };
 
-  type get1Params = {
+  type getAdminBoatPageQueryParams = {
+    page?: number;
+    size?: number;
+  };
+
+  type getAdminBoatParams = {
     id: number;
   };
 
-  type get2Params = {
+  type getAdminBoatTypePageQueryParams = {
+    page?: number;
+    size?: number;
+  };
+
+  type getAdminBoatTypeParams = {
     id: number;
   };
 
-  type get3Params = {
-    id: number;
-  };
-
-  type get4Params = {
-    id: number;
-  };
-
-  type getDocksByIdParams = {
-    id: number;
-  };
-
-  type getDocksPageParams = {
+  type getAdminDocksPageQueryParams = {
     pageNum?: number;
     pageSize?: number;
   };
 
-  type getGoodsByIdParams = {
+  type getAdminDocksParams = {
     id: number;
   };
 
-  type getGoodsPageParams = {
+  type getAdminMerchantPageQueryParams = {
+    page?: number;
+    size?: number;
+  };
+
+  type getAdminMerchantParams = {
+    id: number;
+  };
+
+  type getAdminUnitPageQueryParams = {
     pageNum?: number;
     pageSize?: number;
   };
 
-  type getMerchantOrdersPageParams = {
+  type getAdminUserPageQuery1Params = {
+    pageNum?: number;
+    pageSize?: number;
+  };
+
+  type getAdminUserPageQueryParams = {
+    page?: number;
+    size?: number;
+  };
+
+  type getAdminUserParams = {
+    id: number;
+  };
+
+  type getAdminVendorPageQueryParams = {
+    page?: number;
+    size?: number;
+  };
+
+  type getGoodsParams = {
+    id: number;
+  };
+
+  type getMerchantGoodsPageQueryParams = {
+    pageNum?: number;
+    pageSize?: number;
+  };
+
+  type getMerchantOrdersPageQueryParams = {
     pageNum?: number;
     pageSize?: number;
   };
@@ -394,10 +429,6 @@ declare namespace API {
     pageSize?: number;
   };
 
-  type getUserMerchantByIdParams = {
-    id: number;
-  };
-
   type getUserMerchantGoodsListParams = {
     merchantId: number;
   };
@@ -413,6 +444,10 @@ declare namespace API {
     pageSize?: number;
   };
 
+  type getUserMerchantParams = {
+    id: number;
+  };
+
   type getUserParams = {
     id: number;
   };
@@ -422,7 +457,7 @@ declare namespace API {
     pageSize?: number;
   };
 
-  type getVendorBoatsPageParams = {
+  type getVendorBoatsPageQueryParams = {
     pageNum?: number;
     pageSize?: number;
   };
@@ -431,7 +466,7 @@ declare namespace API {
     id: number;
   };
 
-  type getVendorBoatTypesPageParams = {
+  type getVendorBoatTypesPageQueryParams = {
     pageNum?: number;
     pageSize?: number;
   };
@@ -461,41 +496,6 @@ declare namespace API {
 
   type leaveUnitParams = {
     types: string;
-  };
-
-  type listPage1Params = {
-    page?: number;
-    size?: number;
-  };
-
-  type listPage2Params = {
-    page?: number;
-    size?: number;
-  };
-
-  type listPage3Params = {
-    page?: number;
-    size?: number;
-  };
-
-  type listPage4Params = {
-    page?: number;
-    size?: number;
-  };
-
-  type listPage5Params = {
-    pageNum?: number;
-    pageSize?: number;
-  };
-
-  type listPageParams = {
-    page?: number;
-    size?: number;
-  };
-
-  type listUserPageParams = {
-    pageNum?: number;
-    pageSize?: number;
   };
 
   type NameRequestDTO = {
@@ -909,23 +909,23 @@ declare namespace API {
     contactPhone?: string;
   };
 
-  type update1Params = {
+  type updateAdminAccountParams = {
     id: number;
   };
 
-  type update2Params = {
+  type updateAdminBoatParams = {
     id: number;
   };
 
-  type update3Params = {
+  type updateAdminBoatTypeParams = {
     id: number;
   };
 
-  type update4Params = {
+  type updateAdminDocksParams = {
     id: number;
   };
 
-  type updateDocksParams = {
+  type updateAdminMerchantParams = {
     id: number;
   };
 

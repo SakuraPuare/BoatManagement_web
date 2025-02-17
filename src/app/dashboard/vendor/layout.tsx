@@ -8,6 +8,7 @@ import {
   Settings,
   Ship,
   ShoppingCart,
+  Sailboat,
 } from "lucide-react";
 
 const sidebarItems = [
@@ -20,6 +21,11 @@ const sidebarItems = [
     title: "船只列表",
     path: "/dashboard/vendor/boats",
     icon: <Anchor className="w-5 h-5" />,
+  },
+  {
+    title: "船舶类型",
+    path: "/dashboard/vendor/boat-types",
+    icon: <Sailboat className="w-5 h-5" />,
   },
   {
     title: "供应商品",

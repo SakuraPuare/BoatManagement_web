@@ -1,4 +1,4 @@
-import type { API } from "@/services/api/typings";
+import type { API } from "./typings";
 /* eslint-disable */
 import request from "@/utils/request";
 

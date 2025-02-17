@@ -92,10 +92,10 @@ export async function getAdminMerchantPageQuery(
       "Content-Type": "application/json",
     },
     params: {
-      // page has a default value: 1
-      page: "1",
-      // size has a default value: 10
-      size: "10",
+      // pageNum has a default value: 1
+      pageNum: "1",
+      // pageSize has a default value: 10
+      pageSize: "10",
       ...params,
     },
     data: body,

@@ -148,7 +148,8 @@ declare namespace API {
 
   type BaseDocksDTO = {
     name?: string;
-    location?: number[];
+    longitude?: number;
+    latitude?: number;
     address?: string;
     contactPhone?: string;
     isEnabled?: boolean;
@@ -159,7 +160,8 @@ declare namespace API {
     updatedAt?: string;
     id?: number;
     name?: string;
-    location?: number[];
+    longitude?: number;
+    latitude?: number;
     address?: string;
     contactPhone?: string;
     isEnabled?: boolean;
@@ -342,8 +344,8 @@ declare namespace API {
   };
 
   type getAdminBoatPageQueryParams = {
-    page?: number;
-    size?: number;
+    pageNum?: number;
+    pageSize?: number;
   };
 
   type getAdminBoatParams = {
@@ -351,8 +353,8 @@ declare namespace API {
   };
 
   type getAdminBoatTypePageQueryParams = {
-    page?: number;
-    size?: number;
+    pageNum?: number;
+    pageSize?: number;
   };
 
   type getAdminBoatTypeParams = {
@@ -369,8 +371,8 @@ declare namespace API {
   };
 
   type getAdminMerchantPageQueryParams = {
-    page?: number;
-    size?: number;
+    pageNum?: number;
+    pageSize?: number;
   };
 
   type getAdminMerchantParams = {
@@ -388,8 +390,8 @@ declare namespace API {
   };
 
   type getAdminUserPageQueryParams = {
-    page?: number;
-    size?: number;
+    pageNum?: number;
+    pageSize?: number;
   };
 
   type getAdminUserParams = {
@@ -397,8 +399,8 @@ declare namespace API {
   };
 
   type getAdminVendorPageQueryParams = {
-    page?: number;
-    size?: number;
+    pageNum?: number;
+    pageSize?: number;
   };
 
   type getGoodsParams = {

@@ -6,7 +6,6 @@ enum ROLE {
 }
 
 export const ROLE_MASKS = {
-  NONE: 0,
   USER: 1 << ROLE.USER, // 0001
   MERCHANT: 1 << ROLE.MERCHANT, // 0010
   VENDOR: 1 << ROLE.VENDOR, // 0100

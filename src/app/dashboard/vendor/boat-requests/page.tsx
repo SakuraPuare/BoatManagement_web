@@ -19,7 +19,7 @@ import { getVendorBoatRequestsPageQuery } from "@/services/api/vendorBoatRequest
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { REQUEST_STATUS_MAP } from "@/lib/constants/status";
-
+import { getDocksById } from "@/services/api/adminDock";
 const ITEMS_PER_PAGE = 10;
 
 
@@ -31,21 +31,45 @@ export default function VendorBoatRequestsPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [dockNames, setDockNames] = useState<Record<number, string>>({});
 
   const fetchRequests = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await getVendorBoatRequestsPageQuery({
-        pageNum: currentPage,
-        pageSize: ITEMS_PER_PAGE,
-        // Add search params if needed
-      }, {});
-      console.log(response?.data);
-      setRequests(response.data?.data?.records || []);
-      setTotalPages(response.data?.data?.totalPage || 0);
+      const [requestsResponse] = await Promise.all([
+        getVendorBoatRequestsPageQuery(
+          { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
+          {}
+        ),
+      ]);
+      setRequests(requestsResponse.data?.data?.records || []);
+      setTotalPages(requestsResponse.data?.data?.totalPage || 0);
+
+      // 获取所有请求中涉及的码头ID
+      const dockIds = new Set<number>();
+      requestsResponse.data?.data?.records?.forEach((request) => {
+        if (request.startDockId) dockIds.add(request.startDockId);
+        if (request.endDockId) dockIds.add(request.endDockId);
+      });
+
+      // 获取所有码头的名称
+      const dockNamesMap: Record<number, string> = {};
+      await Promise.all(
+        Array.from(dockIds).map(async (id) => {
+          try {
+            const response = await getDocksById({ id }, {});
+            if (response.data?.data?.name) {
+              dockNamesMap[id] = response.data.data.name;
+            }
+          } catch (error) {
+            console.error(`Failed to fetch dock name for ID ${id}:`, error);
+          }
+        })
+      );
+      setDockNames(dockNamesMap);
     } catch (error) {
       console.error(error);
-      toast.error("获取请求列表失败");
+      toast.error("获取数据失败");
     } finally {
       setIsLoading(false);
     }
@@ -80,8 +104,7 @@ export default function VendorBoatRequestsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>请求ID</TableHead>
-              <TableHead>船只名称</TableHead>
+              <TableHead>请求ID</TableHead> 
               <TableHead>起始码头</TableHead>
               <TableHead>目的码头</TableHead>
               <TableHead>开始时间</TableHead>
@@ -108,9 +131,12 @@ export default function VendorBoatRequestsPage() {
               requests.map((request) => (
                 <TableRow key={request.id}>
                   <TableCell>{request.id}</TableCell>
-                  <TableCell>{request.boatName}</TableCell>
-                  <TableCell>{request.startDockName}</TableCell>
-                  <TableCell>{request.endDockName}</TableCell>
+                  <TableCell>
+                    {dockNames[request.startDockId || 0] || '未知码头'}
+                  </TableCell>
+                  <TableCell>
+                    {dockNames[request.endDockId || 0] || '未知码头'}
+                  </TableCell>
                   <TableCell>
                     {request.startTime &&
                       format(new Date(request.startTime), "yyyy-MM-dd HH:mm:ss")}

@@ -1,7 +1,6 @@
-
+import type { API } from "@/services/api/typings";
 /* eslint-disable */
 import request from "@/utils/request";
-import API from "./typings";
 
 /** 创建船舶类型 POST /admin/boat-type/ */
 export async function create4(
@@ -65,40 +64,41 @@ export async function delete4(
   });
 }
 
-/** 获取船舶类型列表 GET /admin/boat-type/list */
+/** 获取船舶类型列表 POST /admin/boat-type/list */
 export async function list4(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.list4Params,
+  body: API.BaseBoatTypesDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseBoatTypesVO>("/admin/boat-type/list", {
-    method: "GET",
-    params: {
-      ...params,
-      queryDTO: undefined,
-      ...params["queryDTO"],
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
+    data: body,
     ...(options || {}),
   });
 }
 
-/** 获取船舶类型列表分页 GET /admin/boat-type/page */
+/** 获取船舶类型列表分页 POST /admin/boat-type/page */
 export async function listPage4(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.listPage4Params,
+  body: API.BaseBoatTypesDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponsePageBaseBoatTypesVO>("/admin/boat-type/page", {
-    method: "GET",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
     params: {
       // page has a default value: 1
       page: "1",
       // size has a default value: 10
       size: "10",
       ...params,
-      queryDTO: undefined,
-      ...params["queryDTO"],
     },
+    data: body,
     ...(options || {}),
   });
 }

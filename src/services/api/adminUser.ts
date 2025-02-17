@@ -1,6 +1,6 @@
+import type { API } from "@/services/api/typings";
 /* eslint-disable */
 import request from "@/utils/request";
-import API from "./typings";
 
 /** 创建用户 POST /admin/user/ */
 export async function create1(
@@ -64,40 +64,41 @@ export async function delete1(
   });
 }
 
-/** 获取用户列表 GET /admin/user/list */
+/** 获取用户列表 POST /admin/user/list */
 export async function list1(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.list1Params,
+  body: API.BaseAccountsDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseAccountsVO>("/admin/user/list", {
-    method: "GET",
-    params: {
-      ...params,
-      queryDTO: undefined,
-      ...params["queryDTO"],
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
+    data: body,
     ...(options || {}),
   });
 }
 
-/** 获取用户列表分页 GET /admin/user/page */
+/** 获取用户列表分页 POST /admin/user/page */
 export async function listPage1(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.listPage1Params,
+  body: API.BaseAccountsDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponsePageBaseAccountsVO>("/admin/user/page", {
-    method: "GET",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
     params: {
       // page has a default value: 1
       page: "1",
       // size has a default value: 10
       size: "10",
       ...params,
-      queryDTO: undefined,
-      ...params["queryDTO"],
     },
+    data: body,
     ...(options || {}),
   });
 }

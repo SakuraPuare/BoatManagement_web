@@ -20,8 +20,8 @@ import {
     BOAT_STATUS_DESCRIPTIONS,
     BOAT_STATUS_NAMES,
 } from "@/lib/constants/boat-type";
-import {Boat} from "@/types/boat";
-import {updateBoatStatus} from "@/services/admin/boats";
+import type {API} from "@/services/api/typings";
+import {update3} from "@/services/api/adminBoat";
 
 const StatusFormSchema = z.object({
     status: z.number(),
@@ -32,7 +32,7 @@ type FormValues = z.infer<typeof StatusFormSchema>;
 interface BoatStatusDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    boat: Boat;
+    boat: API.BaseBoatsVO;
 }
 
 export function BoatStatusDialog({
@@ -43,10 +43,10 @@ export function BoatStatusDialog({
     const form = useForm<FormValues>({
         resolver: zodResolver(StatusFormSchema),
         defaultValues: {
-            status: boat?.status || BOAT_STATUS_CODES.ACTIVE,
+            status: boat?.status?.toString() || BOAT_STATUS_CODES.ACTIVE.toString(),
         },
         values: {
-            status: boat?.status || BOAT_STATUS_CODES.ACTIVE,
+            status: boat?.status?.toString() || BOAT_STATUS_CODES.ACTIVE.toString(),
         },
     });
 
@@ -62,10 +62,10 @@ export function BoatStatusDialog({
 
     const onSubmit = async (values: FormValues) => {
         try {
-            if (!boat?.boatId) {
+            if (!boat?.id) {
                 throw new Error("船只ID不存在");
             }
-            await updateBoatStatus(boat.boatId, values.status);
+            await update3({id: boat.id}, {status: values.status.toString()});
             onOpenChange(false);
         } catch (error) {
             console.error("更新状态失败:", error);
@@ -80,7 +80,7 @@ export function BoatStatusDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent className="sm:max-w-[525px]">
                 <AlertDialogHeader>
-                    <AlertDialogTitle>状态设置 - {boat?.boatName}</AlertDialogTitle>
+                    <AlertDialogTitle>状态设置 - {boat?.name}</AlertDialogTitle>
                 </AlertDialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

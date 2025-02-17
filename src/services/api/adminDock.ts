@@ -1,6 +1,6 @@
+import type { API } from "@/services/api/typings";
 /* eslint-disable */
 import request from "@/utils/request";
-import API from "./typings";
 
 /** 添加码头 POST /admin/dock/ */
 export async function addDocks(
@@ -64,36 +64,41 @@ export async function deleteDocks(
   });
 }
 
-/** 获取码头列表 GET /admin/dock/list */
+/** 获取码头列表 POST /admin/dock/list */
 export async function getDocks(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getDocksParams,
+  body: API.BaseDocksDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseDocksVO>("/admin/dock/list", {
-    method: "GET",
-    params: {
-      ...params,
-      queryDTO: undefined,
-      ...params["queryDTO"],
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
+    data: body,
     ...(options || {}),
   });
 }
 
-/** 获取码头列表分页 GET /admin/dock/page */
+/** 获取码头列表分页 POST /admin/dock/page */
 export async function getDocksPage(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getDocksPageParams,
+  body: API.BaseDocksDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponsePageBaseDocksVO>("/admin/dock/page", {
-    method: "GET",
-    params: {
-      ...params,
-      queryDTO: undefined,
-      ...params["queryDTO"],
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
+    params: {
+      // pageNum has a default value: 1
+      pageNum: "1",
+      // pageSize has a default value: 10
+      pageSize: "10",
+      ...params,
+    },
+    data: body,
     ...(options || {}),
   });
 }

@@ -7,16 +7,16 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Anchor, Ban, MoreVertical, Pencil, Plus, Search, Trash2,} from "lucide-react";
-import {BoatType} from "@/types/boat-type";
+import type {API} from "@/services/api/typings";
 import {BoatTypeDialog} from "@/app/dashboard/admin/boat-types/boat-type-dialog";
 import {DataPagination} from "@/components/ui/data-pagination";
-import {deleteBoatType, fetchBoatTypeListPage, updateBoatTypeBlockStatus,} from "@/services/admin/boat-types";
+import {update4,create4,get4,listPage4,delete4} from "@/services/api/adminBoatType";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function BoatTypesPage() {
-    const [boatTypes, setBoatTypes] = useState<BoatType[]>([]);
-    const [selectedBoatType, setSelectedBoatType] = useState<BoatType | null>(
+    const [boatTypes, setBoatTypes] = useState<API.BaseBoatTypesVO[]>([]);
+    const [selectedBoatType, setSelectedBoatType] = useState<API.BaseBoatTypesVO | null>(
         null,
     );
 
@@ -30,9 +30,9 @@ export default function BoatTypesPage() {
     const fetchBoatTypes = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await fetchBoatTypeListPage(currentPage, ITEMS_PER_PAGE);
-            setBoatTypes(response.records);
-            setTotalPages(response.totalPage);
+            const response = await listPage4({pageNum: currentPage, pageSize: ITEMS_PER_PAGE}, {status: 1});
+            setBoatTypes(response.data?.data?.records || []);
+            setTotalPages(response.data?.data?.totalPage || 0);
         } catch (error) {
             console.error(error);
         } finally {
@@ -45,14 +45,14 @@ export default function BoatTypesPage() {
         setIsDialogOpen(true);
     };
 
-    const handleEdit = (boatType: BoatType) => {
+    const handleEdit = (boatType: API.BaseBoatTypesVO) => {
         setSelectedBoatType(boatType);
         setIsDialogOpen(true);
     };
 
     const handleDelete = async (boatTypeId: number) => {
         try {
-            await deleteBoatType(boatTypeId);
+            await delete4({id: boatTypeId});
             fetchBoatTypes();
         } catch (error) {
             console.error(error);
@@ -67,8 +67,9 @@ export default function BoatTypesPage() {
     };
 
     const handleStatus = async (boatTypeId: number, status: number) => {
+        //TODO 需要修改
         try {
-            await updateBoatTypeBlockStatus(boatTypeId, status);
+            await update4({id: boatTypeId}, {status: status});
             fetchBoatTypes();
         } catch (error) {
             console.error(error);
@@ -110,10 +111,13 @@ export default function BoatTypesPage() {
                         <TableRow>
                             <TableHead>ID</TableHead>
                             <TableHead>名称</TableHead>
-                            <TableHead>代码</TableHead>
-                            <TableHead>最大容量</TableHead>
+                            <TableHead>描述</TableHead>
+                            <TableHead>长度</TableHead>
+                            <TableHead>宽度</TableHead>
+                            <TableHead>总吨位</TableHead>
+                            <TableHead>最大载重量</TableHead>
                             <TableHead>最大速度</TableHead>
-                            <TableHead>燃料类型</TableHead>
+                            <TableHead>最大续航</TableHead>
                             <TableHead>状态</TableHead>
                             <TableHead>创建时间</TableHead>
                             <TableHead>更新时间</TableHead>
@@ -135,20 +139,23 @@ export default function BoatTypesPage() {
                             </TableRow>
                         ) : (
                             boatTypes.map((boatType) => (
-                                <TableRow key={boatType.boatTypeId}>
-                                    <TableCell>{boatType.boatTypeId}</TableCell>
+                                <TableRow key={boatType.id}>
+                                    <TableCell>{boatType.id}</TableCell>
                                     <TableCell className="font-medium">
-                                        {boatType.typeName}
+                                            {boatType.typeName}
                                     </TableCell>
-                                    <TableCell>{boatType.typeCode}</TableCell>
-                                    <TableCell>{boatType.maxCapacity}</TableCell>
+                                    <TableCell>{boatType.description}</TableCell>
+                                    <TableCell>{boatType.length}</TableCell>
+                                    <TableCell>{boatType.width}</TableCell>
+                                    <TableCell>{boatType.grossNumber}</TableCell>
+                                    <TableCell>{boatType.maxLoad}</TableCell>
                                     <TableCell>{boatType.maxSpeed}</TableCell>
-                                    <TableCell>{boatType.fuelType}</TableCell>
+                                    <TableCell>{boatType.maxEndurance}</TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
                       <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              boatType.status === 1
+                            boatType.status === 1
                                   ? "bg-green-100 text-green-800"
                                   : "bg-red-100 text-red-800"
                           }`}

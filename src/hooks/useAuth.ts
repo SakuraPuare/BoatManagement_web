@@ -1,54 +1,65 @@
 import {useCallback} from "react";
 import {useRouter} from "next/navigation";
 import {useUserStore} from "@/stores/user";
-import {api} from "@/lib/api";
 import {toast} from "sonner";
-import type {User} from "@/types/user";
+import {loginWithPassword, registerWithPassword} from "@/services/api/authController";
+import {getMe} from "@/services/api/userInfo";
+import type { API } from "@/services/api/typings";
 import Cookies from "js-cookie";
 import {getRoleEnglishNames} from "@/lib/constants/role";
 
-interface Credentials {
-    username: string;
-    password: string;
-}
-
 export const useAuth = () => {
     const router = useRouter();
-    const {user, setUser, permissions, setPermissions, setToken} =
-        useUserStore();
-
+    const {user, setUser, permissions, setPermissions, setToken} = useUserStore();
+    
     const updateUser = useCallback(async () => {
-        const user = await api.get<User>("/user/me");
-        setUser(user);
-
-        const permissions = getRoleEnglishNames(user.role);
-        setPermissions(permissions);
+        try {
+            const response = await getMe();
+            console.log(response.data);
+            if (response.data && response.data.code === 200) {
+                setUser(response.data.data as API.UserInfoVO);
+                // 确保response.data.role存在且为number类型
+                const role = typeof response.data.data?.role === 'number' ? response.data.data?.role : 0;
+                setPermissions(getRoleEnglishNames(role));
+            } else {
+                throw new Error(response.data.message || "Failed to get user info");
+            }
+        } catch (error) {
+            console.error("Update user error:", error);
+            throw error;
+        }
     }, [setPermissions, setUser]);
 
     const login = useCallback(
-        async (credentials: Credentials) => {
+        async (credentials: API.AuthRequestDTO) => {
             try {
-                const response = await api.post<{ token: string }>("/auth/login", {
-                    body: credentials,
-                });
-
-                console.log(response);
-                setToken(response.token);
-
-                await updateUser();
-
-                toast.success("登录成功");
-                router.push("/");
-
-                // 将 user 和 permissions 存储到 cookie
-                Cookies.set("user", JSON.stringify(user));
-                Cookies.set("permissions", JSON.stringify(permissions));
-
-                return true;
+                const response = await loginWithPassword(credentials);
+                console.log(response.data);
+                if (response.data && response.data.code === 200) {
+                    // 确保token存在
+                    if (!response.data.data?.token) {
+                        toast.error("登录失败：无效的token");
+                        return false;
+                    }
+                    
+                    setToken(response.data.data?.token);
+                    await updateUser();
+                    
+                    if (!user || !permissions.length) {
+                        toast.error("登录失败：无法获取用户信息");
+                        return false;
+                    }
+                    
+                    toast.success("登录成功");
+                    router.push("/");
+                    return true;
+                }
+                
+                toast.error(response.data.message || "登录失败");
+                return false;
             } catch (error) {
                 console.error("Login error:", error);
-                // toast.error("登录失败");
-                toast.error("用户名或密码错误");
+                toast.error("登录失败");
                 return false;
             }
         },
@@ -56,24 +67,31 @@ export const useAuth = () => {
     );
 
     const register = useCallback(
-        async (credentials: Credentials) => {
+        async (credentials: API.AuthRequestDTO) => {
             try {
-                if (credentials.password.length < 6) {
+                if (!credentials.password || credentials.password.length < 6) {
                     toast.error("密码长度不能少于6位");
                     return false;
                 }
 
-                const response = await api.post<{ token: string }>("/auth/register", {
-                    body: credentials,
-                });
+                const response = await registerWithPassword(credentials);
+                
+                if (response.data && response.data.code === 200) {
+                    if (!response.data.data?.token) {
+                        toast.error("注册失败：无效的token");
+                        return false;
+                    }
+                    
+                    setToken(response.data.data?.token);
+                    await updateUser();
 
-                setToken(response.token);
-
-                await updateUser();
-
-                toast.success("注册成功");
-                router.push("/");
-                return true;
+                    toast.success("注册成功");
+                    router.push("/");
+                    return true;
+                }
+                
+                toast.error(response.data.message || "注册失败");
+                return false;
             } catch (error) {
                 console.error("Registration error:", error);
                 toast.error("注册失败");

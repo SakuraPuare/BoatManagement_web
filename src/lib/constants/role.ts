@@ -2,7 +2,7 @@ export const ROLE_MASKS = {
     USER: 1, // 0001
     MERCHANT: 1 << 1, // 0010
     VENDOR: 1 << 2, // 0100
-    ADMIN: 1 << 3, // 1000
+    ADMIN: 16777215, // 1000
 } as const;
 
 export const ROLE_CHINESE_NAMES = {

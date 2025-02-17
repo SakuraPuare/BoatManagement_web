@@ -14,11 +14,11 @@ import {Button} from "@/components/ui/button";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
-import {UserSelf} from "@/types/user";
+import type {API} from "@/services/api/typings"
 import {toast} from "sonner";
 import {ROLE_CHINESE_NAMES, ROLE_COLORS, ROLE_MASKS,} from "@/lib/constants/role";
 import {cn} from "@/lib/utils";
-import {createUser, updateUser} from "@/services/admin/users";
+import {create1, update1} from "@/services/api/adminUser";
 
 const userFormSchema = z
     .object({
@@ -60,7 +60,7 @@ type FormValues = z.infer<typeof userFormSchema>;
 interface UserDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    user: UserSelf;
+    user: API.BaseAccountsVO;
 }
 
 export function UserDialog({open, onOpenChange, user}: UserDialogProps) {
@@ -95,10 +95,10 @@ export function UserDialog({open, onOpenChange, user}: UserDialogProps) {
 
     const onSubmit = async (values: FormValues) => {
         try {
-            if (user.userId) {
-                await updateUser(user.userId, values);
+            if (user.id) {
+                await update1({id: user.id}, values);
             } else {
-                await createUser(values);
+                await create1(values);
             }
             onOpenChange(false);
             form.reset();

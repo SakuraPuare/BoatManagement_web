@@ -1,6 +1,6 @@
+import type { API } from "@/services/api/typings";
 /* eslint-disable */
 import request from "@/utils/request";
-import API from "./typings";
 
 /** 加入单位 PUT /certify/join/${param0}/${param1} */
 export async function joinUnit(
@@ -32,7 +32,7 @@ export async function leaveUnit(
 
 /** 获取商户实名认证信息 GET /certify/merchant */
 export async function getMerchantCertify(options?: { [key: string]: any }) {
-  return request<API.ResponseUnitCertifyVO>("/certify/merchant", {
+  return request<API.ResponseBaseCertifyVOBaseUnitsVO>("/certify/merchant", {
     method: "GET",
     ...(options || {}),
   });
@@ -69,7 +69,7 @@ export async function transferUnit(
 
 /** 获取用户实名认证信息 GET /certify/user */
 export async function getUserCertify(options?: { [key: string]: any }) {
-  return request<API.ResponseUserCertifyVO>("/certify/user", {
+  return request<API.ResponseBaseCertifyVOBaseUserCertifyVO>("/certify/user", {
     method: "GET",
     ...(options || {}),
   });
@@ -92,7 +92,7 @@ export async function certifyUser(
 
 /** 获取供应商实名认证信息 GET /certify/vendor */
 export async function getVendorCertify(options?: { [key: string]: any }) {
-  return request<API.ResponseUnitCertifyVO>("/certify/vendor", {
+  return request<API.ResponseBaseCertifyVOBaseUnitsVO>("/certify/vendor", {
     method: "GET",
     ...(options || {}),
   });

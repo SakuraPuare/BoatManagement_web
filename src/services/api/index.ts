@@ -1,4 +1,4 @@
-
+import type { API } from "@/services/api/typings";
 /* eslint-disable */
 // API 更新时间：
 // API 唯一标识：
@@ -13,7 +13,13 @@ import * as adminDock from "./adminDock";
 import * as adminBoat from "./adminBoat";
 import * as adminBoatType from "./adminBoatType";
 import * as adminAudit from "./adminAudit";
-import * as auth from "./auth";
+import * as vendorOrder from "./vendorOrder";
+import * as vendorDockController from "./vendorDockController";
+import * as vendorBoatRequest from "./vendorBoatRequest";
+import * as userDockController from "./userDockController";
+import * as userBoatRequest from "./userBoatRequest";
+import * as merchantOrder from "./merchantOrder";
+import * as authController from "./authController";
 import * as userInfo from "./userInfo";
 export default {
   vendorBoat,
@@ -27,6 +33,12 @@ export default {
   adminBoat,
   adminBoatType,
   adminAudit,
-  auth,
+  vendorOrder,
+  vendorDockController,
+  vendorBoatRequest,
+  userDockController,
+  userBoatRequest,
+  merchantOrder,
+  authController,
   userInfo,
 };

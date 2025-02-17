@@ -1,6 +1,6 @@
+import type { API } from "@/services/api/typings";
 /* eslint-disable */
 import request from "@/utils/request";
-import API from "./typings";
 
 /** 检查用户名是否可用 POST /auth/availability */
 export async function checkAvailability(

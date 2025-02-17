@@ -8,17 +8,17 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Anchor, Ban, MoreVertical, Pencil, Plus, Search, Trash2,} from "lucide-react";
-import {Dock} from "@/types/dock";
+import type {API} from "@/services/api/typings";
 import {DockDialog} from "./dock-dialog";
 import {DataPagination} from "@/components/ui/data-pagination";
-import {deleteDock, fetchDockListPage, updateDockStatus,} from "@/services/admin/docks";
+import {deleteDocks, getDocksPage, updateDocks} from "@/services/api/adminDock";
 import {STATUS_CODES, STATUS_NAMES} from "@/lib/constants/status";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function DocksPage() {
-    const [docks, setDocks] = useState<Dock[]>([]);
-    const [selectedDock, setSelectedDock] = useState<Dock | null>(null);
+    const [docks, setDocks] = useState<API.BaseDocksVO[]>([]);
+    const [selectedDock, setSelectedDock] = useState<API.BaseDocksVO | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
@@ -31,29 +31,34 @@ export default function DocksPage() {
     const fetchDocks = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await fetchDockListPage(currentPage, ITEMS_PER_PAGE);
-            setDocks(response.records);
-            setTotalPages(response.totalPage);
+            const response = await getDocksPage(
+                { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
+                {
+                    status: statusFilter,
+                }
+            );
+            setDocks(response.data?.data?.records || []);
+            setTotalPages(response.data?.data?.totalPage || 0);
         } catch (error) {
             console.error(error);
         } finally {
             setIsLoading(false);
         }
-    }, [currentPage]);
+    }, [currentPage, statusFilter]);
 
     const handleAdd = () => {
         setSelectedDock(null);
         setIsDialogOpen(true);
     };
 
-    const handleEdit = (dock: Dock) => {
+    const handleEdit = (dock: API.BaseDocksVO) => {
         setSelectedDock(dock);
         setIsDialogOpen(true);
     };
 
     const handleDelete = async (dockId: number) => {
         try {
-            await deleteDock(dockId);
+            await deleteDocks({id: dockId});
             fetchDocks();
         } catch (error) {
             console.error(error);
@@ -72,14 +77,9 @@ export default function DocksPage() {
     }, [fetchDocks]);
 
     const handleToggleStatus = async (dockId: number) => {
-        const isActive =
-            docks.find((dock) => dock.dockId === dockId)?.status ===
-            STATUS_CODES.ACTIVE;
+        const isActive = statusFilter === STATUS_CODES.ACTIVE.toString();
         try {
-            await updateDockStatus(
-                dockId,
-                isActive ? STATUS_CODES.INACTIVE : STATUS_CODES.ACTIVE,
-            );
+            await updateDocks({id: dockId}, {status: isActive ? STATUS_CODES.INACTIVE.toString() : STATUS_CODES.ACTIVE.toString()});
             fetchDocks();
         } catch (error) {
             console.error(error);
@@ -132,6 +132,8 @@ export default function DocksPage() {
                             <TableHead>码头ID</TableHead>
                             <TableHead>名称</TableHead>
                             <TableHead>位置</TableHead>
+                            <TableHead>地址</TableHead>
+                            <TableHead>联系电话</TableHead>
                             <TableHead>状态</TableHead>
                             <TableHead>创建时间</TableHead>
                             <TableHead>更新时间</TableHead>
@@ -153,28 +155,30 @@ export default function DocksPage() {
                             </TableRow>
                         ) : (
                             docks.map((dock) => (
-                                <TableRow key={dock.dockId}>
-                                    <TableCell className="font-medium">{dock.dockId}</TableCell>
-                                    <TableCell>{dock.dockName}</TableCell>
-                                    <TableCell>{dock.dockLocation}</TableCell>
+                                <TableRow key={dock.id}>
+                                    <TableCell className="font-medium">{dock.id}</TableCell>
+                                    <TableCell>{dock.name}</TableCell>
+                                    <TableCell>{dock.location}</TableCell>
+                                    <TableCell>{dock.address}</TableCell>
+                                    <TableCell>{dock.contactPhone}</TableCell>
                                     <TableCell>
                     <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            dock.status === STATUS_CODES.ACTIVE
+                            dock.status === STATUS_CODES.ACTIVE.toString()
                                 ? "bg-green-100 text-green-800"
-                                : dock.status === STATUS_CODES.INACTIVE
+                                : dock.status === STATUS_CODES.INACTIVE.toString()
                                     ? "bg-red-100 text-red-800"
                                     : ""
                         }`}
                     >
-                      {STATUS_NAMES[dock.status]}
+                        {dock.status === STATUS_CODES.ACTIVE.toString() ? "正常" : "停用"}
                     </span>
                                     </TableCell>
                                     <TableCell>
-                                        {format(new Date(dock.createdAt), "yyyy-MM-dd HH:mm:ss")}
+                                        {format(new Date(dock.createdAt || ""), "yyyy-MM-dd HH:mm:ss")}
                                     </TableCell>
                                     <TableCell>
-                                        {format(new Date(dock.updatedAt), "yyyy-MM-dd HH:mm:ss")}
+                                        {format(new Date(dock.updatedAt || ""), "yyyy-MM-dd HH:mm:ss")}
                                     </TableCell>
                                     <TableCell>
                                         <DropdownMenu>
@@ -189,15 +193,15 @@ export default function DocksPage() {
                                                     编辑
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
-                                                    onClick={() => handleToggleStatus(dock.dockId)}
+                                                    onClick={() => handleToggleStatus(dock.id || 0)}
                                                 >
                                                     <Ban className="h-4 w-4 mr-2"/>
-                                                    {dock.status === STATUS_CODES.ACTIVE
+                                                    {dock.status === STATUS_CODES.ACTIVE.toString()
                                                         ? "停用"
                                                         : "启用"}
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
-                                                    onClick={() => handleDelete(dock.dockId)}
+                                                    onClick={() => handleDelete(dock.id || 0)}
                                                 >
                                                     <Trash2 className="h-4 w-4 mr-2"/>
                                                     删除

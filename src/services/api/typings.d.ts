@@ -4,6 +4,11 @@ declare namespace API {
     types: string;
   };
 
+  type auditUserParams = {
+    id: number;
+    types: string;
+  };
+
   type AuthRequestDTO = {
     username?: string;
     password?: string;
@@ -15,9 +20,13 @@ declare namespace API {
     phone?: string;
     email?: string;
     role?: number;
+    isActive?: boolean;
+    isBlocked?: boolean;
   };
 
   type BaseAccountsVO = {
+    createdAt?: string;
+    updatedAt?: string;
     id?: number;
     username?: string;
     password?: string;
@@ -28,21 +37,58 @@ declare namespace API {
     isBlocked?: boolean;
   };
 
+  type BaseBoatOrdersDTO = {
+    boatId?: number;
+  };
+
+  type BaseBoatOrdersVO = {
+    createdAt?: string;
+    updatedAt?: string;
+    id?: number;
+    requestId?: number;
+    boatId?: number;
+  };
+
+  type BaseBoatRequestsDTO = {
+    startDockId?: number;
+    endDockId?: number;
+    startTime?: string;
+    endTime?: string;
+    type?: string;
+    status?: string;
+  };
+
+  type BaseBoatRequestsVO = {
+    createdAt?: string;
+    updatedAt?: string;
+    id?: number;
+    userId?: number;
+    orderId?: number;
+    startDockId?: number;
+    endDockId?: number;
+    startTime?: string;
+    endTime?: string;
+    type?: string;
+    status?: string;
+  };
+
   type BaseBoatsDTO = {
     name?: string;
     typeId?: number;
-    boatTypeId?: number;
     dockId?: number;
+    isEnabled?: boolean;
   };
 
   type BaseBoatsVO = {
+    createdAt?: string;
+    updatedAt?: string;
     id?: number;
     name?: string;
     typeId?: number;
-    boatTypeId?: number;
     dockId?: number;
     vendorId?: number;
     unitId?: number;
+    isEnabled?: boolean;
   };
 
   type BaseBoatTypesDTO = {
@@ -54,9 +100,13 @@ declare namespace API {
     maxLoad?: number;
     maxSpeed?: number;
     maxEndurance?: number;
+    price?: number;
+    isEnabled?: boolean;
   };
 
   type BaseBoatTypesVO = {
+    createdAt?: string;
+    updatedAt?: string;
     id?: number;
     typeName?: string;
     description?: string;
@@ -66,40 +116,77 @@ declare namespace API {
     maxLoad?: number;
     maxSpeed?: number;
     maxEndurance?: number;
-    createdVendorId?: number;
-    createdUnitId?: number;
+    price?: number;
+    vendorId?: number;
+    unitId?: number;
+    isEnabled?: boolean;
+  };
+
+  type BaseCertifyVOBaseUnitsVO = {
+    certify?: BaseUnitsVO;
+    status?: string;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+
+  type BaseCertifyVOBaseUserCertifyVO = {
+    certify?: BaseUserCertifyVO;
+    status?: string;
+    createdAt?: string;
+    updatedAt?: string;
   };
 
   type BaseDocksDTO = {
     name?: string;
-    location?: string[];
+    location?: string;
     address?: string;
     contactPhone?: string;
+    isEnabled?: boolean;
   };
 
   type BaseDocksVO = {
+    createdAt?: string;
+    updatedAt?: string;
     id?: number;
     name?: string;
-    location?: string[];
+    location?: string;
     address?: string;
     contactPhone?: string;
+    isEnabled?: boolean;
   };
 
   type BaseGoodsDTO = {
     name?: string;
     description?: string;
     price?: number;
+    unit?: string;
+  };
+
+  type BaseGoodsOrdersDTO = {
+    merchantId?: number;
+    orderInfo?: string;
+  };
+
+  type BaseGoodsOrdersVO = {
+    createdAt?: string;
+    updatedAt?: string;
+    id?: number;
+    merchantId?: number;
+    orderInfo?: string;
   };
 
   type BaseGoodsVO = {
+    createdAt?: string;
+    updatedAt?: string;
     id?: number;
     name?: string;
     description?: string;
     price?: number;
+    unit?: string;
     stock?: number;
     sales?: number;
-    createdMerchantId?: number;
-    createdUnitId?: number;
+    merchantId?: number;
+    unitId?: number;
   };
 
   type BaseMerchantsDTO = {
@@ -109,6 +196,8 @@ declare namespace API {
   };
 
   type BaseMerchantsVO = {
+    createdAt?: string;
+    updatedAt?: string;
     id?: number;
     userId?: number;
     unitId?: number;
@@ -116,6 +205,8 @@ declare namespace API {
   };
 
   type BaseUnitsVO = {
+    createdAt?: string;
+    updatedAt?: string;
     id?: number;
     name?: string;
     unitName?: string;
@@ -128,6 +219,16 @@ declare namespace API {
     types?: string;
   };
 
+  type BaseUserCertifyVO = {
+    createdAt?: string;
+    updatedAt?: string;
+    id?: number;
+    userId?: number;
+    realName?: string;
+    idCard?: string;
+    status?: string;
+  };
+
   type BaseVendorsDTO = {
     userId?: number;
     unitId?: number;
@@ -135,15 +236,50 @@ declare namespace API {
   };
 
   type BaseVendorsVO = {
+    createdAt?: string;
+    updatedAt?: string;
     id?: number;
     userId?: number;
     unitId?: number;
     status?: string;
   };
 
+  type BoatVO = {
+    createdAt?: string;
+    updatedAt?: string;
+    id?: number;
+    name?: string;
+    typeId?: number;
+    dockId?: number;
+    vendorId?: number;
+    unitId?: number;
+    isEnabled?: boolean;
+    typeName?: string;
+  };
+
+  type cancelOrder1Params = {
+    id: number;
+  };
+
+  type cancelOrderParams = {
+    id: number;
+  };
+
+  type cancelUserBoatRequestParams = {
+    id: number;
+  };
+
   type CertifyQueryDTO = {
     status?: string;
     type?: string;
+  };
+
+  type completeOrder1Params = {
+    id: number;
+  };
+
+  type completeOrderParams = {
+    id: number;
   };
 
   type delete1Params = {
@@ -203,13 +339,8 @@ declare namespace API {
   };
 
   type getDocksPageParams = {
-    pageNum: number;
-    pageSize: number;
-    queryDTO: BaseDocksDTO;
-  };
-
-  type getDocksParams = {
-    queryDTO: BaseDocksDTO;
+    pageNum?: number;
+    pageSize?: number;
   };
 
   type getGoodsByIdParams = {
@@ -217,41 +348,68 @@ declare namespace API {
   };
 
   type getGoodsPageParams = {
-    pageNum: number;
-    pageSize: number;
-    queryDTO: BaseGoodsDTO;
+    pageNum?: number;
+    pageSize?: number;
   };
 
-  type getGoodsParams = {
-    queryDTO: BaseGoodsDTO;
+  type getMerchantOrdersPageParams = {
+    pageNum?: number;
+    pageSize?: number;
   };
 
   type getParams = {
     id: number;
   };
 
+  type getUserBoatRequestsPageQueryParams = {
+    pageNum?: number;
+    pageSize?: number;
+  };
+
+  type getUserDockPageQueryParams = {
+    pageNum?: number;
+    pageSize?: number;
+  };
+
   type getUserParams = {
     id: number;
   };
 
-  type getVendorBoatsPageParams = {
-    pageNum: number;
-    pageSize: number;
-    queryDTO: BaseBoatsDTO;
+  type getVendorBoatRequestsPageQueryParams = {
+    pageNum?: number;
+    pageSize?: number;
   };
 
-  type getVendorBoatsParams = {
-    queryDTO: BaseBoatsDTO;
+  type getVendorBoatsPageParams = {
+    pageNum?: number;
+    pageSize?: number;
+  };
+
+  type getVendorBoatTypeParams = {
+    id: number;
   };
 
   type getVendorBoatTypesPageParams = {
-    pageNum: number;
-    pageSize: number;
+    pageNum?: number;
     queryDTO: BaseBoatTypesDTO;
   };
 
-  type getVendorBoatTypesParams = {
-    queryDTO: BaseBoatTypesDTO;
+  type getVendorDockPageQueryParams = {
+    pageNum?: number;
+    pageSize?: number;
+  };
+
+  type getVendorDockParams = {
+    id: number;
+  };
+
+  type getVendorOrdersPageQueryParams = {
+    pageNum?: number;
+    pageSize?: number;
+  };
+
+  type handleOrderParams = {
+    requestId: number;
   };
 
   type joinUnitParams = {
@@ -263,64 +421,39 @@ declare namespace API {
     types: string;
   };
 
-  type list1Params = {
-    queryDTO: BaseAccountsDTO;
-  };
-
-  type list2Params = {
-    queryDTO: BaseMerchantsDTO;
-  };
-
-  type list3Params = {
-    queryDTO: BaseBoatsDTO;
-  };
-
-  type list4Params = {
-    queryDTO: BaseBoatTypesDTO;
-  };
-
-  type list5Params = {
-    queryDTO: CertifyQueryDTO;
-  };
-
   type listPage1Params = {
     page?: number;
     size?: number;
-    queryDTO: BaseAccountsDTO;
   };
 
   type listPage2Params = {
     page?: number;
     size?: number;
-    queryDTO: BaseMerchantsDTO;
   };
 
   type listPage3Params = {
     page?: number;
     size?: number;
-    queryDTO: BaseBoatsDTO;
   };
 
   type listPage4Params = {
     page?: number;
     size?: number;
-    queryDTO: BaseBoatTypesDTO;
   };
 
   type listPage5Params = {
     pageNum?: number;
     pageSize?: number;
-    queryDTO: CertifyQueryDTO;
   };
 
   type listPageParams = {
     page?: number;
     size?: number;
-    queryDTO: BaseVendorsDTO;
   };
 
-  type listParams = {
-    queryDTO: BaseVendorsDTO;
+  type listUserPageParams = {
+    pageNum?: number;
+    pageSize?: number;
   };
 
   type NameRequestDTO = {
@@ -336,8 +469,17 @@ declare namespace API {
     optimizeCountQuery?: boolean;
   };
 
-  type PageBaseBoatsVO = {
-    records?: BaseBoatsVO[];
+  type PageBaseBoatOrdersVO = {
+    records?: BaseBoatOrdersVO[];
+    pageNumber?: number;
+    pageSize?: number;
+    totalPage?: number;
+    totalRow?: number;
+    optimizeCountQuery?: boolean;
+  };
+
+  type PageBaseBoatRequestsVO = {
+    records?: BaseBoatRequestsVO[];
     pageNumber?: number;
     pageSize?: number;
     totalPage?: number;
@@ -356,6 +498,15 @@ declare namespace API {
 
   type PageBaseDocksVO = {
     records?: BaseDocksVO[];
+    pageNumber?: number;
+    pageSize?: number;
+    totalPage?: number;
+    totalRow?: number;
+    optimizeCountQuery?: boolean;
+  };
+
+  type PageBaseGoodsOrdersVO = {
+    records?: BaseGoodsOrdersVO[];
     pageNumber?: number;
     pageSize?: number;
     totalPage?: number;
@@ -390,8 +541,26 @@ declare namespace API {
     optimizeCountQuery?: boolean;
   };
 
+  type PageBaseUserCertifyVO = {
+    records?: BaseUserCertifyVO[];
+    pageNumber?: number;
+    pageSize?: number;
+    totalPage?: number;
+    totalRow?: number;
+    optimizeCountQuery?: boolean;
+  };
+
   type PageBaseVendorsVO = {
     records?: BaseVendorsVO[];
+    pageNumber?: number;
+    pageSize?: number;
+    totalPage?: number;
+    totalRow?: number;
+    optimizeCountQuery?: boolean;
+  };
+
+  type PageBoatVO = {
+    records?: BoatVO[];
     pageNumber?: number;
     pageSize?: number;
     totalPage?: number;
@@ -417,6 +586,20 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: BaseBoatTypesVO;
+    time?: number;
+  };
+
+  type ResponseBaseCertifyVOBaseUnitsVO = {
+    code?: number;
+    message?: string;
+    data?: BaseCertifyVOBaseUnitsVO;
+    time?: number;
+  };
+
+  type ResponseBaseCertifyVOBaseUserCertifyVO = {
+    code?: number;
+    message?: string;
+    data?: BaseCertifyVOBaseUserCertifyVO;
     time?: number;
   };
 
@@ -462,10 +645,17 @@ declare namespace API {
     time?: number;
   };
 
-  type ResponseListBaseBoatsVO = {
+  type ResponseListBaseBoatOrdersVO = {
     code?: number;
     message?: string;
-    data?: BaseBoatsVO[];
+    data?: BaseBoatOrdersVO[];
+    time?: number;
+  };
+
+  type ResponseListBaseBoatRequestsVO = {
+    code?: number;
+    message?: string;
+    data?: BaseBoatRequestsVO[];
     time?: number;
   };
 
@@ -480,6 +670,13 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: BaseDocksVO[];
+    time?: number;
+  };
+
+  type ResponseListBaseGoodsOrdersVO = {
+    code?: number;
+    message?: string;
+    data?: BaseGoodsOrdersVO[];
     time?: number;
   };
 
@@ -504,10 +701,24 @@ declare namespace API {
     time?: number;
   };
 
+  type ResponseListBaseUserCertifyVO = {
+    code?: number;
+    message?: string;
+    data?: BaseUserCertifyVO[];
+    time?: number;
+  };
+
   type ResponseListBaseVendorsVO = {
     code?: number;
     message?: string;
     data?: BaseVendorsVO[];
+    time?: number;
+  };
+
+  type ResponseListBoatVO = {
+    code?: number;
+    message?: string;
+    data?: BoatVO[];
     time?: number;
   };
 
@@ -518,10 +729,17 @@ declare namespace API {
     time?: number;
   };
 
-  type ResponsePageBaseBoatsVO = {
+  type ResponsePageBaseBoatOrdersVO = {
     code?: number;
     message?: string;
-    data?: PageBaseBoatsVO;
+    data?: PageBaseBoatOrdersVO;
+    time?: number;
+  };
+
+  type ResponsePageBaseBoatRequestsVO = {
+    code?: number;
+    message?: string;
+    data?: PageBaseBoatRequestsVO;
     time?: number;
   };
 
@@ -536,6 +754,13 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: PageBaseDocksVO;
+    time?: number;
+  };
+
+  type ResponsePageBaseGoodsOrdersVO = {
+    code?: number;
+    message?: string;
+    data?: PageBaseGoodsOrdersVO;
     time?: number;
   };
 
@@ -560,10 +785,24 @@ declare namespace API {
     time?: number;
   };
 
+  type ResponsePageBaseUserCertifyVO = {
+    code?: number;
+    message?: string;
+    data?: PageBaseUserCertifyVO;
+    time?: number;
+  };
+
   type ResponsePageBaseVendorsVO = {
     code?: number;
     message?: string;
     data?: PageBaseVendorsVO;
+    time?: number;
+  };
+
+  type ResponsePageBoatVO = {
+    code?: number;
+    message?: string;
+    data?: PageBoatVO;
     time?: number;
   };
 
@@ -581,31 +820,10 @@ declare namespace API {
     time?: number;
   };
 
-  type ResponseUnitCertifyVO = {
-    code?: number;
-    message?: string;
-    data?: UnitCertifyVO;
-    time?: number;
-  };
-
-  type ResponseUserCertifyVO = {
-    code?: number;
-    message?: string;
-    data?: UserCertifyVO;
-    time?: number;
-  };
-
   type ResponseUserInfoVO = {
     code?: number;
     message?: string;
     data?: UserInfoVO;
-    time?: number;
-  };
-
-  type ResponseUserPersonalInfoVO = {
-    code?: number;
-    message?: string;
-    data?: UserPersonalInfoVO;
     time?: number;
   };
 
@@ -624,13 +842,6 @@ declare namespace API {
     legalPerson?: string;
     address?: string;
     contactPhone?: string;
-  };
-
-  type UnitCertifyVO = {
-    certify?: BaseUnitsVO;
-    status?: string;
-    createdAt?: string;
-    updatedAt?: string;
   };
 
   type update1Params = {
@@ -661,6 +872,10 @@ declare namespace API {
     id: number;
   };
 
+  type updateUserBoatRequestParams = {
+    id: number;
+  };
+
   type updateVendorBoatParams = {
     id: number;
   };
@@ -669,44 +884,14 @@ declare namespace API {
     id: number;
   };
 
-  type UserCertify = {
-    isDeleted?: boolean;
-    createdAt?: string;
-    updatedAt?: string;
-    id?: number;
-    userId?: number;
-    realName?: string;
-    idCard?: string;
-    status?: string;
-  };
-
   type UserCertifyRequestDTO = {
     realName?: string;
     idCard?: string;
   };
 
-  type UserCertifyVO = {
-    certify?: UserCertify;
-    status?: string;
-    createdAt?: string;
-    updatedAt?: string;
-  };
-
   type UserInfoVO = {
-    userId?: number;
+    id?: number;
     username?: string;
-  };
-
-  type UserPersonalInfoVO = {
-    userId?: number;
-    username?: string;
-    email?: string;
-    phone?: string;
-    role?: number;
-    isActive?: boolean;
-    isBlocked?: boolean;
-    createdAt?: string;
-    updatedAt?: string;
   };
 
   type WxLoginDTO = {
@@ -720,4 +905,4 @@ declare namespace API {
     gender?: number;
   };
 }
-export default API;
+export type {API};

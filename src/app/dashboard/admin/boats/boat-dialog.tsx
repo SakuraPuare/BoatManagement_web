@@ -14,11 +14,10 @@ import {Button} from "@/components/ui/button";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
-import {Boat} from "@/types/boat";
+import type {API} from "@/services/api/typings";
 import {toast} from "sonner";
-import {updateBoat} from "@/services/admin/boats";
-import {BoatType} from "@/types/boat-type";
-import {Dock} from "@/types/dock";
+import {update3} from "@/services/api/adminBoat";
+
 import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover";
 import {cn} from "@/lib/utils";
 import {CalendarIcon} from "lucide-react";
@@ -28,19 +27,16 @@ import {Calendar} from "@/components/ui/calendar";
 const boatFormSchema = z.object({
     boatName: z.string().min(1, "请输入船名"),
     boatTypeId: z.number().min(1, "请选择船只类型"),
+    
     status: z.number().min(0, "状态不能为负"),
-    registrationNumber: z.string().min(1, "注册号不能为空"),
-    buildYear: z.number().min(1900, "建造年份不能为空"),
-    currentDockId: z.number().min(1, "当前港口不能为空"),
-    nextMaintenance: z.date().min(new Date(0), "下次维护时间不能为空"),
-});
+}); 
 
 interface BoatDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    boat: Boat | null;
-    boatTypes: BoatType[];
-    docks: Dock[];
+    boat: API.BaseBoatsVO | null;
+    boatTypes: API.BaseBoatTypesVO[];
+    docks: API.BaseDocksVO[];
 }
 
 export function BoatDialog({
@@ -53,7 +49,7 @@ export function BoatDialog({
     const form = useForm<z.infer<typeof boatFormSchema>>({
         resolver: zodResolver(boatFormSchema),
         defaultValues: {
-            boatName: boat?.boatName || "",
+            boatName: boat?.name || "",
             boatTypeId: boat?.boatTypeId || 0,
             status: boat?.status || 0,
             registrationNumber: boat?.registrationNumber || "",
@@ -85,8 +81,8 @@ export function BoatDialog({
             return;
         }
         try {
-            if (boat?.boatId) {
-                await updateBoat(boat.boatId, {
+            if (boat?.id) {
+                await update3({id: boat.id}, {
                     ...values,
                     boatTypeId: boatType.boatTypeId,
                 });
@@ -104,7 +100,7 @@ export function BoatDialog({
             <AlertDialogContent className="sm:max-w-[425px]">
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {boat?.boatId ? "编辑船只" : "添加船只"}
+                        {boat?.id ? "编辑船只" : "添加船只"}
                     </AlertDialogTitle>
                 </AlertDialogHeader>
                 <Form {...form}>
@@ -139,17 +135,11 @@ export function BoatDialog({
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {boatTypes.map((type) => {
-                                                if (type.status === 1)
-                                                    return (
-                                                        <SelectItem
-                                                            key={type.boatTypeId}
-                                                            value={type.boatTypeId.toString()}
-                                                        >
-                                                            {type.typeName}
-                                                        </SelectItem>
-                                                    );
-                                            })}
+                                            {boatTypes.map((type) => (
+                                                <SelectItem key={type.id} value={type.id.toString()}>
+                                                    {type.typeName}
+                                                </SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                     <FormMessage/>
@@ -206,17 +196,11 @@ export function BoatDialog({
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {docks.map((dock) => {
-                                                if (dock.status === 1)
-                                                    return (
-                                                        <SelectItem
-                                                            key={dock.dockId}
-                                                            value={dock.dockId.toString()}
-                                                        >
-                                                            {dock.dockName}
-                                                        </SelectItem>
-                                                    );
-                                            })}
+                                            {docks.map((dock) => (
+                                                <SelectItem key={dock.id} value={dock.id.toString()}>
+                                                    {dock.name}
+                                                </SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                 </FormItem>

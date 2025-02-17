@@ -1,10 +1,10 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
-import type {UserSelf} from "@/types/user";
+import type { API } from "@/services/api/typings";
 
 interface UserState {
-    user: UserSelf | null;
-    setUser: (user: UserSelf | null) => void;
+    user: API.UserPersonalInfoVO | null;
+    setUser: (user: API.UserPersonalInfoVO | null) => void;
     token: string | null;
     setToken: (token: string | null) => void;
     permissions: string[];
@@ -23,11 +23,6 @@ export const useUserStore = create<UserState>()(
         }),
         {
             name: "user-storage",
-            // // 只持久化 user 和 token
-            // partialize: (state) => ({
-            //   user: state.user,
-            //   token: state.token
-            // }),
         },
     ),
 );

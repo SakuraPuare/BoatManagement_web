@@ -1,6 +1,6 @@
+import type { API } from "@/services/api/typings";
 /* eslint-disable */
 import request from "@/utils/request";
-import API from "./typings";
 
 /** 添加供应商船舶 POST /vendor/boat-type/ */
 export async function addVendorBoatType(
@@ -13,6 +13,20 @@ export async function addVendorBoatType(
       "Content-Type": "application/json",
     },
     data: body,
+    ...(options || {}),
+  });
+}
+
+/** 获取供应商船舶类型 GET /vendor/boat-type/${param0} */
+export async function getVendorBoatType(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getVendorBoatTypeParams,
+  options?: { [key: string]: any }
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.ResponseBaseBoatTypesVO>(`/vendor/boat-type/${param0}`, {
+    method: "GET",
+    params: { ...queryParams },
     ...(options || {}),
   });
 }
@@ -50,36 +64,41 @@ export async function deleteVendorBoatType(
   });
 }
 
-/** 获取供应商船舶类型列表 GET /vendor/boat-type/list */
+/** 获取供应商船舶类型列表 POST /vendor/boat-type/list */
 export async function getVendorBoatTypes(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getVendorBoatTypesParams,
+  body: API.BaseBoatTypesDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseBoatTypesVO>("/vendor/boat-type/list", {
-    method: "GET",
-    params: {
-      ...params,
-      queryDTO: undefined,
-      ...params["queryDTO"],
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
+    data: body,
     ...(options || {}),
   });
 }
 
-/** 获取供应商船舶列表分页 GET /vendor/boat-type/page */
+/** 获取供应商船舶列表分页 POST /vendor/boat-type/page */
 export async function getVendorBoatTypesPage(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getVendorBoatTypesPageParams,
+  body: number,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponsePageBaseBoatTypesVO>("/vendor/boat-type/page", {
-    method: "GET",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
     params: {
+      // pageNum has a default value: 1
+      pageNum: "1",
       ...params,
       queryDTO: undefined,
       ...params["queryDTO"],
     },
+    data: body,
     ...(options || {}),
   });
 }

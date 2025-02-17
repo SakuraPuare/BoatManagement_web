@@ -1,6 +1,6 @@
+import type { API } from "@/services/api/typings";
 /* eslint-disable */
 import request from "@/utils/request";
-import API from "./typings";
 
 /** 此处后端没有提供注释 GET /user/info/${param0} */
 export async function getUser(
@@ -18,7 +18,7 @@ export async function getUser(
 
 /** 此处后端没有提供注释 GET /user/info/me */
 export async function getMe(options?: { [key: string]: any }) {
-  return request<API.ResponseUserPersonalInfoVO>("/user/info/me", {
+  return request<API.ResponseBaseAccountsVO>("/user/info/me", {
     method: "GET",
     ...(options || {}),
   });

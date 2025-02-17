@@ -4,8 +4,9 @@ import {Dialog, DialogContent, DialogHeader, DialogTitle,} from "@/components/ui
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
-import {Dock} from "@/types/dock";
-import {createDock, updateDock} from "@/services/admin/docks";
+import {Select, SelectTrigger, SelectValue, SelectContent, SelectItem} from "@/components/ui/select";
+import type {API} from "@/services/api/typings";
+import {addDocks, updateDocks} from "@/services/api/adminDock";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -14,9 +15,11 @@ import {Switch} from "@/components/ui/switch";
 import {STATUS_CODES} from "@/lib/constants/status";
 
 const DockFormSchema = z.object({
-    dockName: z.string().min(1, "码头名称不能为空"),
-    dockLocation: z.string().min(1, "码头位置不能为空"),
-    status: z.boolean(),
+    name: z.string().min(1, "码头名称不能为空"),
+    location: z.string().min(1, "码头位置不能为空"),
+    address: z.string().min(1, "地址不能为空"),
+    contactPhone: z.string().min(1, "联系电话不能为空"),
+    status: z.string().min(1, "状态不能为空"),
 });
 
 type FormValues = z.infer<typeof DockFormSchema>;
@@ -24,35 +27,39 @@ type FormValues = z.infer<typeof DockFormSchema>;
 interface DockDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    dock: Dock | null;
+    dock: API.BaseDocksVO | null;
 }
 
 export function DockDialog({open, onOpenChange, dock}: DockDialogProps) {
     const form = useForm<FormValues>({
         resolver: zodResolver(DockFormSchema),
         defaultValues: {
-            dockName: "",
-            dockLocation: "",
-            status: false,
+            name: "",
+            location: "",
+            address: "",
+            contactPhone: "",
+            status: STATUS_CODES.ACTIVE.toString(),
         },
         values: {
-            dockName: dock?.dockName || "",
-            dockLocation: dock?.dockLocation || "",
-            status: dock?.status || false,
+            name: dock?.name || "",
+            location: dock?.location || "",
+            address: dock?.address || "",
+            contactPhone: dock?.contactPhone || "",
+            status: dock?.status || STATUS_CODES.ACTIVE.toString(),
         },
     });
 
     const onSubmit = async (values: FormValues) => {
         try {
-            if (dock) {
-                await updateDock(dock.dockId, {
+            if (dock?.id) {
+                await updateDocks({id: dock.id}, {
                     ...values,
-                    status: values.status ? STATUS_CODES.ACTIVE : STATUS_CODES.INACTIVE,
+                    status: values.status,
                 });
             } else {
-                await createDock({
+                await addDocks({}, {
                     ...values,
-                    status: values.status ? STATUS_CODES.ACTIVE : STATUS_CODES.INACTIVE,
+                    status: values.status,
                 });
             }
             onOpenChange(false);
@@ -72,10 +79,10 @@ export function DockDialog({open, onOpenChange, dock}: DockDialogProps) {
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         <FormField
                             control={form.control}
-                            name="dockName"
+                            name="name"
                             render={({field}) => (
                                 <FormItem>
-                                    <Label htmlFor="dockName">码头名称</Label>
+                                    <Label htmlFor="name">码头名称</Label>
                                     <FormControl>
                                         <Input {...field} />
                                     </FormControl>
@@ -86,10 +93,10 @@ export function DockDialog({open, onOpenChange, dock}: DockDialogProps) {
 
                         <FormField
                             control={form.control}
-                            name="dockLocation"
+                            name="location"
                             render={({field}) => (
                                 <FormItem>
-                                    <Label htmlFor="dockLocation">码头位置</Label>
+                                    <Label htmlFor="location">码头位置</Label>
                                     <FormControl>
                                         <Input {...field} />
                                     </FormControl>
@@ -98,17 +105,48 @@ export function DockDialog({open, onOpenChange, dock}: DockDialogProps) {
                             )}
                         />
 
+                        <FormField
+                            control={form.control}
+                            name="address"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>地址</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="contactPhone"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>联系电话</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name="status"
                             render={({field}) => (
-                                <FormItem className="flex items-center gap-2">
-                                    <FormLabel>启用状态</FormLabel>
+                                <FormItem>  
+                                    <FormLabel>状态</FormLabel>
                                     <FormControl>
-                                        <Switch
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
+                                        <Select>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="选择状态" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value={STATUS_CODES.ACTIVE.toString()}>正常</SelectItem>
+                                                <SelectItem value={STATUS_CODES.INACTIVE.toString()}>停用</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>

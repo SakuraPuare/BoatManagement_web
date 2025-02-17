@@ -8,24 +8,21 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Anchor, MoreVertical, Pencil, Plus, Search, Ship, Trash2,} from "lucide-react";
-import {Boat} from "@/types/boat";
+import type {API} from "@/services/api/typings";
 import {BOAT_STATUS_CODES, BOAT_STATUS_NAMES,} from "@/lib/constants/boat-type";
 import {BoatDialog} from "./boat-dialog";
 import {DataPagination} from "@/components/ui/data-pagination";
-import {deleteBoat, fetchBoatListPage} from "@/services/admin/boats";
-import {BoatType} from "@/types/boat-type";
-import {fetchBoatTypeList} from "@/services/admin/boat-types";
-import {Dock} from "@/types/dock";
-import {fetchDockList} from "@/services/admin/docks";
+import {delete3, listPage3} from "@/services/api/adminBoat";
+import {getDocksPage} from "@/services/api/adminDock";
+import {listPage4} from "@/services/api/adminBoatType";
 import {BoatStatusDialog} from "./status-dialog";
-
 const ITEMS_PER_PAGE = 10;
 
 export default function BoatsPage() {
-    const [boats, setBoats] = useState<Boat[]>([]);
-    const [selectedBoat, setSelectedBoat] = useState<Boat | null>(null);
-    const [boatTypes, setBoatTypes] = useState<BoatType[]>([]);
-    const [docks, setDocks] = useState<Dock[]>([]);
+    const [boats, setBoats] = useState<API.BaseBoatsVO[]>([]);
+    const [selectedBoat, setSelectedBoat] = useState<API.BaseBoatsVO | null>(null);
+    const [boatTypes, setBoatTypes] = useState<API.BaseBoatTypesVO[]>([]);
+    const [docks, setDocks] = useState<API.BaseDocksVO[]>([]);
 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
@@ -36,12 +33,14 @@ export default function BoatsPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
+
     const fetchBoats = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await fetchBoatListPage(currentPage, ITEMS_PER_PAGE);
-            setBoats(response.records);
-            setTotalPages(response.totalPage);
+            const response = await listPage3({page: currentPage, size: ITEMS_PER_PAGE},{});
+            
+            setBoats(response.data?.data?.records || []);
+            setTotalPages(response.data?.data?.totalPage || 0);
         } catch (error) {
             console.error(error);
         } finally {
@@ -51,13 +50,13 @@ export default function BoatsPage() {
 
     const fetchData = useCallback(async () => {
         const fetchBoatTypes = async () => {
-            const response = await fetchBoatTypeList();
-            setBoatTypes(response);
+            const response = await listPage4({page: currentPage, size: ITEMS_PER_PAGE},{});
+            setBoatTypes(response.data?.data?.records || []);
         };
 
         const fetchDocks = async () => {
-            const response = await fetchDockList();
-            setDocks(response);
+            const response = await getDocksPage({pageNum: currentPage, pageSize: ITEMS_PER_PAGE},{});
+            setDocks(response.data?.data?.records || []);
         };
 
         await fetchBoatTypes();
@@ -70,7 +69,7 @@ export default function BoatsPage() {
         setIsDialogOpen(true);
     };
 
-    const handleEdit = (boat: Boat) => {
+    const handleEdit = (boat: API.BaseBoatsVO) => {
         setSelectedBoat(boat);
         setIsDialogOpen(true);
     };
@@ -78,7 +77,7 @@ export default function BoatsPage() {
     const handleDelete = async (id: number | undefined) => {
         if (!id) return;
         try {
-            await deleteBoat(id.toString());
+            await delete3({id: id});
             fetchBoats();
         } catch (error) {
             console.error(error);
@@ -140,14 +139,12 @@ export default function BoatsPage() {
                         <TableRow>
                             <TableHead>船只ID</TableHead>
                             <TableHead>船名</TableHead>
-                            <TableHead>类型</TableHead>
-                            <TableHead>容量</TableHead>
+                            <TableHead>船型</TableHead>
+                            <TableHead>船主ID</TableHead>
+                            <TableHead>船主单位ID</TableHead>
                             <TableHead>状态</TableHead>
-                            <TableHead>注册号</TableHead>
-                            <TableHead>建造年份</TableHead>
-                            <TableHead>当前港口</TableHead>
-                            <TableHead>上次维护</TableHead>
-                            <TableHead>下次维护</TableHead>
+                            <TableHead>创建时间</TableHead>
+                            <TableHead>更新时间</TableHead>
                             <TableHead className="w-[100px]">操作</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -166,59 +163,51 @@ export default function BoatsPage() {
                             </TableRow>
                         ) : (
                             boats.map((boat) => (
-                                <TableRow key={boat.boatId}>
-                                    <TableCell className="font-medium">{boat.boatId}</TableCell>
-                                    <TableCell>{boat.boatName}</TableCell>
+                                <TableRow key={boat.id}>
+                                    <TableCell className="font-medium">{boat.id}</TableCell>
+                                    <TableCell>{boat.name}</TableCell>
                                     <TableCell>
                                         {
                                             boatTypes.find(
-                                                (type) => type.boatTypeId === boat.boatTypeId,
+                                                (type) => type.id === boat.boatTypeId,
                                             )?.typeName
                                         }
                                     </TableCell>
                                     <TableCell>
                                         {
                                             boatTypes.find(
-                                                (type) => type.boatTypeId === boat.boatTypeId,
-                                            )?.maxCapacity
+                                                (type) => type.id === boat.boatTypeId,
+                                            )?.maxLoad
                                         }
                                     </TableCell>
                                     <TableCell>
                     <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            boat.status === BOAT_STATUS_CODES.ACTIVE
+                            boat.status === BOAT_STATUS_CODES.ACTIVE.toString()
                                 ? "bg-green-100 text-green-800"
-                                : boat.status === BOAT_STATUS_CODES.MAINTENANCE
+                                : boat.status === BOAT_STATUS_CODES.MAINTENANCE.toString()
                                     ? "bg-blue-100 text-blue-800"
-                                    : boat.status === BOAT_STATUS_CODES.INACTIVE
+                                    : boat.status === BOAT_STATUS_CODES.INACTIVE.toString()
                                         ? "bg-yellow-100 text-yellow-800"
                                         : "bg-red-100 text-red-800"
                         }`}
                     >
                       {boat.status !== undefined
-                          ? BOAT_STATUS_NAMES[
-                              boat.status as keyof typeof BOAT_STATUS_NAMES
-                              ]
-                          : "未知状态"}
+                          ? boat.status === BOAT_STATUS_CODES.ACTIVE.toString()
+                              ? "可用"
+                              : boat.status === BOAT_STATUS_CODES.MAINTENANCE.toString()
+                                  ? "维护中"
+                                  : "停用"
+                          : "未知"}
                     </span>
                                     </TableCell>
-                                    <TableCell>{boat.registrationNumber}</TableCell>
-                                    <TableCell>{boat.buildYear}</TableCell>
+                                    <TableCell>{boat.createdAt}</TableCell>
+                                    <TableCell>{boat.updatedAt}</TableCell>
                                     <TableCell>
                                         {
-                                            docks.find((dock) => dock.dockId === boat.currentDockId)
-                                                ?.dockName
+                                            docks.find((dock) => dock.id === boat.dockId)
+                                                ?.name
                                         }
-                                    </TableCell>
-                                    <TableCell>
-                                        {boat.lastMaintenance
-                                            ? format(new Date(boat.lastMaintenance), "yyyy-MM-dd")
-                                            : "-"}
-                                    </TableCell>
-                                    <TableCell>
-                                        {boat.nextMaintenance
-                                            ? format(new Date(boat.nextMaintenance), "yyyy-MM-dd")
-                                            : "-"}
                                     </TableCell>
                                     <TableCell>
                                         <DropdownMenu>
@@ -233,7 +222,7 @@ export default function BoatsPage() {
                                                     编辑
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
-                                                    onClick={() => handleDelete(boat.boatId)}
+                                                    onClick={() => handleDelete(boat.id)}
                                                 >
                                                     <Trash2 className="h-4 w-4 mr-2"/>
                                                     删除
@@ -285,7 +274,7 @@ export default function BoatsPage() {
                     }
                     setIsStatusDialogOpen(open);
                 }}
-                boat={selectedBoat || undefined}
+                boat={selectedBoat || null}
             />
         </div>
     );

@@ -28,13 +28,12 @@ const sidebarItems = [
 
 export default function VendorDashboard() {
     return (
-        <DashboardLayout title="设备管理平台" sidebarItems={sidebarItems}>
+        
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                 <h2 className="text-2xl font-semibold mb-4">设备管理控制台</h2>
                 <p className="text-gray-600 dark:text-gray-400">
                     这里是设备管理控制台主页
                 </p>
             </div>
-        </DashboardLayout>
     );
 }

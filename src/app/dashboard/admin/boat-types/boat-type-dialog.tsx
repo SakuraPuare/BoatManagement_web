@@ -13,9 +13,9 @@ import {
 import {Button} from "@/components/ui/button";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {BoatType} from "@/types/boat-type";
+import type {API} from "@/services/api/typings";
 import {toast} from "sonner";
-import {createBoatType, updateBoatType} from "@/services/admin/boat-types";
+import {create4, update4} from "@/services/api/adminBoatType";
 import {Switch} from "@/components/ui/switch";
 import {Label} from "@/components/ui/label";
 
@@ -24,20 +24,33 @@ const boatTypeFormSchema = z.object({
         .string()
         .min(1, "船型名称不能为空")
         .max(50, "船型名称不能超过50个字符"),
-    typeCode: z
+    description: z
         .string()
-        .min(1, "船型代码不能为空")
-        .max(20, "船型代码不能超过20个字符"),
-    maxCapacity: z.coerce
+        .min(1, "船只描述不能为空")
+        .max(200, "船只描述不能超过200个字符"),
+    length: z.coerce
         .number()
-        .min(1, "最大容量不能小于1")
-        .max(10000, "最大容量不能大于10000"),
+        .min(1, "长度不能小于1")
+        .max(10000, "长度不能大于10000"),
+    width: z.coerce
+        .number()
+        .min(0, "宽度不能小于0")
+            .max(100, "宽度不能大于100"),
+    grossNumber: z.coerce
+        .number()
+        .min(1, "总吨位不能小于1")
+        .max(10000, "总吨位不能大于10000"),
+    maxLoad: z.coerce
+        .number()
+        .min(0, "最大载重量不能小于0")
+        .max(10000, "最大载重量不能大于10000"),
     maxSpeed: z.coerce
         .number()
         .min(0, "最大速度不能小于0")
         .max(100, "最大速度不能大于100"),
-    fuelType: z.string().min(1, "燃料类型不能为空"),
-    status: z.number().min(0).max(1),
+    maxEndurance: z.coerce
+        .number()
+        .min(0, "最大续航不能小于0")
 });
 
 type FormValues = z.infer<typeof boatTypeFormSchema>;
@@ -45,7 +58,7 @@ type FormValues = z.infer<typeof boatTypeFormSchema>;
 interface BoatTypeDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    boatType: BoatType | null;
+    boatType: API.BaseBoatTypesVO | null;
 }
 
 export function BoatTypeDialog({
@@ -57,28 +70,32 @@ export function BoatTypeDialog({
         resolver: zodResolver(boatTypeFormSchema),
         defaultValues: {
             typeName: boatType?.typeName || "",
-            typeCode: boatType?.typeCode || "",
-            maxCapacity: boatType?.maxCapacity || 1,
+            description: boatType?.description || "",
+            length: boatType?.length || 0,
+            width: boatType?.width || 0,
+            grossNumber: boatType?.grossNumber || 0,
+            maxLoad: boatType?.maxLoad || 0,
             maxSpeed: boatType?.maxSpeed || 0,
-            fuelType: boatType?.fuelType || "",
-            status: boatType?.status || 1,
+            maxEndurance: boatType?.maxEndurance || 0,
         },
         values: {
             typeName: boatType?.typeName || "",
-            typeCode: boatType?.typeCode || "",
-            maxCapacity: boatType?.maxCapacity || 1,
+            description: boatType?.description || "",
+            length: boatType?.length || 0,
+            width: boatType?.width || 0,
+            grossNumber: boatType?.grossNumber || 0,
+            maxLoad: boatType?.maxLoad || 0,
             maxSpeed: boatType?.maxSpeed || 0,
-            fuelType: boatType?.fuelType || "",
-            status: boatType?.status || 1,
+            maxEndurance: boatType?.maxEndurance || 0,
         },
     });
 
     const onSubmit = async (values: FormValues) => {
         try {
-            if (boatType?.boatTypeId) {
-                await updateBoatType(boatType.boatTypeId, values);
+            if (boatType?.id) {
+                await update4({id: boatType.id}, values);
             } else {
-                await createBoatType(values);
+                await create4(values);
             }
             onOpenChange(false);
             form.reset();
@@ -115,12 +132,12 @@ export function BoatTypeDialog({
                         />
                         <FormField
                             control={form.control}
-                            name="typeCode"
+                            name="description"
                             render={({field}) => (
                                 <FormItem>
-                                    <FormLabel>船型代码</FormLabel>
+                                    <FormLabel>描述</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="请输入船型代码"/>
+                                        <Input {...field} placeholder="请输入描述"/>
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>
@@ -128,17 +145,62 @@ export function BoatTypeDialog({
                         />
                         <FormField
                             control={form.control}
-                            name="maxCapacity"
+                            name="length"
                             render={({field}) => (
                                 <FormItem>
-                                    <FormLabel>最大容量</FormLabel>
+                                    <FormLabel>长度</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
                                             type="number"
                                             min="1"
-                                            placeholder="请输入最大容量"
+                                            placeholder="请输入长度"
                                         />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="width"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>宽度</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            type="number"
+                                            min="0"
+                                            step="0.1"
+                                            placeholder="请输入宽度"
+                                        />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="grossNumber"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>总吨位</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="请输入总吨位"/>
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="maxLoad"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>最大载重量</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="请输入最大载重量"/>
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>
@@ -151,13 +213,7 @@ export function BoatTypeDialog({
                                 <FormItem>
                                     <FormLabel>最大速度</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            {...field}
-                                            type="number"
-                                            min="0"
-                                            step="0.1"
-                                            placeholder="请输入最大速度"
-                                        />
+                                        <Input {...field} placeholder="请输入最大速度"/>
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>
@@ -165,38 +221,17 @@ export function BoatTypeDialog({
                         />
                         <FormField
                             control={form.control}
-                            name="fuelType"
+                            name="maxEndurance"
                             render={({field}) => (
                                 <FormItem>
-                                    <FormLabel>燃料类型</FormLabel>
+                                    <FormLabel>最大续航</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="请输入燃料类型"/>
+                                        <Input {...field} placeholder="请输入最大续航"/>
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>
                             )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="status"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>状态</FormLabel>
-                                    <FormControl>
-                                        <div className="flex items-center space-x-2">
-                                            <Switch
-                                                checked={field.value === 1}
-                                                onCheckedChange={(checked) =>
-                                                    field.onChange(checked ? 1 : 0)
-                                                }
-                                            />
-                                            <Label>{field.value === 1 ? "启用" : "禁用"}</Label>
-                                        </div>
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
+                        />  
                         <AlertDialogFooter>
                             <Button
                                 variant="outline"

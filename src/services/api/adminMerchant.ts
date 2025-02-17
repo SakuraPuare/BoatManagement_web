@@ -1,6 +1,6 @@
+import type { API } from "@/services/api/typings";
 /* eslint-disable */
 import request from "@/utils/request";
-import API from "./typings";
 
 /** 创建商户 POST /admin/merchant/ */
 export async function create2(
@@ -64,40 +64,41 @@ export async function delete2(
   });
 }
 
-/** 获取商户列表 GET /admin/merchant/list */
+/** 获取商户列表 POST /admin/merchant/list */
 export async function list2(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.list2Params,
+  body: API.BaseMerchantsDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseMerchantsVO>("/admin/merchant/list", {
-    method: "GET",
-    params: {
-      ...params,
-      queryDTO: undefined,
-      ...params["queryDTO"],
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
+    data: body,
     ...(options || {}),
   });
 }
 
-/** 获取商户列表分页 GET /admin/merchant/page */
+/** 获取商户列表分页 POST /admin/merchant/page */
 export async function listPage2(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.listPage2Params,
+  body: API.BaseMerchantsDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponsePageBaseMerchantsVO>("/admin/merchant/page", {
-    method: "GET",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
     params: {
       // page has a default value: 1
       page: "1",
       // size has a default value: 10
       size: "10",
       ...params,
-      queryDTO: undefined,
-      ...params["queryDTO"],
     },
+    data: body,
     ...(options || {}),
   });
 }

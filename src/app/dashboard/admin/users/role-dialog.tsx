@@ -12,11 +12,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import {Button} from "@/components/ui/button";
 import {Form, FormDescription, FormField, FormItem, FormLabel,} from "@/components/ui/form";
-import {UserSelf} from "@/types/user";
+import type {API} from "@/services/api/typings"
 import {toast} from "sonner";
 import {ROLE_CHINESE_NAMES, ROLE_COLORS, ROLE_DESCRIPTIONS, ROLE_MASKS,} from "@/lib/constants/role";
 import {cn} from "@/lib/utils";
-import {updateUserRoles} from "@/services/admin/users";
+import {update1} from "@/services/api/adminUser";
 
 const RoleFormSchema = z.object({
     role: z.number(),
@@ -27,7 +27,7 @@ type FormValues = z.infer<typeof RoleFormSchema>;
 interface RoleDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    user: UserSelf;
+    user: API.BaseAccountsVO;
 }
 
 export function RoleDialog({open, onOpenChange, user}: RoleDialogProps) {
@@ -54,7 +54,8 @@ export function RoleDialog({open, onOpenChange, user}: RoleDialogProps) {
 
     const onSubmit = async (values: FormValues) => {
         try {
-            await updateUserRoles(user.userId, values.role);
+            if (!user.id) return;
+            await update1({id: user.id}, {role: values.role});
             onOpenChange(false);
             form.reset();
         } catch (error) {

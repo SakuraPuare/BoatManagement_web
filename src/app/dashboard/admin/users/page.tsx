@@ -1,5 +1,6 @@
 "use client";
 import {
+  Action,
   Column,
   DataManagementTable,
 } from "@/components/data-management-table";
@@ -8,7 +9,11 @@ import {
   getRoleColors,
   ROLE_MASKS,
 } from "@/lib/constants/role";
-import { delete1, listPage1, update1 } from "@/services/api/adminUser";
+import {
+  deleteAdminAccount,
+  getAdminUserPageQuery,
+  updateAdminAccount,
+} from "@/services/api/adminUser";
 import { API } from "@/services/api/typings";
 import {
   Ban,
@@ -39,7 +44,7 @@ const defaultUser: API.BaseAccountsVO = {
 export default function UsersPage() {
   const [users, setUsers] = useState<API.BaseAccountsVO[]>([]);
   const [selectedUser, setSelectedUser] = useState<API.BaseAccountsVO | null>(
-    null,
+    null
   );
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -53,17 +58,16 @@ export default function UsersPage() {
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await listPage1(
-        { page: currentPage, size: ITEMS_PER_PAGE },
+      const response = await getAdminUserPageQuery(
+        { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         {
-          username: "",
           ...(statusFilter === "active" && {
             isActive: true,
             isBlocked: false,
           }),
           ...(statusFilter === "blocked" && { isBlocked: true }),
           ...(statusFilter === "inactive" && { isActive: false }),
-        },
+        }
       );
       if (response.data?.data?.records) {
         setUsers(response.data.data.records);
@@ -88,7 +92,7 @@ export default function UsersPage() {
 
   const handleDelete = async (userId: number) => {
     try {
-      await delete1({ id: userId });
+      await deleteAdminAccount({ id: userId });
       await fetchUsers();
     } catch (error) {
       console.error(error);
@@ -98,7 +102,7 @@ export default function UsersPage() {
   const handleBlock = async (userId: number) => {
     const isBlocked = users.find((user) => user.id === userId)?.isBlocked;
     try {
-      await update1({ id: userId }, { username: "", isActive: !isBlocked });
+      await updateAdminAccount({ id: userId }, { isBlocked: !isBlocked });
       await fetchUsers();
     } catch (error) {
       console.error(error);
@@ -117,51 +121,49 @@ export default function UsersPage() {
     {
       header: "角色",
       accessor: "role",
-      render: (value: number) => (
-        <div className="flex gap-1">
-          {getRoleChineseNames(value || 0).map((name, index) => (
-            <span
-              key={index}
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                getRoleColors(value || 0)[index]
-              }`}
-            >
-              {name}
-            </span>
-          ))}
-        </div>
-      ),
+      render: (value) => {
+        const role = value as number;
+        return (
+          <div className="flex gap-1">
+            {getRoleChineseNames(role).map((name, index) => (
+              <span
+                key={index}
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  getRoleColors(role)[index]
+                }`}
+              >
+                {name}
+              </span>
+            ))}
+          </div>
+        );
+      },
     },
     {
       header: "状态",
       accessor: "isBlocked",
-      render: (value: boolean, user: API.BaseAccountsVO) => (
-        <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            value
-              ? "bg-red-100 text-red-800"
-              : user.isActive
+      render: (value, user: API.BaseAccountsVO) => {
+        const isBlocked = value as boolean;
+        return (
+          <span
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+              isBlocked
+                ? "bg-red-100 text-red-800"
+                : user.isActive
                 ? "bg-green-100 text-green-800"
                 : "bg-gray-100 text-gray-800"
-          }`}
-        >
-          {value ? "已封禁" : user.isActive ? "正常" : "未激活"}
-        </span>
-      ),
+            }`}
+          >
+            {isBlocked ? "已封禁" : user.isActive ? "正常" : "未激活"}
+          </span>
+        );
+      },
     },
-    {
-      header: "创建时间",
-      accessor: "createdAt",
-      render: (value: string) => value,
-    },
-    {
-      header: "更新时间",
-      accessor: "updatedAt",
-      render: (value: string) => value,
-    },
+    { header: "创建时间", accessor: "createdAt" },
+    { header: "更新时间", accessor: "updatedAt" },
   ];
 
-  const actions = [
+  const actions: Action<API.BaseAccountsVO>[] = [
     {
       icon: <Pencil className="h-4 w-4 mr-2" />,
       label: "编辑",

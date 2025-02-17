@@ -23,7 +23,7 @@ import {
   ROLE_MASKS,
 } from "@/lib/constants/role";
 import { cn } from "@/lib/utils";
-import { update1 } from "@/services/api/adminUser";
+import { updateAdminAccount } from "@/services/api/adminUser";
 import type { API } from "@/services/api/typings";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -67,7 +67,7 @@ export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
   const onSubmit = async (values: FormValues) => {
     try {
       if (!user.id) return;
-      await update1({ id: user.id }, { role: values.role });
+      await updateAdminAccount({ id: user.id }, { role: values.role });
       onOpenChange(false);
       form.reset();
     } catch (error) {
@@ -97,7 +97,7 @@ export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
                     选择要分配给用户的角色。用户可以同时拥有多个角色。
                   </FormDescription>
                   <div className="space-y-4">
-                    {Object.entries(ROLE_MASKS).map(([roleName, roleValue]) => (
+                    {Object.entries(ROLE_MASKS).map(([_, roleValue]) => (
                       <div
                         key={roleValue}
                         className="flex items-start space-x-4"

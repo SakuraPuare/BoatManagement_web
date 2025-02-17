@@ -25,12 +25,13 @@ import {
   ROLE_MASKS,
 } from "@/lib/constants/role";
 import { cn } from "@/lib/utils";
-import { create1, update1 } from "@/services/api/adminUser";
+// import { create1, update1 } from "@/services/api/adminUser";
 import type { API } from "@/services/api/typings";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+import { createAdminAccount, updateAdminAccount } from "@/services/api/adminUser";
 
 const userFormSchema = z
   .object({
@@ -90,10 +91,10 @@ export function UserDialog({ open, onOpenChange, user }: UserDialogProps) {
       email: user?.email || "",
       phone: user?.phone || "",
       role: user?.role || ROLE_MASKS.USER,
-      isActive: user?.isActive || true,
+      isActive: user?.isActive || false,
     },
   });
-
+  
   const role = form.watch("role");
 
   const toggleRole = (roleValue: number) => {
@@ -108,9 +109,9 @@ export function UserDialog({ open, onOpenChange, user }: UserDialogProps) {
   const onSubmit = async (values: FormValues) => {
     try {
       if (user.id) {
-        await update1({ id: user.id }, values);
+        await updateAdminAccount({ id: user.id }, values);
       } else {
-        await create1(values);
+        await createAdminAccount(values);
       }
       onOpenChange(false);
       form.reset();
@@ -180,7 +181,7 @@ export function UserDialog({ open, onOpenChange, user }: UserDialogProps) {
                 <FormItem>
                   <FormLabel>用户角色</FormLabel>
                   <div className="flex flex-wrap gap-2">
-                    {Object.entries(ROLE_MASKS).map(([roleName, roleValue]) => (
+                    {Object.entries(ROLE_MASKS).map(([_, roleValue]) => (
                       <Button
                         key={roleValue}
                         type="button"
@@ -203,7 +204,7 @@ export function UserDialog({ open, onOpenChange, user }: UserDialogProps) {
               name="isActive"
               render={({ field }) => (
                 <FormItem className="flex items-center gap-2">
-                  <FormLabel>启用状态</FormLabel>
+                  <FormLabel>激活状态</FormLabel>
                   <FormControl>
                     <Switch
                       checked={field.value}

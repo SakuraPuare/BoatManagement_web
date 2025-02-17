@@ -138,7 +138,7 @@ declare namespace API {
 
   type BaseDocksDTO = {
     name?: string;
-    location?: string;
+    location?: number[];
     address?: string;
     contactPhone?: string;
     isEnabled?: boolean;
@@ -149,7 +149,7 @@ declare namespace API {
     updatedAt?: string;
     id?: number;
     name?: string;
-    location?: string;
+    location?: number[];
     address?: string;
     contactPhone?: string;
     isEnabled?: boolean;

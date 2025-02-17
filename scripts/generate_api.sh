@@ -1,8 +1,10 @@
 rm -rf src/services/api
 mkdir -p src/services/api
 
-npm run openapi
+pnpm run openapi
 
-fd -t f . src/services/api -E "typings.d.ts" -E "index.ts" -x sed -i '1i\import type { API } from "@/services/api/typings";' {}
-fd -t f . src/services/api -E "typings.d.ts" -E "index.ts" -x sed -i '/\/\/ @ts-ignore/d' {}
-echo "export type { API };" >> src/services/api/typings.d.ts
+fd -t f . src/services/api -E "typings.d.ts" -x sed -i '1i\import type { API } from "./typings";' {}
+fd -t f . src/services/api -E "typings.d.ts" -x sed -i '/\/\/ @ts-ignore/d' {}
+echo "export type {
+  API
+}" >> src/services/api/typings.d.ts

@@ -1,9 +1,10 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Building2, ShieldCheck, Store, User } from "lucide-react";
+import { Building2, Home, ShieldCheck, Store, User } from "lucide-react";
 import { useRouter } from "next/navigation"; // 注意这里改用 next/navigation
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface RoleCard {
   title: string;
@@ -51,6 +52,17 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
       <div className="container mx-auto px-4 py-16 max-w-6xl">
+        <div className="absolute top-8 left-8">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => router.push("/")}
+            className="hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            <Home className="h-8 w-8 text-gray-600 dark:text-gray-400" />
+          </Button>
+        </div>
+
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             选择角色

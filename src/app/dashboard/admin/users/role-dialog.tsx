@@ -1,8 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -18,8 +15,6 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import type { API } from "@/services/api/typings";
-import { toast } from "sonner";
 import {
   ROLE_CHINESE_NAMES,
   ROLE_COLORS,
@@ -28,6 +23,11 @@ import {
 } from "@/lib/constants/role";
 import { cn } from "@/lib/utils";
 import { update1 } from "@/services/api/adminUser";
+import type { API } from "@/services/api/typings";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
 
 const RoleFormSchema = z.object({
   role: z.number(),

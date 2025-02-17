@@ -1,16 +1,16 @@
 enum ROLE {
-    USER,
-    MERCHANT,
-    VENDOR,
-    ADMIN,
+  USER,
+  MERCHANT,
+  VENDOR,
+  ADMIN,
 }
 
 export const ROLE_MASKS = {
-    NONE: 0,
-    USER: 1 << ROLE.USER, // 0001
-    MERCHANT: 1 << ROLE.MERCHANT, // 0010
-    VENDOR: 1 << ROLE.VENDOR, // 0100
-    ADMIN: 1 << ROLE.ADMIN, // 1000
+  NONE: 0,
+  USER: 1 << ROLE.USER, // 0001
+  MERCHANT: 1 << ROLE.MERCHANT, // 0010
+  VENDOR: 1 << ROLE.VENDOR, // 0100
+  ADMIN: 1 << ROLE.ADMIN, // 1000
 } as const;
 
 export const ROLE_CHINESE_NAMES = {

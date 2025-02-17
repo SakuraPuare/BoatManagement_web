@@ -1,6 +1,6 @@
+import type { API } from "@/services/api/typings";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { API } from "@/services/api/typings";
 
 interface UserState {
   user: API.UserPersonalInfoVO | null;

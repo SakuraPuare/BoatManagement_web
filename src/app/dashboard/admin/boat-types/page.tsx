@@ -1,7 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { format } from "date-fns";
+import { BoatTypeDialog } from "@/app/dashboard/admin/boat-types/boat-type-dialog";
+import { Button } from "@/components/ui/button";
+import { DataPagination } from "@/components/ui/data-pagination";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -10,14 +18,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { delete4, listPage4, update4 } from "@/services/api/adminBoatType";
+import type { API } from "@/services/api/typings";
+import { format } from "date-fns";
 import {
   Anchor,
   Ban,
@@ -27,10 +30,7 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-import type { API } from "@/services/api/typings";
-import { BoatTypeDialog } from "@/app/dashboard/admin/boat-types/boat-type-dialog";
-import { DataPagination } from "@/components/ui/data-pagination";
-import { delete4, listPage4, update4 } from "@/services/api/adminBoatType";
+import { useCallback, useEffect, useState } from "react";
 
 const ITEMS_PER_PAGE = 10;
 

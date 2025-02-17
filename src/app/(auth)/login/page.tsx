@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Lock, QrCode, Ship, Smartphone, User as UserIcon } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { useAuth } from "@/hooks/useAuth";
+import { Lock, QrCode, Ship, Smartphone, User as UserIcon } from "lucide-react";
+import Link from "next/link";
+import React, { useState } from "react";
 
 export default function LoginPage() {
   const { login } = useAuth();

@@ -1,15 +1,15 @@
-import { useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { useUserStore } from "@/stores/user";
-import { toast } from "sonner";
+import { getRoleEnglishNames } from "@/lib/constants/role";
 import {
   loginWithPassword,
   registerWithPassword,
 } from "@/services/api/authController";
-import { getMe } from "@/services/api/userInfo";
 import type { API } from "@/services/api/typings";
+import { getMe } from "@/services/api/userInfo";
+import { useUserStore } from "@/stores/user";
 import Cookies from "js-cookie";
-import { getRoleEnglishNames } from "@/lib/constants/role";
+import { useRouter } from "next/navigation";
+import { useCallback } from "react";
+import { toast } from "sonner";
 
 export const useAuth = () => {
   const router = useRouter();

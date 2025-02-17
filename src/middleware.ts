@@ -1,11 +1,11 @@
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
 import {
   apiAuthPrefix,
   DEFAULT_LOGIN_REDIRECT,
   publicRoutes,
 } from "@/configs/routes";
 import Cookies from "js-cookie";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

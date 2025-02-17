@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
-import Link from "next/link";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Lock, Ship, User } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/useAuth";
 import { api } from "@/lib/api";
 import { debounce } from "lodash";
+import { Lock, Ship, User } from "lucide-react";
+import Link from "next/link";
+import React, { useCallback, useState } from "react";
 import { toast } from "sonner";
-import { useAuth } from "@/hooks/useAuth";
 
 export default function RegisterPage() {
   const { register } = useAuth();

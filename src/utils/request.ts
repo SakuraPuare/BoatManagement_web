@@ -1,5 +1,5 @@
-import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { useUserStore } from "@/stores/user";
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 
 interface ApiResponse<T> {
   code: number;

@@ -1,8 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -20,9 +17,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import type { API } from "@/services/api/typings";
-import { toast } from "sonner";
 import { create4, update4 } from "@/services/api/adminBoatType";
+import type { API } from "@/services/api/typings";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
 
 const boatTypeFormSchema = z.object({
   typeName: z

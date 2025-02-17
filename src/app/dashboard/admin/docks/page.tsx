@@ -1,7 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { DataPagination } from "@/components/ui/data-pagination";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -10,21 +24,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { STATUS_CODES } from "@/lib/constants/status";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+  deleteDocks,
+  getDocksPage,
+  updateDocks,
+} from "@/services/api/adminDock";
+import type { API } from "@/services/api/typings";
+import { format } from "date-fns";
 import {
   Anchor,
   Ban,
@@ -34,15 +41,8 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-import type { API } from "@/services/api/typings";
+import { useCallback, useEffect, useState } from "react";
 import { DockDialog } from "./dock-dialog";
-import { DataPagination } from "@/components/ui/data-pagination";
-import {
-  deleteDocks,
-  getDocksPage,
-  updateDocks,
-} from "@/services/api/adminDock";
-import { STATUS_CODES } from "@/lib/constants/status";
 
 const ITEMS_PER_PAGE = 10;
 

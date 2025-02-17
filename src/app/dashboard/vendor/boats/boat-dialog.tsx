@@ -1,8 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -27,11 +24,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { API } from "@/services/api/typings";
-import { toast } from "sonner";
-import { addVendorBoat, updateVendorBoat } from "@/services/api/vendorBoat";
 import { Switch } from "@/components/ui/switch";
+import type { API } from "@/services/api/typings";
+import { addVendorBoat, updateVendorBoat } from "@/services/api/vendorBoat";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
 
 const boatFormSchema = z.object({
   name: z.string().min(1, "请输入船名"),

@@ -1,8 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -18,16 +15,19 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 import {
   BOAT_STATUS_CODES,
   BOAT_STATUS_COLORS,
   BOAT_STATUS_DESCRIPTIONS,
   BOAT_STATUS_NAMES,
 } from "@/lib/constants/boat-type";
-import type { API } from "@/services/api/typings";
+import { cn } from "@/lib/utils";
 import { update3 } from "@/services/api/adminBoat";
+import type { API } from "@/services/api/typings";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
 
 const StatusFormSchema = z.object({
   status: z.number(),

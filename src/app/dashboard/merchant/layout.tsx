@@ -1,7 +1,7 @@
 "use client";
 
-import { Home, Package, ShoppingCart, Store } from "lucide-react";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
+import { Home, Package, ShoppingCart, Store } from "lucide-react";
 
 const sidebarItems = [
   {

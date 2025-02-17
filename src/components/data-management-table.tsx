@@ -26,16 +26,18 @@ import { NestedKeyOf, NestedValue } from "@/types/commom";
 import { MoreVertical, Plus, Search } from "lucide-react";
 import React, { ReactNode } from "react";
 
-
-function getValue<T, K extends NestedKeyOf<T>>(obj: T, path: K): NestedValue<T, K> {
-  const [first, second] = path.split('.') as [keyof T & string, string];
+function getValue<T, K extends NestedKeyOf<T>>(
+  obj: T,
+  path: K
+): NestedValue<T, K> {
+  const [first, second] = path.split(".") as [keyof T & string, string];
 
   if (second === undefined) {
     return obj[first] as NestedValue<T, K>;
   }
 
   const firstValue = obj[first];
-  if (firstValue && typeof firstValue === 'object') {
+  if (firstValue && typeof firstValue === "object") {
     return firstValue[second as keyof typeof firstValue] as NestedValue<T, K>;
   }
 
@@ -45,8 +47,9 @@ function getValue<T, K extends NestedKeyOf<T>>(obj: T, path: K): NestedValue<T, 
 export interface Column<T> {
   header: string;
   accessor: NestedKeyOf<T>;
-  render?: (value: NestedValue<T, NestedKeyOf<T>>, item: T) => ReactNode;
+  render?: (value: NestedValue<T, NestedKeyOf<T>>, item?: T) => ReactNode;
 }
+
 export interface Action<T> {
   icon: ReactNode;
   label: string | ((item: T) => string);
@@ -94,7 +97,6 @@ export function DataManagementTable<T>({
   onAdd,
   onSearch,
 }: DataManagementTableProps<T>) {
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -113,8 +115,8 @@ export function DataManagementTable<T>({
       <div className="flex items-center space-x-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
-          <Input 
-            placeholder={searchPlaceholder} 
+          <Input
+            placeholder={searchPlaceholder}
             className="pl-10"
             onChange={(e) => {
               onSearch?.(e.target.value);

@@ -1,6 +1,4 @@
 "use client";
-import React from "react";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,26 +16,21 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { STATUS_CODES } from "@/lib/constants/status";
-import { addDocks, updateDocks } from "@/services/api/adminDock";
+import { Switch } from "@/components/ui/switch";
+import { addAdminDocks, updateAdminDocks } from "@/services/api/adminDock";
 import type { API } from "@/services/api/typings";
 import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 const DockFormSchema = z.object({
   name: z.string().min(1, "码头名称不能为空"),
-  location: z.string().min(1, "码头位置不能为空"),
+  longitude: z.number(),
+  latitude: z.number(),
   address: z.string().min(1, "地址不能为空"),
   contactPhone: z.string().min(1, "联系电话不能为空"),
-  status: z.string().min(1, "状态不能为空"),
+  isEnabled: z.boolean(),
 });
 
 type FormValues = z.infer<typeof DockFormSchema>;
@@ -53,37 +46,39 @@ export function DockDialog({ open, onOpenChange, dock }: DockDialogProps) {
     resolver: zodResolver(DockFormSchema),
     defaultValues: {
       name: "",
-      location: "",
+      longitude: 0,
+      latitude: 0,
       address: "",
       contactPhone: "",
-      status: STATUS_CODES.ACTIVE.toString(),
+      isEnabled: true,
     },
     values: {
       name: dock?.name || "",
-      location: dock?.location || "",
+      longitude: dock?.longitude || 0,
+      latitude: dock?.latitude || 0,
       address: dock?.address || "",
       contactPhone: dock?.contactPhone || "",
-      status: dock?.status || STATUS_CODES.ACTIVE.toString(),
+      isEnabled: dock?.isEnabled || false,
     },
   });
 
   const onSubmit = async (values: FormValues) => {
     try {
       if (dock?.id) {
-        await updateDocks(
+        await updateAdminDocks(
           { id: dock.id },
           {
             ...values,
-            status: values.status,
-          },
+            isEnabled: values.isEnabled,
+          }
         );
       } else {
-        await addDocks(
+        await addAdminDocks(
           {},
           {
             ...values,
-            status: values.status,
-          },
+            isEnabled: values.isEnabled,
+          }
         );
       }
       onOpenChange(false);
@@ -117,10 +112,24 @@ export function DockDialog({ open, onOpenChange, dock }: DockDialogProps) {
 
             <FormField
               control={form.control}
-              name="location"
+              name="longitude"
               render={({ field }) => (
                 <FormItem>
-                  <Label htmlFor="location">码头位置</Label>
+                  <Label htmlFor="longitude">经度</Label>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="latitude"
+              render={({ field }) => (
+                <FormItem>
+                  <Label htmlFor="latitude">纬度</Label>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -157,26 +166,16 @@ export function DockDialog({ open, onOpenChange, dock }: DockDialogProps) {
             />
             <FormField
               control={form.control}
-              name="status"
+              name="isEnabled"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex items-center gap-2">
                   <FormLabel>状态</FormLabel>
                   <FormControl>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="选择状态" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value={STATUS_CODES.ACTIVE.toString()}>
-                          正常
-                        </SelectItem>
-                        <SelectItem value={STATUS_CODES.INACTIVE.toString()}>
-                          停用
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />

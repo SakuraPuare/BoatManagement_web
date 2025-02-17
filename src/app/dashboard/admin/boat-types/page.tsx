@@ -17,7 +17,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { delete4, listPage4, update4 } from "@/services/api/adminBoatType";
+import {
+  deleteAdminBoatType,
+  getAdminBoatTypePageQuery,
+  updateAdminBoatType,
+} from "@/services/api/adminBoatType";
 import type { API } from "@/services/api/typings";
 import { format } from "date-fns";
 import {
@@ -48,9 +52,9 @@ export default function BoatTypesPage() {
   const fetchBoatTypes = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await listPage4(
+      const response = await getAdminBoatTypePageQuery(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-        { status: 1 },
+        {}
       );
       setBoatTypes(response.data?.data?.records || []);
       setTotalPages(response.data?.data?.totalPage || 0);
@@ -73,7 +77,7 @@ export default function BoatTypesPage() {
 
   const handleDelete = async (boatTypeId: number) => {
     try {
-      await delete4({ id: boatTypeId });
+      await deleteAdminBoatType({ id: boatTypeId });
       await fetchBoatTypes();
     } catch (error) {
       console.error(error);
@@ -87,10 +91,9 @@ export default function BoatTypesPage() {
     }
   };
 
-  const handleStatus = async (boatTypeId: number, status: number) => {
-    //TODO 需要修改
+  const handleStatus = async (boatTypeId: number, isEnabled: boolean) => {
     try {
-      await update4({ id: boatTypeId }, { status: status });
+      await updateAdminBoatType({ id: boatTypeId }, { isEnabled });
       await fetchBoatTypes();
     } catch (error) {
       console.error(error);
@@ -140,21 +143,21 @@ export default function BoatTypesPage() {
               <TableHead>最大速度</TableHead>
               <TableHead>最大续航</TableHead>
               <TableHead>状态</TableHead>
-              <TableHead>创建时间</TableHead>
               <TableHead>更新时间</TableHead>
+              <TableHead>创建时间</TableHead>
               <TableHead className="w-[100px]">操作</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={10} className="text-center py-10">
+                <TableCell colSpan={13} className="text-center py-10">
                   加载中...
                 </TableCell>
               </TableRow>
             ) : (boatTypes?.length || 0) === 0 ? (
               <TableRow>
-                <TableCell colSpan={10} className="text-center py-10">
+                <TableCell colSpan={13} className="text-center py-10">
                   暂无数据
                 </TableCell>
               </TableRow>
@@ -176,12 +179,12 @@ export default function BoatTypesPage() {
                     <div className="flex items-center gap-2">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          boatType.status === 1
+                          boatType.isEnabled
                             ? "bg-green-100 text-green-800"
                             : "bg-red-100 text-red-800"
                         }`}
                       >
-                        {boatType.status === 1 ? "启用" : "禁用"}
+                        {boatType.isEnabled ? "启用" : "禁用"}
                       </span>
                     </div>
                   </TableCell>
@@ -189,20 +192,20 @@ export default function BoatTypesPage() {
                     {boatType.createdAt &&
                       format(
                         new Date(boatType.createdAt),
-                        "yyyy-MM-dd HH:mm:ss",
+                        "yyyy-MM-dd HH:mm:ss"
                       )}
                   </TableCell>
                   <TableCell>
                     {boatType.updatedAt &&
                       format(
                         new Date(boatType.updatedAt),
-                        "yyyy-MM-dd HH:mm:ss",
+                        "yyyy-MM-dd HH:mm:ss"
                       )}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost">
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -213,14 +216,14 @@ export default function BoatTypesPage() {
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() =>
-                            handleStatus(boatType.boatTypeId, boatType.status)
+                            handleStatus(boatType.id || 0, !boatType.isEnabled)
                           }
                         >
                           <Ban className="h-4 w-4 mr-2" />
-                          {boatType.status === 1 ? "禁用" : "启用"}
+                          {boatType.isEnabled ? "禁用" : "启用"}
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => handleDelete(boatType.boatTypeId)}
+                          onClick={() => handleDelete(boatType.id || 0)}
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
                           删除

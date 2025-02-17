@@ -1,6 +1,4 @@
 "use client";
-import React from "react";
-
 import {
   AlertDialog,
   AlertDialogContent,
@@ -26,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { updateAdminAccount } from "@/services/api/adminUser";
 import type { API } from "@/services/api/typings";
 import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -73,8 +72,7 @@ export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
     } catch (error) {
       console.error("更新权限失败:", error);
       toast.error(
-        "更新权限失败: " +
-          (error instanceof Error ? error.message : "未知错误"),
+        "更新权限失败: " + (error instanceof Error ? error.message : "未知错误")
       );
     }
   };
@@ -108,7 +106,7 @@ export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
                           onClick={() => toggleRole(roleValue)}
                           className={cn(
                             "min-w-[100px]",
-                            hasRole(roleValue) && ROLE_COLORS[roleValue],
+                            hasRole(roleValue) && ROLE_COLORS[roleValue]
                           )}
                         >
                           {ROLE_CHINESE_NAMES[roleValue]}

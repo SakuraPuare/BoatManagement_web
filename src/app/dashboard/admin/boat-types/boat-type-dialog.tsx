@@ -1,6 +1,4 @@
 "use client";
-import React from "react";
-
 import {
   AlertDialog,
   AlertDialogContent,
@@ -18,9 +16,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { create4, update4 } from "@/services/api/adminBoatType";
+import {
+  createAdminBoatType,
+  updateAdminBoatType,
+} from "@/services/api/adminBoatType";
 import type { API } from "@/services/api/typings";
 import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -94,16 +96,16 @@ export function BoatTypeDialog({
   const onSubmit = async (values: FormValues) => {
     try {
       if (boatType?.id) {
-        await update4({ id: boatType.id }, values);
+        await updateAdminBoatType({ id: boatType.id }, values);
       } else {
-        await create4(values);
+        await createAdminBoatType(values);
       }
       onOpenChange(false);
       form.reset();
     } catch (error) {
       console.error("操作失败:", error);
       toast.error(
-        "操作失败: " + (error instanceof Error ? error.message : "未知错误"),
+        "操作失败: " + (error instanceof Error ? error.message : "未知错误")
       );
     }
   };
@@ -245,8 +247,8 @@ export function BoatTypeDialog({
                 {form.formState.isSubmitting
                   ? "提交中..."
                   : boatType
-                    ? "更新"
-                    : "创建"}
+                  ? "更新"
+                  : "创建"}
               </Button>
             </AlertDialogFooter>
           </form>

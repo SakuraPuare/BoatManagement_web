@@ -45,7 +45,7 @@ export const useAuth = () => {
                     setToken(response.data.data?.token);
                     await updateUser();
                     
-                    if (!user || !permissions.length) {
+                    if (!user) {
                         toast.error("登录失败：无法获取用户信息");
                         return false;
                     }

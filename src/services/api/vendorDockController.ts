@@ -31,7 +31,7 @@ export async function getVendorDockListQuery(
   });
 }
 
-/** 获取供应商码头分页列表 获取供应商码头分页列表 GET /vendor/dock/page */
+/** 获取供应商码头分页列表 获取供应商码头分页列表 POST /vendor/dock/page */
 export async function getVendorDockPageQuery(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getVendorDockPageQueryParams,
@@ -39,7 +39,7 @@ export async function getVendorDockPageQuery(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponsePageBaseDocksVO>("/vendor/dock/page", {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },

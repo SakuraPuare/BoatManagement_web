@@ -163,7 +163,6 @@ declare namespace API {
   };
 
   type BaseGoodsOrdersDTO = {
-    merchantId?: number;
     orderInfo?: string;
   };
 
@@ -172,7 +171,7 @@ declare namespace API {
     updatedAt?: string;
     id?: number;
     merchantId?: number;
-    orderInfo?: string;
+    orderInfo?: Record<string, any>;
   };
 
   type BaseGoodsVO = {
@@ -282,6 +281,10 @@ declare namespace API {
     id: number;
   };
 
+  type createUserMerchantGoodsOrderParams = {
+    merchantId: number;
+  };
+
   type delete1Params = {
     id: number;
   };
@@ -367,6 +370,25 @@ declare namespace API {
   };
 
   type getUserDockPageQueryParams = {
+    pageNum?: number;
+    pageSize?: number;
+  };
+
+  type getUserMerchantByIdParams = {
+    id: number;
+  };
+
+  type getUserMerchantGoodsListParams = {
+    merchantId: number;
+  };
+
+  type getUserMerchantGoodsPageParams = {
+    merchantId: number;
+    pageNum?: number;
+    pageSize?: number;
+  };
+
+  type getUserMerchantPageQueryParams = {
     pageNum?: number;
     pageSize?: number;
   };
@@ -480,6 +502,15 @@ declare namespace API {
 
   type PageBaseBoatRequestsVO = {
     records?: BaseBoatRequestsVO[];
+    pageNumber?: number;
+    pageSize?: number;
+    totalPage?: number;
+    totalRow?: number;
+    optimizeCountQuery?: boolean;
+  };
+
+  type PageBaseBoatsVO = {
+    records?: BaseBoatsVO[];
     pageNumber?: number;
     pageSize?: number;
     totalPage?: number;
@@ -659,6 +690,13 @@ declare namespace API {
     time?: number;
   };
 
+  type ResponseListBaseBoatsVO = {
+    code?: number;
+    message?: string;
+    data?: BaseBoatsVO[];
+    time?: number;
+  };
+
   type ResponseListBaseBoatTypesVO = {
     code?: number;
     message?: string;
@@ -740,6 +778,13 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: PageBaseBoatRequestsVO;
+    time?: number;
+  };
+
+  type ResponsePageBaseBoatsVO = {
+    code?: number;
+    message?: string;
+    data?: PageBaseBoatsVO;
     time?: number;
   };
 
@@ -905,4 +950,4 @@ declare namespace API {
     gender?: number;
   };
 }
-export type {API};
+export type { API };

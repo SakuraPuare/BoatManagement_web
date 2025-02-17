@@ -1,4 +1,4 @@
-import type { API } from "@/services/api/typings";
+// @ts-ignore
 /* eslint-disable */
 // API 更新时间：
 // API 唯一标识：
@@ -16,6 +16,7 @@ import * as adminAudit from "./adminAudit";
 import * as vendorOrder from "./vendorOrder";
 import * as vendorDockController from "./vendorDockController";
 import * as vendorBoatRequest from "./vendorBoatRequest";
+import * as userMerchant from "./userMerchant";
 import * as userDockController from "./userDockController";
 import * as userBoatRequest from "./userBoatRequest";
 import * as merchantOrder from "./merchantOrder";
@@ -36,6 +37,7 @@ export default {
   vendorOrder,
   vendorDockController,
   vendorBoatRequest,
+  userMerchant,
   userDockController,
   userBoatRequest,
   merchantOrder,

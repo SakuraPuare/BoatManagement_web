@@ -10,9 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Ship, Search } from "lucide-react";
+import { Search, Ship } from "lucide-react";
 import type { API } from "@/services/api/typings";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { getVendorBoatRequestsPageQuery } from "@/services/api/vendorBoatRequest";
@@ -21,9 +20,6 @@ import { Badge } from "@/components/ui/badge";
 import { REQUEST_STATUS_MAP } from "@/lib/constants/status";
 import { getDocksById } from "@/services/api/adminDock";
 const ITEMS_PER_PAGE = 10;
-
-
-
 
 export default function VendorBoatRequestsPage() {
   const [requests, setRequests] = useState<API.BaseBoatRequestsVO[]>([]);
@@ -132,14 +128,17 @@ export default function VendorBoatRequestsPage() {
                 <TableRow key={request.id}>
                   <TableCell>{request.id}</TableCell>
                   <TableCell>
-                    {dockNames[request.startDockId || 0] || '未知码头'}
+                    {dockNames[request.startDockId || 0] || "未知码头"}
                   </TableCell>
                   <TableCell>
-                    {dockNames[request.endDockId || 0] || '未知码头'}
+                    {dockNames[request.endDockId || 0] || "未知码头"}
                   </TableCell>
                   <TableCell>
                     {request.startTime &&
-                      format(new Date(request.startTime), "yyyy-MM-dd HH:mm:ss")}
+                      format(
+                        new Date(request.startTime),
+                        "yyyy-MM-dd HH:mm:ss"
+                      )}
                   </TableCell>
                   <TableCell>
                     {request.endTime &&
@@ -147,18 +146,26 @@ export default function VendorBoatRequestsPage() {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      className={REQUEST_STATUS_MAP[request?.status as string]?.color}
+                      className={
+                        REQUEST_STATUS_MAP[request?.status as string]?.color
+                      }
                     >
                       {REQUEST_STATUS_MAP[request?.status as string]?.label}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     {request.createdAt &&
-                      format(new Date(request.createdAt), "yyyy-MM-dd HH:mm:ss")}
+                      format(
+                        new Date(request.createdAt),
+                        "yyyy-MM-dd HH:mm:ss"
+                      )}
                   </TableCell>
                   <TableCell>
                     {request.updatedAt &&
-                      format(new Date(request.updatedAt), "yyyy-MM-dd HH:mm:ss")}
+                      format(
+                        new Date(request.updatedAt),
+                        "yyyy-MM-dd HH:mm:ss"
+                      )}
                   </TableCell>
                 </TableRow>
               ))
@@ -175,4 +182,4 @@ export default function VendorBoatRequestsPage() {
       />
     </div>
   );
-} 
+}

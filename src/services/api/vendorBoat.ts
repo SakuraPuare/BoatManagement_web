@@ -55,7 +55,7 @@ export async function getVendorBoats(
   body: API.BaseBoatsDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseListBoatVO>("/vendor/boat/list", {
+  return request<API.ResponseListBaseBoatsVO>("/vendor/boat/list", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -72,7 +72,7 @@ export async function getVendorBoatsPage(
   body: API.BaseBoatsDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponsePageBoatVO>("/vendor/boat/page", {
+  return request<API.ResponsePageBaseBoatsVO>("/vendor/boat/page", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

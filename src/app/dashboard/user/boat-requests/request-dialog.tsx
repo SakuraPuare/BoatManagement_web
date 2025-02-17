@@ -29,7 +29,11 @@ import {
 import type { API } from "@/services/api/typings";
 import { toast } from "sonner";
 import { createUserBoatRequest } from "@/services/api/userBoatRequest";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
@@ -237,7 +241,10 @@ export function RequestDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>请求类型</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="选择请求类型" />
@@ -271,4 +278,4 @@ export function RequestDialog({
       </AlertDialogContent>
     </AlertDialog>
   );
-} 
+}

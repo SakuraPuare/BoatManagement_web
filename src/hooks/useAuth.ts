@@ -19,15 +19,12 @@ export const useAuth = () => {
   const updateUser = useCallback(async () => {
     try {
       const response = await getMe();
-      console.log(response.data);
       if (response.data && response.data.code === 200) {
-        setUser(response.data.data as API.UserInfoVO);
-        // 确保response.data.role存在且为number类型
-        const role =
-          typeof response.data.data?.role === "number"
-            ? response.data.data?.role
-            : 0;
+        const userData = response.data.data as API.BaseAccountsVO;
+        setUser(userData);
+        const role = typeof userData?.role === "number" ? userData.role : 0;
         setPermissions(getRoleEnglishNames(role));
+        return userData; // 返回用户数据
       } else {
         throw new Error(response.data.message || "Failed to get user info");
       }
@@ -41,18 +38,18 @@ export const useAuth = () => {
     async (credentials: API.AuthRequestDTO) => {
       try {
         const response = await loginWithPassword(credentials);
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
-          // 确保token存在
           if (!response.data.data?.token) {
             toast.error("登录失败：无效的token");
             return false;
           }
 
           setToken(response.data.data?.token);
-          await updateUser();
 
-          if (!user) {
+          // 等待获取用户信息完成，并获取返回的用户数据
+          const userData = await updateUser();
+
+          if (!userData) {
             toast.error("登录失败：无法获取用户信息");
             return false;
           }
@@ -70,7 +67,7 @@ export const useAuth = () => {
         return false;
       }
     },
-    [setToken, updateUser, router, user, permissions]
+    [setToken, updateUser, router] // 移除 user 和 permissions 依赖
   );
 
   const register = useCallback(

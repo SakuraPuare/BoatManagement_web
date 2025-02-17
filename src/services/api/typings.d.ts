@@ -38,10 +38,20 @@ declare namespace API {
   };
 
   type BaseBoatOrdersDTO = {
+    status?: string;
+    price?: number;
+    discount?: number;
+    createdAt?: string;
+    updatedAt?: string;
     boatId?: number;
   };
 
   type BaseBoatOrdersVO = {
+    orderId?: number;
+    userId?: number;
+    status?: string;
+    price?: number;
+    discount?: number;
     createdAt?: string;
     updatedAt?: string;
     id?: number;
@@ -163,10 +173,20 @@ declare namespace API {
   };
 
   type BaseGoodsOrdersDTO = {
+    status?: string;
+    price?: number;
+    discount?: number;
+    createdAt?: string;
+    updatedAt?: string;
     orderInfo?: Record<string, any>;
   };
 
   type BaseGoodsOrdersVO = {
+    orderId?: number;
+    userId?: number;
+    status?: string;
+    price?: number;
+    discount?: number;
     createdAt?: string;
     updatedAt?: string;
     id?: number;

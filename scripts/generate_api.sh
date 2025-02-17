@@ -1,3 +1,6 @@
+rm -rf src/services/api
+mkdir -p src/services/api
+
 npm run openapi
 
 fd -t f . src/services/api -E "typings.d.ts" -E "index.ts" -x sed -i '1i\import type { API } from "@/services/api/typings";' {}

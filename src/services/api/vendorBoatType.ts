@@ -83,7 +83,7 @@ export async function getVendorBoatTypes(
 export async function getVendorBoatTypesPage(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getVendorBoatTypesPageParams,
-  body: number,
+  body: API.BaseBoatTypesDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponsePageBaseBoatTypesVO>("/vendor/boat-type/page", {
@@ -94,9 +94,9 @@ export async function getVendorBoatTypesPage(
     params: {
       // pageNum has a default value: 1
       pageNum: "1",
+      // pageSize has a default value: 10
+      pageSize: "10",
       ...params,
-      queryDTO: undefined,
-      ...params["queryDTO"],
     },
     data: body,
     ...(options || {}),

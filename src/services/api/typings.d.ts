@@ -163,7 +163,7 @@ declare namespace API {
   };
 
   type BaseGoodsOrdersDTO = {
-    orderInfo?: string;
+    orderInfo?: Record<string, any>;
   };
 
   type BaseGoodsOrdersVO = {
@@ -413,7 +413,7 @@ declare namespace API {
 
   type getVendorBoatTypesPageParams = {
     pageNum?: number;
-    queryDTO: BaseBoatTypesDTO;
+    pageSize?: number;
   };
 
   type getVendorDockPageQueryParams = {

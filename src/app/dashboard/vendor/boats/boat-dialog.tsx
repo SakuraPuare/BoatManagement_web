@@ -87,7 +87,7 @@ export function BoatDialog({
   const onSubmit = async (values: z.infer<typeof boatFormSchema>) => {
     try {
       if (boat?.id) {
-        console.log("更新",values);
+        console.log("更新", values);
         const response = await updateVendorBoat(
           { id: boat.id },
           {
@@ -115,7 +115,7 @@ export function BoatDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent 
+      <AlertDialogContent
         className="sm:max-w-[425px]"
         onOpenAutoFocus={(e) => {
           e.preventDefault();
@@ -222,20 +222,18 @@ export function BoatDialog({
             />
 
             <AlertDialogFooter>
-              <Button 
+              <Button
                 ref={cancelRef}
-                variant="outline" 
+                variant="outline"
                 onClick={() => onOpenChange(false)}
               >
                 取消
               </Button>
-              <Button type="submit">
-                {boat?.id ? "更新" : "添加"}
-              </Button>
+              <Button type="submit">{boat?.id ? "更新" : "添加"}</Button>
             </AlertDialogFooter>
           </form>
         </Form>
       </AlertDialogContent>
     </AlertDialog>
   );
-} 
+}

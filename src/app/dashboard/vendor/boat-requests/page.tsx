@@ -10,9 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Ship, Search } from "lucide-react";
+import { Search, Ship } from "lucide-react";
 import type { API } from "@/services/api/typings";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { getVendorBoatRequestsPageQuery } from "@/services/api/vendorBoatRequest";
@@ -21,9 +20,6 @@ import { Badge } from "@/components/ui/badge";
 import { REQUEST_STATUS_MAP } from "@/lib/constants/status";
 
 const ITEMS_PER_PAGE = 10;
-
-
-
 
 export default function VendorBoatRequestsPage() {
   const [requests, setRequests] = useState<API.BaseBoatRequestsVO[]>([]);
@@ -35,11 +31,14 @@ export default function VendorBoatRequestsPage() {
   const fetchRequests = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await getVendorBoatRequestsPageQuery({
-        pageNum: currentPage,
-        pageSize: ITEMS_PER_PAGE,
-        // Add search params if needed
-      }, {});
+      const response = await getVendorBoatRequestsPageQuery(
+        {
+          pageNum: currentPage,
+          pageSize: ITEMS_PER_PAGE,
+          // Add search params if needed
+        },
+        {}
+      );
       console.log(response?.data);
       setRequests(response.data?.data?.records || []);
       setTotalPages(response.data?.data?.totalPage || 0);
@@ -113,7 +112,10 @@ export default function VendorBoatRequestsPage() {
                   <TableCell>{request.endDockName}</TableCell>
                   <TableCell>
                     {request.startTime &&
-                      format(new Date(request.startTime), "yyyy-MM-dd HH:mm:ss")}
+                      format(
+                        new Date(request.startTime),
+                        "yyyy-MM-dd HH:mm:ss"
+                      )}
                   </TableCell>
                   <TableCell>
                     {request.endTime &&
@@ -121,18 +123,26 @@ export default function VendorBoatRequestsPage() {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      className={REQUEST_STATUS_MAP[request?.status as string]?.color}
+                      className={
+                        REQUEST_STATUS_MAP[request?.status as string]?.color
+                      }
                     >
                       {REQUEST_STATUS_MAP[request?.status as string]?.label}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     {request.createdAt &&
-                      format(new Date(request.createdAt), "yyyy-MM-dd HH:mm:ss")}
+                      format(
+                        new Date(request.createdAt),
+                        "yyyy-MM-dd HH:mm:ss"
+                      )}
                   </TableCell>
                   <TableCell>
                     {request.updatedAt &&
-                      format(new Date(request.updatedAt), "yyyy-MM-dd HH:mm:ss")}
+                      format(
+                        new Date(request.updatedAt),
+                        "yyyy-MM-dd HH:mm:ss"
+                      )}
                   </TableCell>
                 </TableRow>
               ))
@@ -149,4 +159,4 @@ export default function VendorBoatRequestsPage() {
       />
     </div>
   );
-} 
+}

@@ -18,10 +18,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Anchor, MoreVertical, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import {
+  Anchor,
+  MoreVertical,
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+} from "lucide-react";
 import type { API } from "@/services/api/typings";
 import { DataPagination } from "@/components/ui/data-pagination";
-import { getVendorBoats, getVendorBoatsPage, deleteVendorBoat,updateVendorBoat } from "@/services/api/vendorBoat";
+import {
+  deleteVendorBoat,
+  getVendorBoatsPage,
+} from "@/services/api/vendorBoat";
 import { toast } from "sonner";
 import { BoatDialog } from "./boat-dialog";
 import { getVendorBoatTypes } from "@/services/api/vendorBoatType";
@@ -31,10 +41,12 @@ const ITEMS_PER_PAGE = 10;
 
 export default function VendorBoatsPage() {
   const [boats, setBoats] = useState<API.BaseBoatsVO[]>([]);
-  const [selectedBoat, setSelectedBoat] = useState<API.BaseBoatsVO | null>(null);
+  const [selectedBoat, setSelectedBoat] = useState<API.BaseBoatsVO | null>(
+    null
+  );
   const [boatTypes, setBoatTypes] = useState<API.BaseBoatTypesVO[]>([]);
   const [docks, setDocks] = useState<API.BaseDocksVO[]>([]);
-  
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,8 +74,8 @@ export default function VendorBoatsPage() {
   const fetchData = useCallback(async () => {
     try {
       const [boatTypesResponse, docksResponse] = await Promise.all([
-        getVendorBoatTypes({},{}),
-        getVendorDockListQuery({}, {})
+        getVendorBoatTypes({}, {}),
+        getVendorDockListQuery({}, {}),
       ]);
       console.log(boats);
       console.log(boatTypesResponse?.data);
@@ -160,7 +172,10 @@ export default function VendorBoatsPage() {
                   <TableCell>{boat.id}</TableCell>
                   <TableCell>{boat.name}</TableCell>
                   <TableCell>
-                    {boatTypes.find((type) => type.id === boat.typeId)?.typeName}
+                    {
+                      boatTypes.find((type) => type.id === boat.typeId)
+                        ?.typeName
+                    }
                   </TableCell>
                   <TableCell>
                     {docks.find((dock) => dock.id === boat.dockId)?.name}
@@ -234,4 +249,4 @@ export default function VendorBoatsPage() {
       />
     </div>
   );
-} 
+}

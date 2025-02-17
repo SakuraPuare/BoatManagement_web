@@ -23,13 +23,12 @@ import type { API } from "@/services/api/typings";
 import { DataPagination } from "@/components/ui/data-pagination";
 import {
   cancelUserBoatRequest,
-  createUserBoatRequest,
   getUserBoatRequestsPageQuery,
 } from "@/services/api/userBoatRequest";
 import { toast } from "sonner";
 import { RequestDialog } from "./request-dialog";
 import { getUserDockListQuery } from "@/services/api/userDockController";
-import { getDocks } from "@/services/api/adminDock";
+
 const ITEMS_PER_PAGE = 10;
 
 export default function BoatRequestsPage() {
@@ -63,9 +62,12 @@ export default function BoatRequestsPage() {
   }, [currentPage]);
   const fetchDocks = useCallback(async () => {
     try {
-      const docksResponse = await getUserDockListQuery({}, {
-        isEnabled: true
-      });
+      const docksResponse = await getUserDockListQuery(
+        {},
+        {
+          isEnabled: true,
+        }
+      );
       setDocks(docksResponse.data?.data || []);
     } catch (error) {
       console.error(error);
@@ -153,7 +155,10 @@ export default function BoatRequestsPage() {
                   <TableCell>{request.endDockId}</TableCell>
                   <TableCell>
                     {request.startTime &&
-                      format(new Date(request.startTime), "yyyy-MM-dd HH:mm:ss")}
+                      format(
+                        new Date(request.startTime),
+                        "yyyy-MM-dd HH:mm:ss"
+                      )}
                   </TableCell>
                   <TableCell>
                     {request.endTime &&
@@ -177,11 +182,17 @@ export default function BoatRequestsPage() {
                   </TableCell>
                   <TableCell>
                     {request.createdAt &&
-                      format(new Date(request.createdAt), "yyyy-MM-dd HH:mm:ss")}
+                      format(
+                        new Date(request.createdAt),
+                        "yyyy-MM-dd HH:mm:ss"
+                      )}
                   </TableCell>
                   <TableCell>
                     {request.updatedAt &&
-                      format(new Date(request.updatedAt), "yyyy-MM-dd HH:mm:ss")}
+                      format(
+                        new Date(request.updatedAt),
+                        "yyyy-MM-dd HH:mm:ss"
+                      )}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -227,4 +238,4 @@ export default function BoatRequestsPage() {
       />
     </div>
   );
-} 
+}

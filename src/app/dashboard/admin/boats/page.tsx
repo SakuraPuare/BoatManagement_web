@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { DataPagination } from "@/components/ui/data-pagination";
 import {
@@ -38,7 +37,7 @@ import {
   Ship,
   Trash2,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { BoatDialog } from "./boat-dialog";
 import { BoatStatusDialog } from "./status-dialog";
 
@@ -47,7 +46,7 @@ const ITEMS_PER_PAGE = 10;
 export default function BoatsPage() {
   const [boats, setBoats] = useState<API.BaseBoatsVO[]>([]);
   const [selectedBoat, setSelectedBoat] = useState<API.BaseBoatsVO | null>(
-    null
+    null,
   );
   const [boatTypes, setBoatTypes] = useState<API.BaseBoatTypesVO[]>([]);
   const [docks, setDocks] = useState<API.BaseDocksVO[]>([]);
@@ -67,7 +66,7 @@ export default function BoatsPage() {
     try {
       const response = await listPage3(
         { page: currentPage, size: ITEMS_PER_PAGE },
-        {}
+        {},
       );
 
       setBoats(response.data?.data?.records || []);
@@ -83,7 +82,7 @@ export default function BoatsPage() {
     const fetchBoatTypes = async () => {
       const response = await listPage4(
         { page: currentPage, size: ITEMS_PER_PAGE },
-        {}
+        {},
       );
       setBoatTypes(response.data?.data?.records || []);
     };
@@ -91,7 +90,7 @@ export default function BoatsPage() {
     const fetchDocks = async () => {
       const response = await getDocksPage(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-        {}
+        {},
       );
       setDocks(response.data?.data?.records || []);
     };
@@ -115,7 +114,7 @@ export default function BoatsPage() {
     if (!id) return;
     try {
       await delete3({ id: id });
-      fetchBoats();
+      await fetchBoats();
     } catch (error) {
       console.error(error);
     }
@@ -221,21 +220,21 @@ export default function BoatsPage() {
                         boat.status === BOAT_STATUS_CODES.ACTIVE.toString()
                           ? "bg-green-100 text-green-800"
                           : boat.status ===
-                            BOAT_STATUS_CODES.MAINTENANCE.toString()
-                          ? "bg-blue-100 text-blue-800"
-                          : boat.status ===
-                            BOAT_STATUS_CODES.INACTIVE.toString()
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-red-100 text-red-800"
+                              BOAT_STATUS_CODES.MAINTENANCE.toString()
+                            ? "bg-blue-100 text-blue-800"
+                            : boat.status ===
+                                BOAT_STATUS_CODES.INACTIVE.toString()
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
                       }`}
                     >
                       {boat.status !== undefined
                         ? boat.status === BOAT_STATUS_CODES.ACTIVE.toString()
                           ? "可用"
                           : boat.status ===
-                            BOAT_STATUS_CODES.MAINTENANCE.toString()
-                          ? "维护中"
-                          : "停用"
+                              BOAT_STATUS_CODES.MAINTENANCE.toString()
+                            ? "维护中"
+                            : "停用"
                         : "未知"}
                     </span>
                   </TableCell>

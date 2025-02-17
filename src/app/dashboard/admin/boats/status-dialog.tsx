@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import {
   AlertDialog,
@@ -76,7 +77,8 @@ export function BoatStatusDialog({
     } catch (error) {
       console.error("更新状态失败:", error);
       toast.error(
-        "更新状态失败: " + (error instanceof Error ? error.message : "未知错误")
+        "更新状态失败: " +
+          (error instanceof Error ? error.message : "未知错误"),
       );
     }
   };
@@ -114,7 +116,7 @@ export function BoatStatusDialog({
                             className={cn(
                               "min-w-[100px]",
                               hasStatus(statusValue) &&
-                                BOAT_STATUS_COLORS[statusValue]
+                                BOAT_STATUS_COLORS[statusValue],
                             )}
                           >
                             {BOAT_STATUS_NAMES[statusValue]}
@@ -123,7 +125,7 @@ export function BoatStatusDialog({
                             {BOAT_STATUS_DESCRIPTIONS[statusValue]}
                           </FormDescription>
                         </div>
-                      )
+                      ),
                     )}
                   </div>
                 </FormItem>

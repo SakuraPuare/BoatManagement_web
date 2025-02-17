@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Column,
   DataManagementTable,
@@ -20,7 +19,7 @@ import {
   Trash2,
   Users,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { RoleDialog } from "./role-dialog";
 import { UserDialog } from "./user-dialog";
 
@@ -40,7 +39,7 @@ const defaultUser: API.BaseAccountsVO = {
 export default function UsersPage() {
   const [users, setUsers] = useState<API.BaseAccountsVO[]>([]);
   const [selectedUser, setSelectedUser] = useState<API.BaseAccountsVO | null>(
-    null
+    null,
   );
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -64,7 +63,7 @@ export default function UsersPage() {
           }),
           ...(statusFilter === "blocked" && { isBlocked: true }),
           ...(statusFilter === "inactive" && { isActive: false }),
-        }
+        },
       );
       if (response.data?.data?.records) {
         setUsers(response.data.data.records);
@@ -90,7 +89,7 @@ export default function UsersPage() {
   const handleDelete = async (userId: number) => {
     try {
       await delete1({ id: userId });
-      fetchUsers();
+      await fetchUsers();
     } catch (error) {
       console.error(error);
     }
@@ -100,7 +99,7 @@ export default function UsersPage() {
     const isBlocked = users.find((user) => user.id === userId)?.isBlocked;
     try {
       await update1({ id: userId }, { username: "", isActive: !isBlocked });
-      fetchUsers();
+      await fetchUsers();
     } catch (error) {
       console.error(error);
     }
@@ -142,8 +141,8 @@ export default function UsersPage() {
             value
               ? "bg-red-100 text-red-800"
               : user.isActive
-              ? "bg-green-100 text-green-800"
-              : "bg-gray-100 text-gray-800"
+                ? "bg-green-100 text-green-800"
+                : "bg-gray-100 text-gray-800"
           }`}
         >
           {value ? "已封禁" : user.isActive ? "正常" : "未激活"}

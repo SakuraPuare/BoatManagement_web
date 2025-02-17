@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -23,7 +24,10 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import type { API } from "@/services/api/typings";
 import { toast } from "sonner";
-import { addVendorBoatType, updateVendorBoatType } from "@/services/api/vendorBoatType";
+import {
+  addVendorBoatType,
+  updateVendorBoatType,
+} from "@/services/api/vendorBoatType";
 
 const boatTypeFormSchema = z.object({
   typeName: z.string().min(1, "请输入类型名称"),
@@ -153,7 +157,11 @@ export function BoatTypeDialog({
                 <FormItem>
                   <FormLabel>总吨位(t)</FormLabel>
                   <FormControl>
-                    <Input {...field} type="number" placeholder="请输入总吨位" />
+                    <Input
+                      {...field}
+                      type="number"
+                      placeholder="请输入总吨位"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -167,7 +175,11 @@ export function BoatTypeDialog({
                 <FormItem>
                   <FormLabel>最大载重(t)</FormLabel>
                   <FormControl>
-                    <Input {...field} type="number" placeholder="请输入最大载重" />
+                    <Input
+                      {...field}
+                      type="number"
+                      placeholder="请输入最大载重"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -181,7 +193,11 @@ export function BoatTypeDialog({
                 <FormItem>
                   <FormLabel>最大速度(节)</FormLabel>
                   <FormControl>
-                    <Input {...field} type="number" placeholder="请输入最大速度" />
+                    <Input
+                      {...field}
+                      type="number"
+                      placeholder="请输入最大速度"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -195,7 +211,11 @@ export function BoatTypeDialog({
                 <FormItem>
                   <FormLabel>最大续航(海里)</FormLabel>
                   <FormControl>
-                    <Input {...field} type="number" placeholder="请输入最大续航" />
+                    <Input
+                      {...field}
+                      type="number"
+                      placeholder="请输入最大续航"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -226,4 +246,4 @@ export function BoatTypeDialog({
       </AlertDialogContent>
     </AlertDialog>
   );
-} 
+}

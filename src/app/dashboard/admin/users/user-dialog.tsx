@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import {
   AlertDialog,
@@ -39,7 +40,7 @@ const userFormSchema = z
       .max(50, "用户名不能超过50个字符")
       .regex(
         /^[a-zA-Z0-9_\u4e00-\u9fa5]+$/,
-        "用户名只能包含字母、数字、下划线和中文"
+        "用户名只能包含字母、数字、下划线和中文",
       )
       .optional()
       .or(z.literal("")),
@@ -63,7 +64,7 @@ const userFormSchema = z
     {
       message: "用户名、邮箱、手机号至少填写一项",
       path: ["username"],
-    }
+    },
   );
 
 type FormValues = z.infer<typeof userFormSchema>;
@@ -116,7 +117,7 @@ export function UserDialog({ open, onOpenChange, user }: UserDialogProps) {
     } catch (error) {
       console.error("操作失败:", error);
       toast.error(
-        "操作失败: " + (error instanceof Error ? error.message : "未知错误")
+        "操作失败: " + (error instanceof Error ? error.message : "未知错误"),
       );
     }
   };
@@ -187,7 +188,7 @@ export function UserDialog({ open, onOpenChange, user }: UserDialogProps) {
                         onClick={() => toggleRole(roleValue)}
                         className={cn(
                           "h-8",
-                          hasRole(roleValue) && ROLE_COLORS[roleValue]
+                          hasRole(roleValue) && ROLE_COLORS[roleValue],
                         )}
                       >
                         {ROLE_CHINESE_NAMES[roleValue]}
@@ -224,8 +225,8 @@ export function UserDialog({ open, onOpenChange, user }: UserDialogProps) {
                 {form.formState.isSubmitting
                   ? "提交中..."
                   : user
-                  ? "更新"
-                  : "创建"}
+                    ? "更新"
+                    : "创建"}
               </Button>
             </AlertDialogFooter>
           </form>

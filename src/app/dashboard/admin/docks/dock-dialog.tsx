@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -74,7 +75,7 @@ export function DockDialog({ open, onOpenChange, dock }: DockDialogProps) {
           {
             ...values,
             status: values.status,
-          }
+          },
         );
       } else {
         await addDocks(
@@ -82,7 +83,7 @@ export function DockDialog({ open, onOpenChange, dock }: DockDialogProps) {
           {
             ...values,
             status: values.status,
-          }
+          },
         );
       }
       onOpenChange(false);

@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import {
   AlertDialog,
@@ -102,7 +103,7 @@ export function BoatTypeDialog({
     } catch (error) {
       console.error("操作失败:", error);
       toast.error(
-        "操作失败: " + (error instanceof Error ? error.message : "未知错误")
+        "操作失败: " + (error instanceof Error ? error.message : "未知错误"),
       );
     }
   };
@@ -244,8 +245,8 @@ export function BoatTypeDialog({
                 {form.formState.isSubmitting
                   ? "提交中..."
                   : boatType
-                  ? "更新"
-                  : "创建"}
+                    ? "更新"
+                    : "创建"}
               </Button>
             </AlertDialogFooter>
           </form>

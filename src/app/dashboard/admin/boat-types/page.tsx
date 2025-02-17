@@ -1,5 +1,4 @@
 "use client";
-
 import { BoatTypeDialog } from "@/app/dashboard/admin/boat-types/boat-type-dialog";
 import { Button } from "@/components/ui/button";
 import { DataPagination } from "@/components/ui/data-pagination";
@@ -30,7 +29,7 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -51,7 +50,7 @@ export default function BoatTypesPage() {
     try {
       const response = await listPage4(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-        { status: 1 }
+        { status: 1 },
       );
       setBoatTypes(response.data?.data?.records || []);
       setTotalPages(response.data?.data?.totalPage || 0);
@@ -75,7 +74,7 @@ export default function BoatTypesPage() {
   const handleDelete = async (boatTypeId: number) => {
     try {
       await delete4({ id: boatTypeId });
-      fetchBoatTypes();
+      await fetchBoatTypes();
     } catch (error) {
       console.error(error);
     }
@@ -92,7 +91,7 @@ export default function BoatTypesPage() {
     //TODO 需要修改
     try {
       await update4({ id: boatTypeId }, { status: status });
-      fetchBoatTypes();
+      await fetchBoatTypes();
     } catch (error) {
       console.error(error);
     }
@@ -190,14 +189,14 @@ export default function BoatTypesPage() {
                     {boatType.createdAt &&
                       format(
                         new Date(boatType.createdAt),
-                        "yyyy-MM-dd HH:mm:ss"
+                        "yyyy-MM-dd HH:mm:ss",
                       )}
                   </TableCell>
                   <TableCell>
                     {boatType.updatedAt &&
                       format(
                         new Date(boatType.updatedAt),
-                        "yyyy-MM-dd HH:mm:ss"
+                        "yyyy-MM-dd HH:mm:ss",
                       )}
                   </TableCell>
                   <TableCell>

@@ -1,7 +1,13 @@
 "use client";
-
-import { useCallback, useEffect, useState } from "react";
-import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { DataPagination } from "@/components/ui/data-pagination";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -10,21 +16,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Anchor, MoreVertical, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import type { API } from "@/services/api/typings";
-import { DataPagination } from "@/components/ui/data-pagination";
-import { 
-  deleteVendorBoatType, 
-  getVendorBoatTypesPage 
+import {
+  deleteVendorBoatType,
+  getVendorBoatTypesPage,
 } from "@/services/api/vendorBoatType";
+import { format } from "date-fns";
+import {
+  Anchor,
+  MoreVertical,
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+} from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { BoatTypeDialog } from "./boat-type-dialog";
 
@@ -32,7 +38,8 @@ const ITEMS_PER_PAGE = 10;
 
 export default function VendorBoatTypesPage() {
   const [boatTypes, setBoatTypes] = useState<API.BaseBoatTypesVO[]>([]);
-  const [selectedBoatType, setSelectedBoatType] = useState<API.BaseBoatTypesVO | null>(null);
+  const [selectedBoatType, setSelectedBoatType] =
+    useState<API.BaseBoatTypesVO | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,7 +51,7 @@ export default function VendorBoatTypesPage() {
     try {
       const response = await getVendorBoatTypesPage(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-        {}
+        {},
       );
       setBoatTypes(response.data?.data?.records || []);
       setTotalPages(response.data?.data?.totalPage || 0);
@@ -70,7 +77,7 @@ export default function VendorBoatTypesPage() {
     try {
       await deleteVendorBoatType({ id });
       toast.success("删除成功");
-      fetchBoatTypes();
+      await fetchBoatTypes();
     } catch (error) {
       console.error(error);
       toast.error("删除失败");
@@ -163,11 +170,17 @@ export default function VendorBoatTypesPage() {
                   </TableCell>
                   <TableCell>
                     {boatType.createdAt &&
-                      format(new Date(boatType.createdAt), "yyyy-MM-dd HH:mm:ss")}
+                      format(
+                        new Date(boatType.createdAt),
+                        "yyyy-MM-dd HH:mm:ss",
+                      )}
                   </TableCell>
                   <TableCell>
                     {boatType.updatedAt &&
-                      format(new Date(boatType.updatedAt), "yyyy-MM-dd HH:mm:ss")}
+                      format(
+                        new Date(boatType.updatedAt),
+                        "yyyy-MM-dd HH:mm:ss",
+                      )}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -217,4 +230,4 @@ export default function VendorBoatTypesPage() {
       />
     </div>
   );
-} 
+}

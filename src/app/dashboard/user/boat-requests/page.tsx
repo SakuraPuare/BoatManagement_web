@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { DataPagination } from "@/components/ui/data-pagination";
 import {
@@ -25,7 +24,7 @@ import {
 import { getUserDockListQuery } from "@/services/api/userDockController";
 import { format } from "date-fns";
 import { Anchor, MoreVertical, Plus, Search, X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { RequestDialog } from "./request-dialog";
 
@@ -46,10 +45,10 @@ export default function BoatRequestsPage() {
       const [requestsResponse] = await Promise.all([
         getUserBoatRequestsPageQuery(
           { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-          {}
+          {},
         ),
       ]);
-      fetchDocks();
+      await fetchDocks();
       console.log(requestsResponse.data?.data?.records);
       setRequests(requestsResponse.data?.data?.records || []);
       setTotalPages(requestsResponse.data?.data?.totalPage || 0);
@@ -66,7 +65,7 @@ export default function BoatRequestsPage() {
         {},
         {
           isEnabled: true,
-        }
+        },
       );
       setDocks(docksResponse.data?.data || []);
     } catch (error) {
@@ -78,7 +77,7 @@ export default function BoatRequestsPage() {
     try {
       await cancelUserBoatRequest({ id });
       toast.success("取消请求成功");
-      fetchRequests();
+      await fetchRequests();
     } catch (error) {
       console.error(error);
       toast.error("取消请求失败");
@@ -157,7 +156,7 @@ export default function BoatRequestsPage() {
                     {request.startTime &&
                       format(
                         new Date(request.startTime),
-                        "yyyy-MM-dd HH:mm:ss"
+                        "yyyy-MM-dd HH:mm:ss",
                       )}
                   </TableCell>
                   <TableCell>
@@ -171,10 +170,10 @@ export default function BoatRequestsPage() {
                         request.status === "PENDING"
                           ? "bg-yellow-100 text-yellow-800"
                           : request.status === "ACCEPTED"
-                          ? "bg-green-100 text-green-800"
-                          : request.status === "CANCELLED"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-gray-100 text-gray-800"
+                            ? "bg-green-100 text-green-800"
+                            : request.status === "CANCELLED"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-gray-100 text-gray-800"
                       }`}
                     >
                       {request.status}
@@ -184,14 +183,14 @@ export default function BoatRequestsPage() {
                     {request.createdAt &&
                       format(
                         new Date(request.createdAt),
-                        "yyyy-MM-dd HH:mm:ss"
+                        "yyyy-MM-dd HH:mm:ss",
                       )}
                   </TableCell>
                   <TableCell>
                     {request.updatedAt &&
                       format(
                         new Date(request.updatedAt),
-                        "yyyy-MM-dd HH:mm:ss"
+                        "yyyy-MM-dd HH:mm:ss",
                       )}
                   </TableCell>
                   <TableCell>

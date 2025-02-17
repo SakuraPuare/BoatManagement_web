@@ -67,7 +67,7 @@ export const useAuth = () => {
         return false;
       }
     },
-    [setToken, updateUser, router] // 移除 user 和 permissions 依赖
+    [setToken, updateUser, router], // 移除 user 和 permissions 依赖
   );
 
   const register = useCallback(
@@ -102,7 +102,7 @@ export const useAuth = () => {
         return false;
       }
     },
-    [router, setToken, updateUser]
+    [router, setToken, updateUser],
   );
 
   const logout = useCallback(async () => {
@@ -129,10 +129,10 @@ export const useAuth = () => {
     (requiredPermissions: string[]) => {
       if (!permissions.length || !requiredPermissions.length) return false;
       return requiredPermissions.some((permission) =>
-        permissions.includes(permission)
+        permissions.includes(permission),
       );
     },
-    [permissions]
+    [permissions],
   );
 
   return {

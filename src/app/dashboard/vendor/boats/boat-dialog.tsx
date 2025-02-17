@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import {
   AlertDialog,
@@ -94,7 +95,7 @@ export function BoatDialog({
             ...values,
             typeId: parseInt(values.typeId),
             dockId: parseInt(values.dockId),
-          }
+          },
         );
         console.log(response);
         toast.success("更新成功");

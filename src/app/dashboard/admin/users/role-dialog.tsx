@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import {
   AlertDialog,
@@ -72,7 +73,8 @@ export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
     } catch (error) {
       console.error("更新权限失败:", error);
       toast.error(
-        "更新权限失败: " + (error instanceof Error ? error.message : "未知错误")
+        "更新权限失败: " +
+          (error instanceof Error ? error.message : "未知错误"),
       );
     }
   };
@@ -106,7 +108,7 @@ export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
                           onClick={() => toggleRole(roleValue)}
                           className={cn(
                             "min-w-[100px]",
-                            hasRole(roleValue) && ROLE_COLORS[roleValue]
+                            hasRole(roleValue) && ROLE_COLORS[roleValue],
                           )}
                         >
                           {ROLE_CHINESE_NAMES[roleValue]}

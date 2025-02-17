@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { DataPagination } from "@/components/ui/data-pagination";
 import {
@@ -41,7 +40,7 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { DockDialog } from "./dock-dialog";
 
 const ITEMS_PER_PAGE = 10;
@@ -49,13 +48,13 @@ const ITEMS_PER_PAGE = 10;
 export default function DocksPage() {
   const [docks, setDocks] = useState<API.BaseDocksVO[]>([]);
   const [selectedDock, setSelectedDock] = useState<API.BaseDocksVO | null>(
-    null
+    null,
   );
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>(
-    STATUS_CODES.ACTIVE.toString()
+    STATUS_CODES.ACTIVE.toString(),
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -67,7 +66,7 @@ export default function DocksPage() {
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         {
           status: statusFilter,
-        }
+        },
       );
       setDocks(response.data?.data?.records || []);
       setTotalPages(response.data?.data?.totalPage || 0);
@@ -91,7 +90,7 @@ export default function DocksPage() {
   const handleDelete = async (dockId: number) => {
     try {
       await deleteDocks({ id: dockId });
-      fetchDocks();
+      await fetchDocks();
     } catch (error) {
       console.error(error);
     }
@@ -117,9 +116,9 @@ export default function DocksPage() {
           status: isActive
             ? STATUS_CODES.INACTIVE.toString()
             : STATUS_CODES.ACTIVE.toString(),
-        }
+        },
       );
-      fetchDocks();
+      await fetchDocks();
     } catch (error) {
       console.error(error);
     }
@@ -206,8 +205,8 @@ export default function DocksPage() {
                         dock.status === STATUS_CODES.ACTIVE.toString()
                           ? "bg-green-100 text-green-800"
                           : dock.status === STATUS_CODES.INACTIVE.toString()
-                          ? "bg-red-100 text-red-800"
-                          : ""
+                            ? "bg-red-100 text-red-800"
+                            : ""
                       }`}
                     >
                       {dock.status === STATUS_CODES.ACTIVE.toString()
@@ -218,13 +217,13 @@ export default function DocksPage() {
                   <TableCell>
                     {format(
                       new Date(dock.createdAt || ""),
-                      "yyyy-MM-dd HH:mm:ss"
+                      "yyyy-MM-dd HH:mm:ss",
                     )}
                   </TableCell>
                   <TableCell>
                     {format(
                       new Date(dock.updatedAt || ""),
-                      "yyyy-MM-dd HH:mm:ss"
+                      "yyyy-MM-dd HH:mm:ss",
                     )}
                   </TableCell>
                   <TableCell>

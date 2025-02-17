@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { DataPagination } from "@/components/ui/data-pagination";
 import {
@@ -33,7 +32,7 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { BoatDialog } from "./boat-dialog";
 
@@ -42,7 +41,7 @@ const ITEMS_PER_PAGE = 10;
 export default function VendorBoatsPage() {
   const [boats, setBoats] = useState<API.BaseBoatsVO[]>([]);
   const [selectedBoat, setSelectedBoat] = useState<API.BaseBoatsVO | null>(
-    null
+    null,
   );
   const [boatTypes, setBoatTypes] = useState<API.BaseBoatTypesVO[]>([]);
   const [docks, setDocks] = useState<API.BaseDocksVO[]>([]);
@@ -58,7 +57,7 @@ export default function VendorBoatsPage() {
     try {
       const response = await getVendorBoatsPage(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-        {}
+        {},
       );
       console.log(response.data?.data?.records);
       setBoats(response.data?.data?.records || []);
@@ -102,7 +101,7 @@ export default function VendorBoatsPage() {
     try {
       await deleteVendorBoat({ id });
       toast.success("删除成功");
-      fetchBoats();
+      await fetchBoats();
     } catch (error) {
       console.error(error);
       toast.error("删除失败");

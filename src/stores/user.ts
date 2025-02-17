@@ -3,8 +3,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface UserState {
-  user: API.UserPersonalInfoVO | null;
-  setUser: (user: API.UserPersonalInfoVO | null) => void;
+  user: API.BaseAccountsVO | null;
+  setUser: (user: API.BaseAccountsVO | null) => void;
   token: string | null;
   setToken: (token: string | null) => void;
   permissions: string[];
@@ -23,6 +23,6 @@ export const useUserStore = create<UserState>()(
     }),
     {
       name: "user-storage",
-    }
-  )
+    },
+  ),
 );

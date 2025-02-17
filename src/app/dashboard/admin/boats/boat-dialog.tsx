@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import {
   AlertDialog,
@@ -91,7 +92,7 @@ export function BoatDialog({
 
   const onSubmit = async (values: z.infer<typeof boatFormSchema>) => {
     const boatType = boatTypes.find(
-      (type) => type.boatTypeId === Number(values.boatTypeId)
+      (type) => type.boatTypeId === Number(values.boatTypeId),
     );
     if (!boatType) {
       toast.error("船只类型不存在");
@@ -104,13 +105,13 @@ export function BoatDialog({
           {
             ...values,
             boatTypeId: boatType.boatTypeId,
-          }
+          },
         );
       }
     } catch (error) {
       console.error("操作失败:", error);
       toast.error(
-        "操作失败: " + (error instanceof Error ? error.message : "未知错误")
+        "操作失败: " + (error instanceof Error ? error.message : "未知错误"),
       );
     }
   };
@@ -241,7 +242,7 @@ export function BoatDialog({
                           variant={"outline"}
                           className={cn(
                             "w-full justify-start text-left font-normal",
-                            !field.value && "text-muted-foreground"
+                            !field.value && "text-muted-foreground",
                           )}
                         >
                           {field.value ? (
@@ -280,8 +281,8 @@ export function BoatDialog({
                 {form.formState.isSubmitting
                   ? "提交中..."
                   : boat?.boatId
-                  ? "更新"
-                  : "创建"}
+                    ? "更新"
+                    : "创建"}
               </Button>
             </AlertDialogFooter>
           </form>

@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { DataPagination } from "@/components/ui/data-pagination";
@@ -36,7 +37,7 @@ export default function VendorBoatRequestsPage() {
       const [requestsResponse] = await Promise.all([
         getVendorBoatRequestsPageQuery(
           { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-          {}
+          {},
         ),
       ]);
       setRequests(requestsResponse.data?.data?.records || []);
@@ -61,7 +62,7 @@ export default function VendorBoatRequestsPage() {
           } catch (error) {
             console.error(`Failed to fetch dock name for ID ${id}:`, error);
           }
-        })
+        }),
       );
       setDockNames(dockNamesMap);
     } catch (error) {
@@ -138,7 +139,7 @@ export default function VendorBoatRequestsPage() {
                     {request.startTime &&
                       format(
                         new Date(request.startTime),
-                        "yyyy-MM-dd HH:mm:ss"
+                        "yyyy-MM-dd HH:mm:ss",
                       )}
                   </TableCell>
                   <TableCell>
@@ -158,14 +159,14 @@ export default function VendorBoatRequestsPage() {
                     {request.createdAt &&
                       format(
                         new Date(request.createdAt),
-                        "yyyy-MM-dd HH:mm:ss"
+                        "yyyy-MM-dd HH:mm:ss",
                       )}
                   </TableCell>
                   <TableCell>
                     {request.updatedAt &&
                       format(
                         new Date(request.updatedAt),
-                        "yyyy-MM-dd HH:mm:ss"
+                        "yyyy-MM-dd HH:mm:ss",
                       )}
                   </TableCell>
                 </TableRow>

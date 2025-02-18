@@ -4,7 +4,7 @@ import {
   Column,
   DataManagementTable,
 } from "@/components/data-management-table";
-import { getAdminUnitListQuery } from "@/services/api/adminAudit";
+import { getAdminUnitListQuery } from "@/services/api/adminUnit";
 import { getAdminBoatPageQuery } from "@/services/api/adminBoat";
 import { getAdminBoatTypeListQuery } from "@/services/api/adminBoatType";
 import { getAdminDocksListQuery } from "@/services/api/adminDock";
@@ -12,6 +12,7 @@ import { API } from "@/services/api/typings";
 import { Pencil, Ship } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { BoatDialog } from "./boat-dialog";
+import { boatFormSchema } from "./boat-dialog";
 
 type BoatVO = {
   boat: API.BaseBoatsVO;
@@ -45,6 +46,7 @@ export default function BoatsPage() {
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         {}
       );
+      console.log(response.data?.data?.records);
       setBaseBoats(response.data?.data?.records || []);
     } catch (error) {
       console.error(error);
@@ -83,7 +85,7 @@ export default function BoatsPage() {
 
   const fetchUnits = useCallback(async () => {
     try {
-      const response = await getAdminUnitListQuery({});
+      const response = await getAdminUnitListQuery({},{});
       setUnits(response.data?.data || []);
       return response;
     } catch (error) {
@@ -164,6 +166,26 @@ export default function BoatsPage() {
         columns={columns}
         actions={actions}
         searchPlaceholder="搜索船名、船型或码头..."
+        dialog={BoatDialog}
+        schema={boatFormSchema}
+        queryFn={async ({ pageNum, pageSize }, searchQuery) => {
+          const response = await getAdminBoatPageQuery(
+            { pageNum, pageSize },
+            { name: searchQuery } as API.BaseBoatsDTO
+          );
+          const records = response.data?.data?.records || [];
+          const boatVOs = records.map(boat => ({
+            boat,
+            boatType: boatTypes.find(bt => bt.id === boat.typeId)!,
+            dock: docks.find(d => d.id === boat.dockId)!,
+            unit: units.find(u => u.id === boat.unitId)!
+          }));
+          return {
+            list: boatVOs,
+            totalItems: records.length,
+            totalPages: response.data?.data?.totalPage || 0,
+          };
+        }}
         statusFilter={{
           value: statusFilter,
           onChange: setStatusFilter,

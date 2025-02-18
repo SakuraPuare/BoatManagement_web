@@ -34,7 +34,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
-const userFormSchema = z
+export const userFormSchema = z
   .object({
     username: z
       .string()

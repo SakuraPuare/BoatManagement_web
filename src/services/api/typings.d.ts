@@ -178,6 +178,7 @@ declare namespace API {
     status?: string;
     price?: number;
     discount?: number;
+    stock?: number;
     createdAt?: string;
     updatedAt?: string;
     orderInfo?: Record<string, any>;
@@ -1010,4 +1011,4 @@ declare namespace API {
 }
 export type {
   API
-}
+};

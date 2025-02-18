@@ -3,6 +3,7 @@ import {
   Action,
   Column,
   DataManagementTable,
+  TableRow,
 } from "@/components/data-management-table";
 import {
   getRoleChineseNames,
@@ -27,7 +28,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { RoleDialog } from "./role-dialog";
 import { UserDialog } from "./user-dialog";
-
+import { userFormSchema } from "./user-dialog";
 const ITEMS_PER_PAGE = 10;
 const defaultUser: API.BaseAccountsVO = {
   id: 0,
@@ -142,7 +143,9 @@ export default function UsersPage() {
     {
       header: "状态",
       accessor: "isBlocked",
-      render: (value, user: API.BaseAccountsVO) => {
+      render: (value: any, row?: TableRow<API.BaseAccountsVO>) => {
+        if (!row) return null;
+        const user = row.data;
         const isBlocked = value as boolean;
         return (
           <span
@@ -210,6 +213,19 @@ export default function UsersPage() {
         columns={columns}
         actions={actions}
         searchPlaceholder="搜索用户名、邮箱或电话..."
+        dialog={UserDialog}
+        schema={userFormSchema}
+        queryFn={async ({ pageNum, pageSize }, searchQuery) => {
+          const response = await getAdminUserPageQuery(
+            { pageNum, pageSize },
+            { username: searchQuery } as API.BaseAccountsDTO
+          );
+          return {
+            list: response.data?.data?.records || [],
+            totalItems: response.data?.data?.records?.length || 0,
+            totalPages: response.data?.data?.totalPage || 0,
+          };
+        }}
         statusFilter={{
           value: statusFilter,
           onChange: (value) =>

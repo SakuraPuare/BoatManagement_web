@@ -14,7 +14,7 @@ import type { API } from "@/services/api/typings";
 
 import { Anchor, Ban, Pencil, Trash2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
-import { DockDialog } from "./dock-dialog";
+import { DockDialog, dockFormSchema } from "./dock-dialog";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -144,6 +144,19 @@ export default function DocksPage() {
         columns={columns}
         actions={actions}
         searchPlaceholder="搜索用户名、邮箱或电话..."
+        dialog={DockDialog}
+        schema={dockFormSchema}
+        queryFn={async ({ pageNum, pageSize }, searchQuery) => {
+          const response = await getAdminDocksPageQuery(
+            { pageNum, pageSize },
+            { name: searchQuery } as API.BaseDocksDTO
+          );
+          return {
+            list: response.data?.data?.records || [],
+            totalItems: response.data?.data?.records?.length || 0,
+            totalPages: response.data?.data?.totalPage || 0,
+          };
+        }}
         statusFilter={{
           value: statusFilter,
           onChange: (value) => setStatusFilter(value),

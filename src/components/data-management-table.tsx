@@ -25,6 +25,7 @@ import {
 import { NestedKeyOf, NestedValue } from "@/types/commom";
 import { MoreVertical, Plus, Search } from "lucide-react";
 import React, { ReactNode } from "react";
+import { z } from "zod";
 
 function getValue<T, K extends NestedKeyOf<T>>(
   obj: T,
@@ -43,11 +44,16 @@ function getValue<T, K extends NestedKeyOf<T>>(
 
   return undefined as NestedValue<T, K>;
 }
-
+export interface TableRow<T> {
+  id?: number;
+  data: T;
+  handleEdit?: (item: T) => void;
+  handleDelete?: (id: number) => void;
+}
 export interface Column<T> {
   header: string;
   accessor: NestedKeyOf<T>;
-  render?: (value: NestedValue<T, NestedKeyOf<T>>, item?: T) => ReactNode;
+  render?: (value: any, row?: TableRow<T>) => ReactNode;
 }
 
 export interface Action<T> {
@@ -56,25 +62,43 @@ export interface Action<T> {
   onClick: (item: T) => void;
 }
 
-interface StatusFilterOption {
+export interface StatusFilterOption {
   value: string;
   label: string;
 }
 
-interface DataManagementTableProps<T> {
+export interface DataManagementTableProps<T> {
   title: string;
   icon: ReactNode;
-  data: T[];
-  isLoading: boolean;
   columns: Column<T>[];
-  actions: Action<T>[];
-  searchPlaceholder: string;
-  statusFilter: {
+  searchPlaceholder?: string;
+  dialog: React.ComponentType<any>;
+  schema: z.ZodSchema<any>;
+  queryFn: (params: { pageNum: number; pageSize: number }, searchQuery: string) => Promise<{
+    list: T[];
+    totalItems: number;
+    totalPages: number;
+  }>;
+  addFn?: (data: any) => Promise<void>;
+  updateFn?: (id: number, data: any) => Promise<void>;
+  deleteFn?: (id: number) => Promise<void>;
+  deleteConfirmMessage?: string;
+  addSuccessMessage?: string;
+  updateSuccessMessage?: string;
+  deleteSuccessMessage?: string;
+  queryErrorMessage?: string;
+  addErrorMessage?: string;
+  updateErrorMessage?: string;
+  deleteErrorMessage?: string;
+  data?: T[];
+  isLoading?: boolean;
+  actions?: Action<T>[];
+  statusFilter?: {
     value: string;
     onChange: (value: string) => void;
     options: StatusFilterOption[];
   };
-  pagination: {
+  pagination?: {
     currentPage: number;
     totalPages: number;
     totalItems: number;
@@ -87,13 +111,18 @@ interface DataManagementTableProps<T> {
 export function DataManagementTable<T>({
   title,
   icon,
-  data,
-  isLoading,
+  data = [],
+  isLoading = false,
   columns,
-  actions,
+  actions = [],
   searchPlaceholder,
   statusFilter,
-  pagination,
+  pagination = {
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    onPageChange: () => {},
+  },
   onAdd,
   onSearch,
 }: DataManagementTableProps<T>) {
@@ -118,26 +147,26 @@ export function DataManagementTable<T>({
           <Input
             placeholder={searchPlaceholder}
             className="pl-10"
-            onChange={(e) => {
-              onSearch?.(e.target.value);
-            }}
+            onChange={(e) => onSearch?.(e.target.value)}
           />
         </div>
-        <Select
-          value={statusFilter.value}
-          onValueChange={statusFilter.onChange}
-        >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="选择状态" />
-          </SelectTrigger>
-          <SelectContent>
-            {statusFilter.options.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {statusFilter && (
+          <Select
+            value={statusFilter.value}
+            onValueChange={statusFilter.onChange}
+          >
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="选择状态" />
+            </SelectTrigger>
+            <SelectContent>
+              {statusFilter.options.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
 
       <div className="border rounded-lg">
@@ -177,7 +206,7 @@ export function DataManagementTable<T>({
                   {columns.map((column) => (
                     <TableCell key={String(column.accessor)}>
                       {column.render
-                        ? column.render(getValue(item, column.accessor), item)
+                        ? column.render(getValue(item, column.accessor), { data: item })
                         : String(getValue(item, column.accessor))}
                     </TableCell>
                   ))}

@@ -24,16 +24,16 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-const DockFormSchema = z.object({
-  name: z.string().min(1, "码头名称不能为空"),
-  longitude: z.number(),
-  latitude: z.number(),
+export const dockFormSchema = z.object({
+  name: z.string().min(1, "名称不能为空"),
+  longitude: z.number().min(-180).max(180),
+  latitude: z.number().min(-90).max(90),
   address: z.string().min(1, "地址不能为空"),
   contactPhone: z.string().min(1, "联系电话不能为空"),
   isEnabled: z.boolean(),
 });
 
-type FormValues = z.infer<typeof DockFormSchema>;
+type FormValues = z.infer<typeof dockFormSchema>;
 
 interface DockDialogProps {
   open: boolean;
@@ -43,7 +43,7 @@ interface DockDialogProps {
 
 export function DockDialog({ open, onOpenChange, dock }: DockDialogProps) {
   const form = useForm<FormValues>({
-    resolver: zodResolver(DockFormSchema),
+    resolver: zodResolver(dockFormSchema),
     defaultValues: {
       name: "",
       longitude: 0,

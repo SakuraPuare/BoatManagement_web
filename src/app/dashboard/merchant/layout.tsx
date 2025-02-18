@@ -11,7 +11,7 @@ const sidebarItems = [
   },
   {
     title: "商品管理",
-    path: "/dashboard/merchant/products",
+    path: "/dashboard/merchant/goods",
     icon: <Package className="w-5 h-5" />,
   },
   {

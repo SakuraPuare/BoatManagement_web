@@ -24,7 +24,7 @@ export function middleware(request: NextRequest) {
     // 如果用户已登录且访问登录页，重定向到默认页面
     if (isLoggedIn && pathname === "/login") {
       return NextResponse.redirect(
-        new URL(DEFAULT_LOGIN_REDIRECT, request.url),
+        new URL(DEFAULT_LOGIN_REDIRECT, request.url)
       );
     }
     return NextResponse.next();

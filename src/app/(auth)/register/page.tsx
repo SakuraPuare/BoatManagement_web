@@ -74,7 +74,7 @@ export default function RegisterPage() {
         console.error("检查用户名失败:", err);
       }
     }, 300),
-    [setUsernameError],
+    [setUsernameError]
   );
 
   return (

@@ -32,8 +32,7 @@ export function DashboardLayout({
       <aside
         className={cn(
           "fixed lg:static inset-y-0 left-0 z-50 flex flex-col w-64 transition-transform duration-300 ease-in-out bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700",
-          !sidebarOpen &&
-            "transform -translate-x-full lg:translate-x-0 lg:w-20",
+          !sidebarOpen && "transform -translate-x-full lg:translate-x-0 lg:w-20"
         )}
       >
         {/* 侧边栏头部 */}
@@ -42,7 +41,7 @@ export function DashboardLayout({
             href="/dashboard"
             className={cn(
               "flex items-center space-x-3 text-gray-800 dark:text-white font-semibold",
-              !sidebarOpen && "lg:justify-center",
+              !sidebarOpen && "lg:justify-center"
             )}
           >
             {!sidebarOpen ? (
@@ -75,7 +74,7 @@ export function DashboardLayout({
                     !sidebarOpen && "lg:justify-center lg:px-2",
                     pathname === item.path
                       ? "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground"
-                      : "hover:bg-gray-100 dark:hover:bg-gray-700",
+                      : "hover:bg-gray-100 dark:hover:bg-gray-700"
                   )}
                 >
                   <span className="flex items-center justify-center w-5 h-5">
@@ -97,7 +96,7 @@ export function DashboardLayout({
             <ChevronLeft
               className={cn(
                 "w-5 h-5 transition-transform",
-                !sidebarOpen && "transform rotate-180",
+                !sidebarOpen && "transform rotate-180"
               )}
             />
           </button>

@@ -1,9 +1,7 @@
 "use client";
-import React from "react";
-
 import { Button } from "@/components/ui/button";
 import { AlertOctagon } from "lucide-react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 export default function Error({
   error,

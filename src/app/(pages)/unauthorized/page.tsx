@@ -1,9 +1,8 @@
 "use client";
-import React from "react";
-
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
+import React from "react";
 
 export default function Unauthorized() {
   const router = useRouter();

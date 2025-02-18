@@ -1,4 +1,3 @@
-export type { API };
 declare namespace API {
   type auditAdminUnitParams = {
     id: number;
@@ -380,12 +379,12 @@ declare namespace API {
     id: number;
   };
 
-  type getAdminUnitPageQueryParams = {
+  type getAdminUnitCertifyPageQueryParams = {
     pageNum?: number;
     pageSize?: number;
   };
 
-  type getAdminUserPageQuery1Params = {
+  type getAdminUserCertifyPageQueryParams = {
     pageNum?: number;
     pageSize?: number;
   };
@@ -972,4 +971,7 @@ declare namespace API {
     avatarUrl?: string;
     gender?: number;
   };
+}
+export type {
+  API
 }

@@ -19,7 +19,7 @@ export async function auditAdminUnit(
 }
 
 /** 获取所有单位认证列表 POST /admin/audit/unit/list */
-export async function getAdminUnitListQuery(
+export async function getAdminUnitCertifyListQuery(
   body: API.CertifyQueryDTO,
   options?: { [key: string]: any }
 ) {
@@ -34,9 +34,9 @@ export async function getAdminUnitListQuery(
 }
 
 /** 获取所有单位认证列表分页 POST /admin/audit/unit/page */
-export async function getAdminUnitPageQuery(
+export async function getAdminUnitCertifyPageQuery(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getAdminUnitPageQueryParams,
+  params: API.getAdminUnitCertifyPageQueryParams,
   body: API.CertifyQueryDTO,
   options?: { [key: string]: any }
 ) {
@@ -74,7 +74,7 @@ export async function auditAdminUser(
 }
 
 /** 获取所有用户认证列表 POST /admin/audit/user/list */
-export async function getAdminUserListQuery1(
+export async function getAdminUserCertifyListQuery(
   body: API.CertifyQueryDTO,
   options?: { [key: string]: any }
 ) {
@@ -89,9 +89,9 @@ export async function getAdminUserListQuery1(
 }
 
 /** 获取所有用户认证列表分页 POST /admin/audit/user/page */
-export async function getAdminUserPageQuery1(
+export async function getAdminUserCertifyPageQuery(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getAdminUserPageQuery1Params,
+  params: API.getAdminUserCertifyPageQueryParams,
   body: API.CertifyQueryDTO,
   options?: { [key: string]: any }
 ) {

@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { REQUEST_STATUS_MAP } from "@/lib/constants/status";
-import { getDocksById } from "@/services/api/adminDock";
+import { getVendorDock } from "@/services/api/vendorDockController";
 import type { API } from "@/services/api/typings";
 import { getVendorBoatRequestsPageQuery } from "@/services/api/vendorBoatRequest";
 import { format } from "date-fns";
@@ -55,7 +55,7 @@ export default function VendorBoatRequestsPage() {
       await Promise.all(
         Array.from(dockIds).map(async (id) => {
           try {
-            const response = await getDocksById({ id }, {});
+            const response = await getVendorDock({ id }, {});
             if (response.data?.data?.name) {
               dockNamesMap[id] = response.data.data.name;
             }

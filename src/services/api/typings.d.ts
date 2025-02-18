@@ -1,3 +1,4 @@
+export type { API };
 declare namespace API {
   type auditAdminUnitParams = {
     id: number;
@@ -971,7 +972,4 @@ declare namespace API {
     avatarUrl?: string;
     gender?: number;
   };
-}
-export type {
-  API
 }

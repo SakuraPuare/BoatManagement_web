@@ -19,7 +19,7 @@ import {
 import type { API } from "@/services/api/typings";
 import {
   deleteVendorBoatType,
-  getVendorBoatTypesPage,
+  getVendorBoatTypesPageQuery,
 } from "@/services/api/vendorBoatType";
 import { format } from "date-fns";
 import {
@@ -49,7 +49,7 @@ export default function VendorBoatTypesPage() {
   const fetchBoatTypes = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await getVendorBoatTypesPage(
+      const response = await getVendorBoatTypesPageQuery(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         {},
       );
@@ -159,7 +159,7 @@ export default function VendorBoatTypesPage() {
                   <TableCell>{boatType.maxEndurance}</TableCell>
                   <TableCell>
                     <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-medium min-w-[60px] ${
                         boatType.isEnabled
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"

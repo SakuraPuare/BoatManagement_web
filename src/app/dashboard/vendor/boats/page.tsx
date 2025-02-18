@@ -19,9 +19,9 @@ import {
 import type { API } from "@/services/api/typings";
 import {
   deleteVendorBoat,
-  getVendorBoatsPage,
+  getVendorBoatsPageQuery,
 } from "@/services/api/vendorBoat";
-import { getVendorBoatTypes } from "@/services/api/vendorBoatType";
+import { getVendorBoatTypesListQuery } from "@/services/api/vendorBoatType";
 import { getVendorDockListQuery } from "@/services/api/vendorDockController";
 import { format } from "date-fns";
 import {
@@ -55,7 +55,7 @@ export default function VendorBoatsPage() {
   const fetchBoats = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await getVendorBoatsPage(
+      const response = await getVendorBoatsPageQuery(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         {},
       );
@@ -73,7 +73,7 @@ export default function VendorBoatsPage() {
   const fetchData = useCallback(async () => {
     try {
       const [boatTypesResponse, docksResponse] = await Promise.all([
-        getVendorBoatTypes({}, {}),
+        getVendorBoatTypesListQuery({}, {}),
         getVendorDockListQuery({}, {}),
       ]);
       console.log(boats);

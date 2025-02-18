@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -55,17 +55,45 @@ export function BoatTypeDialog({
   const form = useForm<z.infer<typeof boatTypeFormSchema>>({
     resolver: zodResolver(boatTypeFormSchema),
     defaultValues: {
-      typeName: boatType?.typeName || "",
-      description: boatType?.description || "",
-      length: boatType?.length || 0,
-      width: boatType?.width || 0,
-      grossNumber: boatType?.grossNumber || 0,
-      maxLoad: boatType?.maxLoad || 0,
-      maxSpeed: boatType?.maxSpeed || 0,
-      maxEndurance: boatType?.maxEndurance || 0,
-      isEnabled: boatType?.isEnabled ?? true,
+      typeName: "",
+      description: "",
+      length: 0,
+      width: 0,
+      grossNumber: 0,
+      maxLoad: 0,
+      maxSpeed: 0,
+      maxEndurance: 0,
+      isEnabled: true,
     },
   });
+
+  useEffect(() => {
+    if (boatType) {
+      form.reset({
+        typeName: boatType.typeName || "",
+        description: boatType.description || "",
+        length: boatType.length || 0,
+        width: boatType.width || 0,
+        grossNumber: boatType.grossNumber || 0,
+        maxLoad: boatType.maxLoad || 0,
+        maxSpeed: boatType.maxSpeed || 0,
+        maxEndurance: boatType.maxEndurance || 0,
+        isEnabled: boatType.isEnabled ?? true,
+      });
+    } else {
+      form.reset({
+        typeName: "",
+        description: "",
+        length: 0,
+        width: 0,
+        grossNumber: 0,
+        maxLoad: 0,
+        maxSpeed: 0,
+        maxEndurance: 0,
+        isEnabled: true,
+      });
+    }
+  }, [boatType, form]);
 
   const onSubmit = async (values: z.infer<typeof boatTypeFormSchema>) => {
     try {

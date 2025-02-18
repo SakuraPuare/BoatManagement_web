@@ -5,9 +5,9 @@ import {
   Anchor,
   Home,
   Package,
+  ShoppingCart,
   Settings,
   Ship,
-  ShoppingCart,
   Sailboat,
 } from "lucide-react";
 
@@ -28,14 +28,14 @@ const sidebarItems = [
     icon: <Sailboat className="w-5 h-5" />,
   },
   {
+    title: "船舶订单",
+    path: "/dashboard/vendor/orders",
+    icon: <ShoppingCart className="w-5 h-5" />,
+  },
+  {
     title: "供应商品",
     path: "/dashboard/vendor/products",
     icon: <Package className="w-5 h-5" />,
-  },
-  {
-    title: "供应订单",
-    path: "/dashboard/vendor/orders",
-    icon: <ShoppingCart className="w-5 h-5" />,
   },
   {
     title: "供应商设置",

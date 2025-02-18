@@ -225,6 +225,18 @@ declare namespace API {
     status?: string;
   };
 
+  type BaseUnitsDTO = {
+    name?: string;
+    unitName?: string;
+    socialCreditCode?: string;
+    legalPerson?: string;
+    address?: string;
+    contactPhone?: string;
+    status?: string;
+    adminUserId?: number;
+    types?: string;
+  };
+
   type BaseUnitsVO = {
     createdAt?: string;
     updatedAt?: string;
@@ -238,6 +250,13 @@ declare namespace API {
     status?: string;
     adminUserId?: number;
     types?: string;
+  };
+
+  type BaseUserCertifyDTO = {
+    userId?: number;
+    realName?: string;
+    idCard?: string;
+    status?: string;
   };
 
   type BaseUserCertifyVO = {
@@ -288,11 +307,6 @@ declare namespace API {
 
   type cancelUserBoatRequestParams = {
     id: number;
-  };
-
-  type CertifyQueryDTO = {
-    status?: string;
-    type?: string;
   };
 
   type completeOrder1Params = {
@@ -379,14 +393,22 @@ declare namespace API {
     id: number;
   };
 
-  type getAdminUnitCertifyPageQueryParams = {
+  type getAdminUnitPageQueryParams = {
     pageNum?: number;
     pageSize?: number;
+  };
+
+  type getAdminUnitParams = {
+    id: number;
   };
 
   type getAdminUserCertifyPageQueryParams = {
     pageNum?: number;
     pageSize?: number;
+  };
+
+  type getAdminUserCertifyParams = {
+    id: number;
   };
 
   type getAdminUserPageQueryParams = {
@@ -674,6 +696,20 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: BaseMerchantsVO;
+    time?: number;
+  };
+
+  type ResponseBaseUnitsVO = {
+    code?: number;
+    message?: string;
+    data?: BaseUnitsVO;
+    time?: number;
+  };
+
+  type ResponseBaseUserCertifyVO = {
+    code?: number;
+    message?: string;
+    data?: BaseUserCertifyVO;
     time?: number;
   };
 

@@ -23,7 +23,7 @@ import {
 } from "@/services/api/vendorBoatType";
 import { format } from "date-fns";
 import {
-  Anchor,
+  Sailboat,
   MoreVertical,
   Pencil,
   Plus,
@@ -92,7 +92,7 @@ export default function VendorBoatTypesPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <Anchor className="h-6 w-6" />
+          <Sailboat className="h-6 w-6" />
           <h1 className="text-2xl font-semibold">船舶类型管理</h1>
         </div>
         <Button onClick={handleAdd}>

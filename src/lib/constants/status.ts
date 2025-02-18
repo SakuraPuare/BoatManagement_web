@@ -17,3 +17,11 @@ export const REQUEST_STATUS_MAP: Record<
   COMPLETED: { label: "已完成", color: "bg-blue-100 text-blue-800" },
   CANCELLED: { label: "已取消", color: "bg-gray-100 text-gray-800" },
 };
+//'PENDING', 'PAID', 'ACCEPTED', 'COMPLETED', 'CANCELLED'
+export const ORDER_STATUS = {
+  PENDING: { label: "待处理", color: "bg-yellow-100 text-yellow-800" },
+  PAID: { label: "已支付", color: "bg-green-100 text-green-800" },
+  ACCEPTED: { label: "已接受", color: "bg-blue-100 text-blue-800" },
+  COMPLETED: { label: "已完成", color: "bg-blue-100 text-blue-800" },
+  CANCELLED: { label: "已取消", color: "bg-red-100 text-red-800" },
+}; 

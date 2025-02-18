@@ -28,6 +28,11 @@ const sidebarItems = [
     icon: <Sailboat className="w-5 h-5" />,
   },
   {
+    title: "船只请求",
+    path: "/dashboard/vendor/boat-requests",
+    icon: <Ship className="w-5 h-5" />,
+  },
+  {
     title: "船舶订单",
     path: "/dashboard/vendor/orders",
     icon: <ShoppingCart className="w-5 h-5" />,
@@ -41,11 +46,6 @@ const sidebarItems = [
     title: "供应商设置",
     path: "/dashboard/vendor/settings",
     icon: <Settings className="w-5 h-5" />,
-  },
-  {
-    title: "船只请求",
-    path: "/dashboard/vendor/boat-requests",
-    icon: <Ship className="w-5 h-5" />,
   },
 ];
 

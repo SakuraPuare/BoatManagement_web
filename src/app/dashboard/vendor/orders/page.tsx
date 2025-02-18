@@ -18,18 +18,13 @@ import { DataPagination } from "@/components/ui/data-pagination";
 import { 
   cancelOrder,
   completeOrder,
-  getVendorOrdersPageQuery 
+  getVendorOrdersPageQuery,
+  handleOrder
 } from "@/services/api/vendorOrder";
 import { toast } from "sonner";
 
 const ITEMS_PER_PAGE = 10;
-
-const ORDER_STATUS = {
-  PENDING: { label: "待处理", color: "bg-yellow-100 text-yellow-800" },
-  PROCESSING: { label: "处理中", color: "bg-blue-100 text-blue-800" },
-  COMPLETED: { label: "已完成", color: "bg-green-100 text-green-800" },
-  CANCELLED: { label: "已取消", color: "bg-red-100 text-red-800" },
-};                                        
+import { ORDER_STATUS } from "@/lib/constants/status";
                                     
 export default function VendorOrdersPage() {
   const [orders, setOrders] = useState<API.BaseBoatOrdersVO[]>([]);
@@ -74,6 +69,22 @@ export default function VendorOrdersPage() {
     } catch (error) {
       console.error(error);
       toast.error("完成订单失败");
+    }
+  };
+
+  const handleAccept = async (requestId: number) => {
+    try {
+      await handleOrder(
+        { requestId },
+        {
+          status: "PROCESSING",
+        }
+      );
+      toast.success("订单已接受");
+      fetchOrders();
+    } catch (error) {
+      console.error(error);
+      toast.error("接受订单失败");
     }
   };
 
@@ -162,7 +173,7 @@ export default function VendorOrdersPage() {
                           <Button
                             variant="default"
                             size="sm"
-                            onClick={() => handleComplete(order.id!)}
+                            onClick={() => handleAccept(order.requestId!)}
                           >
                             接受
                           </Button>

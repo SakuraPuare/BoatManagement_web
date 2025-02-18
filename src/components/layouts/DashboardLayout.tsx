@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { ChevronLeft, Menu, MonitorCheck, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import React, { useState } from "react";
 
 interface SidebarItem {
   title: string;
@@ -124,7 +124,7 @@ export function DashboardLayout({
 
         {/* 页面内容 */}
         <main className="flex-1 p-6 overflow-y-auto">
-          <div className="max-w-7xl mx-auto">{children}</div>
+          <div className="max-w-[90%] mx-auto">{children}</div>
         </main>
       </div>
     </div>

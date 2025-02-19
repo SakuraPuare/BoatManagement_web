@@ -32,7 +32,7 @@ const columns: Column<API.BaseMerchantsVO>[] = [
     ),
   },
   {
-    accessor: "id",
+    accessor: "id.",
     header: "操作",
     render: (_: any, row?: TableRow<API.BaseMerchantsVO>) => {
       if (!row) return null;

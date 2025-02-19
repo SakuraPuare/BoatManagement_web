@@ -16,6 +16,7 @@ import * as adminAudit from "./adminAudit";
 import * as vendorOrder from "./vendorOrder";
 import * as vendorDockController from "./vendorDockController";
 import * as vendorBoatRequest from "./vendorBoatRequest";
+import * as userOrder from "./userOrder";
 import * as userMerchant from "./userMerchant";
 import * as userDockController from "./userDockController";
 import * as userBoatRequest from "./userBoatRequest";
@@ -38,6 +39,7 @@ export default {
   vendorOrder,
   vendorDockController,
   vendorBoatRequest,
+  userOrder,
   userMerchant,
   userDockController,
   userBoatRequest,

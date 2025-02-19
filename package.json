@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "openapi": "node openapi.config.mjs"
+    "openapi": "node openapi.config.mjs",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

@@ -1,5 +1,5 @@
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
-import { Anchor, Bell, Home, ShoppingBag, Ticket, User } from "lucide-react";
+import { Anchor, Bell, Home, ShoppingBag, Store, Ticket, User } from "lucide-react";
 
 const sidebarItems = [
   {
@@ -21,6 +21,11 @@ const sidebarItems = [
     title: "船只请求",
     path: "/dashboard/user/boat-requests",
     icon: <Anchor className="h-4 w-4" />,
+  },
+  {
+    title: "商家列表",
+    path: "/dashboard/user/merchants",
+    icon: <Store className="h-4 w-4" />,
   },
   {
     title: "个人中心",

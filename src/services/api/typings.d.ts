@@ -178,7 +178,6 @@ declare namespace API {
     status?: string;
     price?: number;
     discount?: number;
-    stock?: number;
     createdAt?: string;
     updatedAt?: string;
     orderInfo?: Record<string, any>;
@@ -306,7 +305,15 @@ declare namespace API {
     id: number;
   };
 
+  type cancelUserBoatOrderParams = {
+    id: number;
+  };
+
   type cancelUserBoatRequestParams = {
+    id: number;
+  };
+
+  type cancelUserGoodsOrderParams = {
     id: number;
   };
 
@@ -444,12 +451,22 @@ declare namespace API {
     id: number;
   };
 
+  type getUserBoatOrdersPageQueryParams = {
+    pageNum?: number;
+    pageSize?: number;
+  };
+
   type getUserBoatRequestsPageQueryParams = {
     pageNum?: number;
     pageSize?: number;
   };
 
   type getUserDockPageQueryParams = {
+    pageNum?: number;
+    pageSize?: number;
+  };
+
+  type getUserGoodsOrdersPageQueryParams = {
     pageNum?: number;
     pageSize?: number;
   };
@@ -642,6 +659,14 @@ declare namespace API {
     totalPage?: number;
     totalRow?: number;
     optimizeCountQuery?: boolean;
+  };
+
+  type payUserBoatOrdersParams = {
+    id: number;
+  };
+
+  type payUserGoodsOrderParams = {
+    id: number;
   };
 
   type ResponseBaseAccountsVO = {
@@ -1009,6 +1034,4 @@ declare namespace API {
     gender?: number;
   };
 }
-export type {
-  API
-};
+export type { API };

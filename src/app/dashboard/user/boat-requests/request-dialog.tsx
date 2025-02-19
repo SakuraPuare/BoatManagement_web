@@ -72,14 +72,18 @@ export function RequestDialog({
 
   const onSubmit = async (values: z.infer<typeof requestFormSchema>) => {
     try {
-      await createUserBoatRequest({
+      const res = await createUserBoatRequest({
         ...values,
         startTime: format(values.startTime, "yyyy-MM-dd'T'HH:mm:ss"),
         endTime: format(values.endTime, "yyyy-MM-dd'T'HH:mm:ss"),
       });
-      toast.success("创建请求成功");
-      onOpenChange(false);
-      form.reset();
+      if (res.data.code === 200) {
+        toast.success("创建请求成功");
+        onOpenChange(false);
+        form.reset();
+      } else {
+        toast.error(res.data.message);
+      }
     } catch (error) {
       console.error("创建请求失败:", error);
       toast.error(

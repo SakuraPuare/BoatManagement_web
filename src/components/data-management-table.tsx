@@ -178,7 +178,9 @@ export function DataManagementTable<T>({
                   {column.header}
                 </TableHead>
               ))}
-              <TableHead className="w-[100px]">操作</TableHead>
+              {actions && actions.length > 0 && (
+                <TableHead className="w-[100px]">操作</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -210,28 +212,30 @@ export function DataManagementTable<T>({
                         : String(getValue(item, column.accessor))}
                     </TableCell>
                   ))}
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        {actions.map((action, actionIndex) => (
-                          <DropdownMenuItem
-                            key={actionIndex}
-                            onClick={() => action.onClick(item)}
-                          >
-                            {action.icon}
-                            {typeof action.label === "function"
-                              ? action.label(item)
-                              : action.label}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+                  {actions && actions.length > 0 && (
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          {actions.map((action, actionIndex) => (
+                            <DropdownMenuItem
+                              key={actionIndex}
+                              onClick={() => action.onClick(item)}
+                            >
+                              {action.icon}
+                              {typeof action.label === "function"
+                                ? action.label(item)
+                                : action.label}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             )}

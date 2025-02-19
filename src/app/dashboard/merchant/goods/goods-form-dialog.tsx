@@ -18,30 +18,34 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { updateMerchantsGoods, addMerchantsGoods } from "@/services/api/merchantGoods";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { API } from "@/services/api/typings";
+import { toast } from "sonner";
 
 const goodsFormSchema = z.object({
-  name: z.string().min(1, "商品名称不能为空"),
-  description: z.string().min(1, "商品描述不能为空"),
-  price: z.string().min(1, "价格不能为空"),
-  stock: z.string().min(1, "库存不能为空"),
-  unit: z.string().min(1, "单位不能为空"),
+  name: z.string().min(1, "商品名称不能为空").max(50, "商品名称最多50个字符"),
+  description: z.string().min(1, "商品描述不能为空").max(200, "商品描述最多200个字符"),
+  price: z.string().min(1, "价格不能为空")
+    .refine((val) => !isNaN(Number(val)) && Number(val) > 0, "价格必须大于0"),
+  stock: z.string().min(1, "库存不能为空")
+    .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, "库存不能小于0"),
+  unit: z.string().min(1, "单位不能为空").max(10, "单位最多10个字符"),
 });
 
 type GoodsFormDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   selectedGood: API.BaseGoodsVO | null;
-  onSubmit: (values: z.infer<typeof goodsFormSchema>) => Promise<void>;
+  onSuccess?: () => void;
 };
 
 export function GoodsFormDialog({
   open,
   onOpenChange,
   selectedGood,
-  onSubmit,
+  onSuccess,
 }: GoodsFormDialogProps) {
   const form = useForm<z.infer<typeof goodsFormSchema>>({
     resolver: zodResolver(goodsFormSchema),
@@ -81,6 +85,43 @@ export function GoodsFormDialog({
       form.reset();
     }
   }, [open, form]);
+
+  const onSubmit = async (values: z.infer<typeof goodsFormSchema>) => {
+    try {
+      if (selectedGood?.id) {
+        const res = await updateMerchantsGoods(
+          { id: selectedGood.id },
+          {
+            ...values,
+            price: parseFloat(values.price),
+            stock: parseInt(values.stock, 10),
+          } as API.BaseGoodsDTO
+        );
+        console.log(res);
+        if (res.data?.code === 200) {
+          toast.success("更新成功");
+        } else {
+          toast.error("更新失败");
+        }
+      } else {
+        const res = await addMerchantsGoods({
+          ...values,
+          price: parseFloat(values.price),
+          stock: parseInt(values.stock, 10),
+        } as API.BaseGoodsDTO);
+        if (res.data?.code === 200) {
+          toast.success("添加成功");
+        } else {
+          toast.error("添加失败");
+        }
+      }
+      onOpenChange(false);
+      onSuccess?.();
+    } catch (error) {
+      console.error(error);
+      toast.error(selectedGood ? "更新失败" : "添加失败");
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

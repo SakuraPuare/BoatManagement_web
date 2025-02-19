@@ -25,3 +25,25 @@ export const ORDER_STATUS = {
   COMPLETED: { label: "已完成", color: "bg-blue-100 text-blue-800" },
   CANCELLED: { label: "已取消", color: "bg-red-100 text-red-800" },
 }; 
+//`status` ENUM ('PENDING', 'ACCEPTED', 'CANCELLED') NOT NULL DEFAULT 'PENDING' COMMENT '订单状态',
+export const BOAT_ORDER_STATUS_MAP = {
+  PENDING: {
+    label: "待处理",
+    color: "bg-yellow-100 text-yellow-800"
+  },
+  ACCEPTED: {
+    label: "已接受",
+    color: "bg-green-100 text-green-800"
+  },
+  CANCELLED: {
+    label: "已取消",
+    color: "bg-red-100 text-red-800"
+  }
+} as const;
+
+//  `type` ENUM ('REAL_TIME', 'RESERVATION') NOT NULL COMMENT '订单类型',
+export const BOAT_ORDER_TYPE_MAP = {
+  REAL_TIME: { label: "实时请求", color: "bg-blue-100 text-blue-800" },
+  RESERVATION: { label: "预约请求", color: "bg-green-100 text-green-800" },
+} as const;
+  

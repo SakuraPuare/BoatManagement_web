@@ -39,13 +39,13 @@ import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-
+import { BOAT_ORDER_STATUS_MAP } from "@/lib/constants/status";   
 const requestFormSchema = z.object({
   startDockId: z.number().min(1, "请选择起始码头"),
   endDockId: z.number().min(1, "请选择目的码头"),
   startTime: z.date(),
   endTime: z.date(),
-  type: z.string().min(1, "请选择请求类型"),
+  type: z.enum(["REAL_TIME", "RESERVATION"], { required_error: "请选择请求类型" }),
 });
 
 interface RequestDialogProps {
@@ -66,7 +66,7 @@ export function RequestDialog({
       endDockId: 0,
       startTime: new Date(),
       endTime: new Date(),
-      type: "",
+      type: "REAL_TIME",
     },
   });
 
@@ -74,8 +74,8 @@ export function RequestDialog({
     try {
       const res = await createUserBoatRequest({
         ...values,
-        startTime: format(values.startTime, "yyyy-MM-dd'T'HH:mm:ss"),
-        endTime: format(values.endTime, "yyyy-MM-dd'T'HH:mm:ss"),
+        startTime: format(values.startTime, "yyyy-MM-dd HH:mm:ss"),
+        endTime: format(values.endTime, "yyyy-MM-dd HH:mm:ss"),
       });
       if (res.data.code === 200) {
         toast.success("创建请求成功");
@@ -257,9 +257,8 @@ export function RequestDialog({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="PASSENGER">客运</SelectItem>
-                      <SelectItem value="CARGO">货运</SelectItem>
-                      <SelectItem value="FERRY">渡运</SelectItem>
+                      <SelectItem value="REAL_TIME">实时请求</SelectItem>
+                      <SelectItem value="RESERVATION">预约请求</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

@@ -27,6 +27,8 @@ import { Anchor, MoreVertical, Plus, Search, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { RequestDialog } from "./request-dialog";
+import { BOAT_ORDER_STATUS_MAP, BOAT_ORDER_TYPE_MAP } from "@/lib/constants/status";
+import { clsx } from "clsx";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -126,7 +128,7 @@ export default function BoatRequestsPage() {
               <TableHead>目的码头</TableHead>
               <TableHead>开始时间</TableHead>
               <TableHead>结束时间</TableHead>
-              <TableHead>类型</TableHead>
+              <TableHead>订单类型</TableHead>
               <TableHead>状态</TableHead>
               <TableHead>创建时间</TableHead>
               <TableHead>更新时间</TableHead>
@@ -163,20 +165,18 @@ export default function BoatRequestsPage() {
                     {request.endTime &&
                       format(new Date(request.endTime), "yyyy-MM-dd HH:mm:ss")}
                   </TableCell>
-                  <TableCell>{request.type}</TableCell>
+                  <TableCell>
+                    {BOAT_ORDER_TYPE_MAP[request.type as keyof typeof BOAT_ORDER_TYPE_MAP]?.label || "未知"}
+                  </TableCell>
                   <TableCell>
                     <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        request.status === "PENDING"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : request.status === "ACCEPTED"
-                            ? "bg-green-100 text-green-800"
-                            : request.status === "CANCELLED"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-gray-100 text-gray-800"
-                      }`}
+                      className={clsx(
+                        "px-2 py-1 rounded-full text-sm font-medium whitespace-nowrap",
+                        BOAT_ORDER_STATUS_MAP[request.status as keyof typeof BOAT_ORDER_STATUS_MAP]?.color || 
+                        "bg-gray-100 text-gray-800"
+                      )}
                     >
-                      {request.status}
+                      {BOAT_ORDER_STATUS_MAP[request.status as keyof typeof BOAT_ORDER_STATUS_MAP]?.label || "未知"}
                     </span>
                   </TableCell>
                   <TableCell>

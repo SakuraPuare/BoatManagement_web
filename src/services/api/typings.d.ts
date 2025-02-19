@@ -172,6 +172,7 @@ declare namespace API {
     description?: string;
     price?: number;
     unit?: string;
+    stock?: number;
   };
 
   type BaseGoodsOrdersDTO = {

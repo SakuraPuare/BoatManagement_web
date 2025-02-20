@@ -147,10 +147,9 @@ export default function DocksPage() {
         dialog={DockDialog}
         schema={dockFormSchema}
         queryFn={async ({ pageNum, pageSize }, searchQuery) => {
-          const response = await getAdminDocksPageQuery(
-            { pageNum, pageSize },
-            { name: searchQuery } as API.BaseDocksDTO
-          );
+          const response = await getAdminDocksPageQuery({ pageNum, pageSize }, {
+            name: searchQuery,
+          } as API.BaseDocksDTO);
           return {
             list: response.data?.data?.records || [],
             totalItems: response.data?.data?.records?.length || 0,

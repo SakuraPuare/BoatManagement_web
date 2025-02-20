@@ -1,81 +1,80 @@
 "use client";
-import { DataManagementTable, Column, Action } from "@/components/data-management-table";
-import { Store, Pencil, Trash2, Ban } from "lucide-react";
-import React, { useState, useCallback, useEffect } from "react";
-import { MerchantDialog } from "./merchant-dialog";
-import { merchantFormSchema } from "./merchant-dialog";
 import {
-  deleteAdminMerchant,
-  getAdminMerchantPageQuery,
-  updateAdminMerchant,
-} from "@/services/api/adminMerchant";
-import type { API } from "@/services/api/typings";
+  Column,
+  DataManagementTable,
+} from "@/components/data-management-table";
 import { MERCHANT_CERTIFY_STATUS_MAP } from "@/lib/constants/status";
+import { getAdminMerchantPageQuery } from "@/services/api/adminMerchant";
+import { getAdminUnitListQuery } from "@/services/api/adminUnit";
+import { getAdminUserListQuery } from "@/services/api/adminUser";
+import type { API } from "@/services/api/typings";
+import { Store } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
 
 type MerchantStatus = keyof typeof MERCHANT_CERTIFY_STATUS_MAP;
+type Merchant = API.BaseMerchantsVO & {
+  user: API.BaseAccountsVO;
+  unit: API.BaseUnitsVO;
+};
 
 export default function MerchantsPage() {
   const [merchants, setMerchants] = useState<API.BaseMerchantsVO[]>([]);
+  const [users, setUsers] = useState<API.BaseAccountsVO[]>([]);
+  const [units, setUnits] = useState<API.BaseUnitsVO[]>([]);
+  const [merchantList, setMerchantList] = useState<Merchant[]>([]);
+
   const [isLoading, setIsLoading] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedMerchant, setSelectedMerchant] = useState<API.BaseMerchantsVO | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [statusFilter, setStatusFilter] = useState<"all" | MerchantStatus>("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | MerchantStatus>(
+    "all"
+  );
 
-  const fetchMerchants = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await getAdminMerchantPageQuery(
-        { pageNum: currentPage, pageSize: 10 },
-        { status: statusFilter === "all" ? undefined : statusFilter }
-      );
-      setMerchants(response.data?.data?.records || []);
-      setTotalPages(response.data?.data?.totalPage || 1);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
+  const fetchData = useCallback(async () => {
+    const users = (await getAdminUserListQuery({})).data?.data || [];
+    const units = (await getAdminUnitListQuery({})).data?.data || [];
+    const merchants =
+      (
+        await getAdminMerchantPageQuery(
+          {
+            pageNum: currentPage,
+            pageSize: 10,
+          },
+          {
+            ...(statusFilter !== "all" && { status: statusFilter }),
+          }
+        )
+      ).data?.data?.records || [];
+    setMerchants(merchants);
+    setUsers(users);
+    setUnits(units);
   }, [currentPage, statusFilter]);
 
-  const handleAdd = () => {
-    setSelectedMerchant(null);
-    setIsDialogOpen(true);
-  };
-
-  const handleEdit = (merchant: API.BaseMerchantsVO) => {
-    setSelectedMerchant(merchant);
-    setIsDialogOpen(true);
-  };
-
-  const handleDelete = async (merchantId: number) => {
-    try {
-      await deleteAdminMerchant({ id: merchantId });
-      await fetchMerchants();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleBlock = async (merchantId: number) => {
-    const isBlocked = merchants.find((merchant) => merchant.id === merchantId)?.status === "BLOCKED";
-    try {
-      await updateAdminMerchant({ id: merchantId }, { status: !isBlocked ? "BLOCKED" : "ACTIVE" });
-      await fetchMerchants();
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  useEffect(() => {
+    setIsLoading(true);
+    fetchData();
+  }, [fetchData]);
 
   useEffect(() => {
-    fetchMerchants();
-  }, [fetchMerchants]);
+    if (users.length > 0 && units.length > 0) {
+      const merchantList = merchants.map((merchant) => {
+        const user = users.find((user) => user.id === merchant.userId);
+        const unit = units.find((unit) => unit.id === merchant.unitId);
+        return { ...merchant, user: user || {}, unit: unit || {} };
+      });
+      setMerchantList(merchantList);
+      setIsLoading(false);
+    }
+  }, [users, units, merchants]);
 
-  const columns: Column<API.BaseMerchantsVO>[] = [
+  const columns: Column<Merchant>[] = [
     { header: "商户ID", accessor: "id" },
-    { header: "用户ID", accessor: "userId" },
-    { header: "单位ID", accessor: "unitId" },
+    { header: "用户名", accessor: "user.username" },
+    { header: "单位ID", accessor: "unit.id" },
+    { header: "单位名", accessor: "unit.name" },
+    { header: "单位地址", accessor: "unit.address" },
+    { header: "法定代表人", accessor: "unit.legalPerson" },
+    { header: "联系电话", accessor: "unit.contactPhone" },
     {
       header: "状态",
       accessor: "status",
@@ -93,37 +92,8 @@ export default function MerchantsPage() {
         );
       },
     },
-    { 
-      header: "创建时间", 
-      accessor: "createdAt",
-      render: (value) => new Date(value as string).toLocaleString('zh-CN'),
-    },
-    { 
-      header: "更新时间", 
-      accessor: "updatedAt",
-      render: (value) => new Date(value as string).toLocaleString('zh-CN'),
-    },
-  ];
-
-  const actions: Action<API.BaseMerchantsVO>[] = [
-    {
-      icon: <Pencil className="h-4 w-4 mr-2" />,
-      label: "编辑",
-      onClick: handleEdit,
-    },
-    {
-      icon: <Trash2 className="h-4 w-4 mr-2" />,
-      label: "删除",
-      onClick: (merchant: API.BaseMerchantsVO) => handleDelete(merchant.id || 0),
-    },
-    {
-      icon: <Ban className="h-4 w-4 mr-2" />,
-      label: (merchant: API.BaseMerchantsVO) => {
-        const status = merchant.status as MerchantStatus;
-        return status === "REJECTED" ? "重新审核" : "拒绝";
-      },
-      onClick: (merchant: API.BaseMerchantsVO) => handleBlock(merchant.id || 0),
-    },
+    { header: "创建时间", accessor: "createdAt" },
+    { header: "更新时间", accessor: "updatedAt" },
   ];
 
   return (
@@ -131,33 +101,21 @@ export default function MerchantsPage() {
       <DataManagementTable
         title="商户管理"
         icon={<Store className="h-6 w-6" />}
-        data={merchants}
+        data={merchantList}
         isLoading={isLoading}
         columns={columns}
-        actions={actions}
-        searchPlaceholder="搜索商户ID..."
-        dialog={MerchantDialog}
-        schema={merchantFormSchema}
-        queryFn={async ({ pageNum, pageSize }, searchQuery) => {
-          const response = await getAdminMerchantPageQuery(
-            { pageNum, pageSize },
-            { userId: searchQuery ? parseInt(searchQuery) : undefined } as API.BaseMerchantsDTO
-          );
-          return {
-            list: response.data?.data?.records || [],
-            totalItems: response.data?.data?.records?.length || 0,
-            totalPages: response.data?.data?.totalPage || 0,
-          };
-        }}
+        searchPlaceholder="搜索商户..."
         statusFilter={{
           value: statusFilter,
           onChange: (value) => setStatusFilter(value as "all" | MerchantStatus),
           options: [
             { value: "all", label: "全部状态" },
-            ...Object.entries(MERCHANT_CERTIFY_STATUS_MAP).map(([value, config]) => ({
-              value: value,
-              label: config.label,
-            })),
+            ...Object.entries(MERCHANT_CERTIFY_STATUS_MAP).map(
+              ([value, config]) => ({
+                value: value,
+                label: config.label,
+              })
+            ),
           ],
         }}
         pagination={{
@@ -166,19 +124,7 @@ export default function MerchantsPage() {
           totalItems: merchants.length,
           onPageChange: setCurrentPage,
         }}
-        onAdd={handleAdd}
-      />
-
-      <MerchantDialog
-        open={isDialogOpen}
-        onOpenChange={(open) => {
-          if (!open) {
-            fetchMerchants();
-          }
-          setIsDialogOpen(open);
-        }}
-        merchant={selectedMerchant}
       />
     </>
   );
-} 
+}

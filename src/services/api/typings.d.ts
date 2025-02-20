@@ -981,6 +981,4 @@ declare namespace API {
     gender?: number;
   };
 }
-export type {
-  API
-}
+export type { API };

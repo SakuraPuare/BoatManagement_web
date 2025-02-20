@@ -25,9 +25,19 @@ const sidebarItems = [
     icon: <Users className="h-4 w-4" />,
   },
   {
+    title: "单位管理",
+    path: "/dashboard/admin/units",
+    icon: <FileCheck className="h-4 w-4" />,
+  },
+  {
     title: "商户管理",
     path: "/dashboard/admin/merchants",
     icon: <Store className="h-4 w-4" />,
+  },
+  {
+    title: "用户审核",
+    path: "/dashboard/admin/user-audit",
+    icon: <UserCheck className="h-4 w-4" />,
   },
   {
     title: "码头管理",
@@ -48,16 +58,6 @@ const sidebarItems = [
     title: "单位管理",
     path: "/dashboard/admin/units",
     icon: <Building2 className="h-4 w-4" />,
-  },
-  {
-    title: "用户审核",
-    path: "/dashboard/admin/user-approvals",
-    icon: <UserCheck className="h-4 w-4" />,
-  },
-  {
-    title: "单位审核",
-    path: "/dashboard/admin/unit-approvals",
-    icon: <FileCheck className="h-4 w-4" />,
   },
   {
     title: "船舶预订",

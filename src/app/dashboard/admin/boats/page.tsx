@@ -73,19 +73,9 @@ export default function BoatsPage() {
     }
   }, []);
 
-  // const fetchVendors = useCallback(async () => {
-  //   try {
-  //     const response = await getAdminVendorListQuery({});
-  //     setVendors(response.data?.data || []);
-  //     return response;
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }, []);
-
   const fetchUnits = useCallback(async () => {
     try {
-      const response = await getAdminUnitListQuery({},{});
+      const response = await getAdminUnitListQuery({}, {});
       setUnits(response.data?.data || []);
       return response;
     } catch (error) {
@@ -129,6 +119,7 @@ export default function BoatsPage() {
       setIsLoading(false);
     }
   }, [baseBoats, boatTypes, docks]);
+
   const handleEdit = (boat: BoatVO) => {
     setSelectedBoat(boat);
     setIsDialogOpen(true);
@@ -169,16 +160,15 @@ export default function BoatsPage() {
         dialog={BoatDialog}
         schema={boatFormSchema}
         queryFn={async ({ pageNum, pageSize }, searchQuery) => {
-          const response = await getAdminBoatPageQuery(
-            { pageNum, pageSize },
-            { name: searchQuery } as API.BaseBoatsDTO
-          );
+          const response = await getAdminBoatPageQuery({ pageNum, pageSize }, {
+            name: searchQuery,
+          } as API.BaseBoatsDTO);
           const records = response.data?.data?.records || [];
-          const boatVOs = records.map(boat => ({
+          const boatVOs = records.map((boat) => ({
             boat,
-            boatType: boatTypes.find(bt => bt.id === boat.typeId)!,
-            dock: docks.find(d => d.id === boat.dockId)!,
-            unit: units.find(u => u.id === boat.unitId)!
+            boatType: boatTypes.find((bt) => bt.id === boat.typeId)!,
+            dock: docks.find((d) => d.id === boat.dockId)!,
+            unit: units.find((u) => u.id === boat.unitId)!,
           }));
           return {
             list: boatVOs,

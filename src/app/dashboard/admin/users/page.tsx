@@ -216,10 +216,9 @@ export default function UsersPage() {
         dialog={UserDialog}
         schema={userFormSchema}
         queryFn={async ({ pageNum, pageSize }, searchQuery) => {
-          const response = await getAdminUserPageQuery(
-            { pageNum, pageSize },
-            { username: searchQuery } as API.BaseAccountsDTO
-          );
+          const response = await getAdminUserPageQuery({ pageNum, pageSize }, {
+            username: searchQuery,
+          } as API.BaseAccountsDTO);
           return {
             list: response.data?.data?.records || [],
             totalItems: response.data?.data?.records?.length || 0,

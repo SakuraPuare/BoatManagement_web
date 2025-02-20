@@ -79,7 +79,7 @@ export default function DashboardPage() {
               key={role.title}
               className={cn(
                 "relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 hover:shadow-2xl cursor-pointer border border-gray-100 dark:border-gray-700 w-[280px]",
-                hoveredCard === role.title ? "transform -translate-y-2" : "",
+                hoveredCard === role.title ? "transform -translate-y-2" : ""
               )}
               onMouseEnter={() => setHoveredCard(role.title)}
               onMouseLeave={() => setHoveredCard(null)}
@@ -89,14 +89,14 @@ export default function DashboardPage() {
                 className={cn(
                   "absolute inset-0 opacity-0 transition-opacity duration-300",
                   hoveredCard === role.title ? "opacity-10" : "",
-                  `bg-gradient-to-br ${role.gradient}`,
+                  `bg-gradient-to-br ${role.gradient}`
                 )}
               />
               <div className="p-8 relative z-10 flex flex-col items-center text-center">
                 <div
                   className={cn(
                     "w-20 h-20 rounded-full flex items-center justify-center mb-6",
-                    `bg-gradient-to-br ${role.gradient}`,
+                    `bg-gradient-to-br ${role.gradient}`
                   )}
                 >
                   <div className="text-white">{role.icon}</div>

@@ -74,22 +74,14 @@ export interface DataManagementTableProps<T> {
   searchPlaceholder?: string;
   dialog?: React.ComponentType<any>;
   schema?: z.ZodSchema<any>;
-  queryFn?: (params: { pageNum: number; pageSize: number }, searchQuery: string) => Promise<{
+  queryFn?: (
+    params: { pageNum: number; pageSize: number },
+    searchQuery: string
+  ) => Promise<{
     list: T[];
     totalItems: number;
     totalPages: number;
   }>;
-  addFn?: (data: any) => Promise<void>;
-  updateFn?: (id: number, data: any) => Promise<void>;
-  deleteFn?: (id: number) => Promise<void>;
-  deleteConfirmMessage?: string;
-  addSuccessMessage?: string;
-  updateSuccessMessage?: string;
-  deleteSuccessMessage?: string;
-  queryErrorMessage?: string;
-  addErrorMessage?: string;
-  updateErrorMessage?: string;
-  deleteErrorMessage?: string;
   data?: T[];
   isLoading?: boolean;
   actions?: Action<T>[];
@@ -208,7 +200,9 @@ export function DataManagementTable<T>({
                   {columns.map((column) => (
                     <TableCell key={String(column.accessor)}>
                       {column.render
-                        ? column.render(getValue(item, column.accessor), { data: item })
+                        ? column.render(getValue(item, column.accessor), {
+                            data: item,
+                          })
                         : String(getValue(item, column.accessor))}
                     </TableCell>
                   ))}

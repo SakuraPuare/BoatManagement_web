@@ -23,6 +23,7 @@ import * as userBoatRequest from "./userBoatRequest";
 import * as merchantOrder from "./merchantOrder";
 import * as authController from "./authController";
 import * as adminUnit from "./adminUnit";
+import * as adminOrder from "./adminOrder";
 import * as userInfo from "./userInfo";
 export default {
   vendorBoat,
@@ -46,5 +47,6 @@ export default {
   merchantOrder,
   authController,
   adminUnit,
+  adminOrder,
   userInfo,
 };

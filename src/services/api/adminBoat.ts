@@ -69,7 +69,7 @@ export async function getAdminBoatListQuery(
   body: API.BaseBoatsDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseListBoatVO>("/admin/boat/list", {
+  return request<API.ResponseListBaseBoatsVO>("/admin/boat/list", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -86,7 +86,7 @@ export async function getAdminBoatPageQuery(
   body: API.BaseBoatsDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponsePageBoatVO>("/admin/boat/page", {
+  return request<API.ResponsePageBaseBoatsVO>("/admin/boat/page", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -32,7 +32,7 @@ export async function leaveUnit(
 
 /** 获取商户实名认证信息 GET /certify/merchant */
 export async function getMerchantCertify(options?: { [key: string]: any }) {
-  return request<API.ResponseBaseCertifyVOBaseUnitsVO>("/certify/merchant", {
+  return request<API.ResponseBaseUnitsVO>("/certify/merchant", {
     method: "GET",
     ...(options || {}),
   });
@@ -69,7 +69,7 @@ export async function transferUnit(
 
 /** 获取用户实名认证信息 GET /certify/user */
 export async function getUserCertify(options?: { [key: string]: any }) {
-  return request<API.ResponseBaseCertifyVOBaseUserCertifyVO>("/certify/user", {
+  return request<API.ResponseBaseUserCertifyVO>("/certify/user", {
     method: "GET",
     ...(options || {}),
   });
@@ -92,7 +92,7 @@ export async function certifyUser(
 
 /** 获取供应商实名认证信息 GET /certify/vendor */
 export async function getVendorCertify(options?: { [key: string]: any }) {
-  return request<API.ResponseBaseCertifyVOBaseUnitsVO>("/certify/vendor", {
+  return request<API.ResponseBaseUnitsVO>("/certify/vendor", {
     method: "GET",
     ...(options || {}),
   });

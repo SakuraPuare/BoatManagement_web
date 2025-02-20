@@ -132,20 +132,6 @@ declare namespace API {
     isEnabled?: boolean;
   };
 
-  type BaseCertifyVOBaseUnitsVO = {
-    certify?: BaseUnitsVO;
-    status?: string;
-    createdAt?: string;
-    updatedAt?: string;
-  };
-
-  type BaseCertifyVOBaseUserCertifyVO = {
-    certify?: BaseUserCertifyVO;
-    status?: string;
-    createdAt?: string;
-    updatedAt?: string;
-  };
-
   type BaseDocksDTO = {
     name?: string;
     longitude?: number;
@@ -285,19 +271,6 @@ declare namespace API {
     status?: string;
   };
 
-  type BoatVO = {
-    createdAt?: string;
-    updatedAt?: string;
-    id?: number;
-    name?: string;
-    typeId?: number;
-    dockId?: number;
-    vendorId?: number;
-    unitId?: number;
-    isEnabled?: boolean;
-    typeName?: string;
-  };
-
   type cancelOrder1Params = {
     id: number;
   };
@@ -366,6 +339,11 @@ declare namespace API {
     id: number;
   };
 
+  type getAdminBoatOrdersPageQueryParams = {
+    pageNum?: number;
+    pageSize?: number;
+  };
+
   type getAdminBoatPageQueryParams = {
     pageNum?: number;
     pageSize?: number;
@@ -391,6 +369,11 @@ declare namespace API {
 
   type getAdminDocksParams = {
     id: number;
+  };
+
+  type getAdminGoodsOrdersPageQueryParams = {
+    pageNum?: number;
+    pageSize?: number;
   };
 
   type getAdminMerchantPageQueryParams = {
@@ -653,15 +636,6 @@ declare namespace API {
     optimizeCountQuery?: boolean;
   };
 
-  type PageBoatVO = {
-    records?: BoatVO[];
-    pageNumber?: number;
-    pageSize?: number;
-    totalPage?: number;
-    totalRow?: number;
-    optimizeCountQuery?: boolean;
-  };
-
   type payUserBoatOrdersParams = {
     id: number;
   };
@@ -688,20 +662,6 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: BaseBoatTypesVO;
-    time?: number;
-  };
-
-  type ResponseBaseCertifyVOBaseUnitsVO = {
-    code?: number;
-    message?: string;
-    data?: BaseCertifyVOBaseUnitsVO;
-    time?: number;
-  };
-
-  type ResponseBaseCertifyVOBaseUserCertifyVO = {
-    code?: number;
-    message?: string;
-    data?: BaseCertifyVOBaseUserCertifyVO;
     time?: number;
   };
 
@@ -838,13 +798,6 @@ declare namespace API {
     time?: number;
   };
 
-  type ResponseListBoatVO = {
-    code?: number;
-    message?: string;
-    data?: BoatVO[];
-    time?: number;
-  };
-
   type ResponsePageBaseAccountsVO = {
     code?: number;
     message?: string;
@@ -926,13 +879,6 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: PageBaseVendorsVO;
-    time?: number;
-  };
-
-  type ResponsePageBoatVO = {
-    code?: number;
-    message?: string;
-    data?: PageBoatVO;
     time?: number;
   };
 
@@ -1035,4 +981,6 @@ declare namespace API {
     gender?: number;
   };
 }
-export type { API };
+export type {
+  API
+}

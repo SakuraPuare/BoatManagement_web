@@ -5,6 +5,7 @@ import { Building2, Home, ShieldCheck, Store, User } from "lucide-react";
 import { useRouter } from "next/navigation"; // 注意这里改用 next/navigation
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import React from "react";
 
 interface RoleCard {
   title: string;

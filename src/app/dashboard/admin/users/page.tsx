@@ -143,9 +143,9 @@ export default function UsersPage() {
     {
       header: "状态",
       accessor: "isBlocked",
-      render: (value: any, row?: TableRow<API.BaseAccountsVO>) => {
+      render: (value: boolean, row?: TableRow<API.BaseAccountsVO>) => {
         if (!row) return null;
-        const user = row.data;
+        const user = row.data as API.BaseAccountsVO;
         const isBlocked = value as boolean;
         return (
           <span

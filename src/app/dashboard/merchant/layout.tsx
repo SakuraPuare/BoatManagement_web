@@ -2,6 +2,7 @@
 
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { Home, Package, ShoppingCart, Store } from "lucide-react";
+import React from "react";
 
 const sidebarItems = [
   {
@@ -19,11 +20,11 @@ const sidebarItems = [
     path: "/dashboard/merchant/orders",
     icon: <ShoppingCart className="w-5 h-5" />,
   },
-  {
-    title: "店铺设置",
-    path: "/dashboard/merchant/store",
-    icon: <Store className="w-5 h-5" />,
-  },
+  // {
+  //   title: "店铺设置",
+  //   path: "/dashboard/merchant/store",
+  //   icon: <Store className="w-5 h-5" />,
+  // },
 ];
 
 export default function MerchantLayout({

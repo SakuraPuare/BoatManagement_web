@@ -2,16 +2,16 @@ import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import {
   Anchor,
   BarChart,
-  Bell,
-  FileText,
-  Radio,
+  Building2,
+  CalendarRange,
+  FileCheck,
   Settings,
   Ship,
-  ShoppingBag,
-  Ticket,
+  UserCheck,
   Users,
   Store,
 } from "lucide-react";
+import React from "react";
 
 const sidebarItems = [
   {
@@ -35,39 +35,39 @@ const sidebarItems = [
     icon: <Anchor className="h-4 w-4" />,
   },
   {
-    title: "船只类型",
-    path: "/dashboard/admin/boat-types",
-    icon: <Settings className="h-4 w-4" />,
-  },
-  {
     title: "船只管理",
     path: "/dashboard/admin/boats",
     icon: <Ship className="h-4 w-4" />,
   },
   {
-    title: "船票管理",
-    path: "/dashboard/admin/tickets",
-    icon: <Ticket className="h-4 w-4" />,
+    title: "船型管理",
+    path: "/dashboard/admin/boat-types",
+    icon: <Settings className="h-4 w-4" />,
+  },
+  {
+    title: "单位管理",
+    path: "/dashboard/admin/units",
+    icon: <Building2 className="h-4 w-4" />,
+  },
+  {
+    title: "用户审核",
+    path: "/dashboard/admin/user-approvals",
+    icon: <UserCheck className="h-4 w-4" />,
+  },
+  {
+    title: "单位审核",
+    path: "/dashboard/admin/unit-approvals",
+    icon: <FileCheck className="h-4 w-4" />,
+  },
+  {
+    title: "船舶预订",
+    path: "/dashboard/admin/boat-requests",
+    icon: <CalendarRange className="h-4 w-4" />,
   },
   {
     title: "订单管理",
     path: "/dashboard/admin/orders",
-    icon: <ShoppingBag className="h-4 w-4" />,
-  },
-  {
-    title: "设备管理",
-    path: "/dashboard/admin/devices",
-    icon: <Radio className="h-4 w-4" />,
-  },
-  {
-    title: "告警管理",
-    path: "/dashboard/admin/alerts",
-    icon: <Bell className="h-4 w-4" />,
-  },
-  {
-    title: "日志管理",
-    path: "/dashboard/admin/logs",
-    icon: <FileText className="h-4 w-4" />,
+    icon: <Ship className="h-4 w-4" />,
   },
 ];
 

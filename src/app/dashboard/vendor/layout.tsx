@@ -10,6 +10,7 @@ import {
   Ship,
   Sailboat,
 } from "lucide-react";
+import React from "react";
 
 const sidebarItems = [
   {
@@ -37,16 +38,16 @@ const sidebarItems = [
     path: "/dashboard/vendor/orders",
     icon: <ShoppingCart className="w-5 h-5" />,
   },
-  {
-    title: "供应商品",
-    path: "/dashboard/vendor/products",
-    icon: <Package className="w-5 h-5" />,
-  },
-  {
-    title: "供应商设置",
-    path: "/dashboard/vendor/settings",
-    icon: <Settings className="w-5 h-5" />,
-  },
+  // {
+  //   title: "供应商品",
+  //   path: "/dashboard/vendor/products",
+  //   icon: <Package className="w-5 h-5" />,
+  // },
+  // {
+  //   title: "供应商设置",
+  //   path: "/dashboard/vendor/settings",
+  //   icon: <Settings className="w-5 h-5" />,
+  // },
 ];
 
 export default function VendorLayout({

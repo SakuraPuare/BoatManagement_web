@@ -1,84 +1,89 @@
 "use client";
 
-import { Store } from "lucide-react";
+import { Store, ShoppingCart } from "lucide-react";
 import type { API } from "@/services/api/typings";
-import { 
-  getUserMerchantPageQuery, 
-  getUserMerchantGoodsPage,
-  createUserMerchantGoodsOrder 
-} from "@/services/api/userMerchant";
-import { DataManagementTable, type Column } from "@/components/data-management-table";
-import React, { useState } from "react";
+import { getUserMerchantPageQuery } from "@/services/api/userMerchant";
+import { DataManagementTable, type Column, type TableRow } from "@/components/data-management-table";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart } from "lucide-react";
-import { TableRow } from "@/components/data-management-table";
 
-const columns: Column<API.BaseMerchantsVO>[] = [
-  {
-    accessor: "id",
-    header: "商家ID",
-  },
-  {
-    accessor: "unitId",
-    header: "单位ID",
-  },
-  {
-    accessor: "status",
-    header: "状态",
-    render: (status) => (
-      <span className={status === "ENABLED" ? "text-green-600" : "text-red-600"}>
-        {status === "ENABLED" ? "正常" : "禁用"}
-      </span>
-    ),
-  },
-  {
-    accessor: "id.",
-    header: "操作",
-    render: (_: any, row?: TableRow<API.BaseMerchantsVO>) => {
-      if (!row) return null;
-      return (
-        <div className="flex justify-end space-x-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => window.location.href = `/dashboard/user/merchants/${row.data.id}/goods`}
-          >
-            <ShoppingCart className="h-4 w-4 mr-2" />
-            查看商品
-          </Button>
-        </div>
-      );
-    },
-  },
-];
+const ITEMS_PER_PAGE = 10;
 
 export default function UserMerchantsPage() {
+  const [merchants, setMerchants] = useState<API.BaseMerchantsVO[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const fetchMerchants = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await getUserMerchantPageQuery(
+        { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
+        { status: "APPROVED" } as API.BaseMerchantsDTO // 只获取已通过审核的商家
+      );
+      if (response.data?.data?.records) {
+        setMerchants(response.data.data.records);
+        setTotalPages(response.data.data.totalPage || 0);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentPage]);
+
+  useEffect(() => {
+    fetchMerchants();
+  }, [fetchMerchants]);
+
+  const columns: Column<API.BaseMerchantsVO>[] = [
+    {
+      accessor: "id",
+      header: "商家名称",
+      render: (id) => {
+        return `商家${id}`;
+      },
+    },
+    {
+      accessor: "unitId",
+      header: "单位ID",
+    },
+    {
+      accessor: "id.",
+      header: "",
+      render: (_: any, row?: TableRow<API.BaseMerchantsVO>) => {
+        if (!row) return null;
+        return (
+          <div className="flex justify-end space-x-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => window.location.href = `/dashboard/user/merchants/${row.data.id}/goods`}
+            >
+              <ShoppingCart className="h-4 w-4 mr-2" />
+              查看商品
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
 
   return (
     <DataManagementTable
-    
       title="商家列表"
       icon={<Store className="h-6 w-6" />}
+      data={merchants}
       columns={columns}
       isLoading={isLoading}
       searchPlaceholder="搜索商家..."
-      queryFn={async ({ pageNum, pageSize }, searchQuery) => {
-        const response = await getUserMerchantPageQuery(
-          { pageNum, pageSize },
-          { status: searchQuery } as API.BaseMerchantsDTO
-        );
-        return {
-          list: response.data?.data?.records || [],
-          totalItems: response.data?.data?.records?.length || 0,
-          totalPages: response.data?.data?.totalPage || 0,
-        };
-      }}
+      onSearch={setSearchQuery}
       pagination={{
         currentPage,
-        totalPages: 1,
-        totalItems: 0,
+        totalPages,
+        totalItems: merchants.length,
         onPageChange: setCurrentPage,
       }}
     />

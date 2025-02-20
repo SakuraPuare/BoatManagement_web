@@ -74,7 +74,7 @@ export interface DataManagementTableProps<T> {
   searchPlaceholder?: string;
   dialog?: React.ComponentType<any>;
   schema?: z.ZodSchema<any>;
-  queryFn: (params: { pageNum: number; pageSize: number }, searchQuery: string) => Promise<{
+  queryFn?: (params: { pageNum: number; pageSize: number }, searchQuery: string) => Promise<{
     list: T[];
     totalItems: number;
     totalPages: number;

@@ -10,6 +10,7 @@ import {
   ShoppingBag,
   Ticket,
   Users,
+  Store,
 } from "lucide-react";
 
 const sidebarItems = [
@@ -22,6 +23,11 @@ const sidebarItems = [
     title: "用户管理",
     path: "/dashboard/admin/users",
     icon: <Users className="h-4 w-4" />,
+  },
+  {
+    title: "商户管理",
+    path: "/dashboard/admin/merchants",
+    icon: <Store className="h-4 w-4" />,
   },
   {
     title: "码头管理",

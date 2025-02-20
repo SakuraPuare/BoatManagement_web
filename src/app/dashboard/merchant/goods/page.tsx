@@ -30,10 +30,11 @@ export default function MerchantGoodsPage() {
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         {}
       );
+
       if (response.data?.data?.records) {
         setGoods(response.data.data.records);
         setTotalPages(response.data.data.totalPage || 0);
-      }
+      } 
     } catch (error) {
       console.error(error);
     } finally {

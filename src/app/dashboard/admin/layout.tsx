@@ -27,7 +27,7 @@ const sidebarItems = [
   {
     title: "单位管理",
     path: "/dashboard/admin/units",
-    icon: <FileCheck className="h-4 w-4" />,
+    icon: <Building2 className="h-4 w-4" />,
   },
   {
     title: "商户管理",
@@ -53,11 +53,6 @@ const sidebarItems = [
     title: "船型管理",
     path: "/dashboard/admin/boat-types",
     icon: <Settings className="h-4 w-4" />,
-  },
-  {
-    title: "单位管理",
-    path: "/dashboard/admin/units",
-    icon: <Building2 className="h-4 w-4" />,
   },
   {
     title: "船舶预订",

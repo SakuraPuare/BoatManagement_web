@@ -60,6 +60,7 @@ export interface Action<T> {
   icon: ReactNode;
   label: string | ((item: T) => string);
   onClick: (item: T) => void;
+  show?: (item: T) => boolean;
 }
 
 export interface StatusFilterOption {

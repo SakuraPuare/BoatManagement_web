@@ -148,9 +148,9 @@ export default function VendorBoatRequestsPage() {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      className={
+                      className={`inline-flex items-center  rounded-full whitespace-nowrap ${
                         REQUEST_STATUS_MAP[request?.status as string]?.color
-                      }
+                      }`}
                     >
                       {REQUEST_STATUS_MAP[request?.status as string]?.label}
                     </Badge>

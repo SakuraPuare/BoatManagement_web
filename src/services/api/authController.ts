@@ -22,7 +22,7 @@ export async function sendCode(
   body: API.NameRequestDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseString>("/auth/code", {
+  return request<API.ResponseVoid>("/auth/code", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -83,21 +83,6 @@ export async function registerWithPassword(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseTokenVO>("/auth/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
-}
-
-/** 微信登录 POST /auth/wx/login */
-export async function wxLogin(
-  body: API.WxLoginDTO,
-  options?: { [key: string]: any }
-) {
-  return request<API.ResponseTokenVO>("/auth/wx/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

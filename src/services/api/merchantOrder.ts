@@ -3,9 +3,9 @@ import type { API } from "./typings";
 import request from "@/utils/request";
 
 /** 取消订单 POST /merchant/order/cancel/${param0} */
-export async function cancelOrder1(
+export async function merchantCancelOrder(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.cancelOrder1Params,
+  params: API.merchantCancelOrderParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -17,9 +17,9 @@ export async function cancelOrder1(
 }
 
 /** 完成订单 POST /merchant/order/complete/${param0} */
-export async function completeOrder1(
+export async function merchantCompleteOrder(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.completeOrder1Params,
+  params: API.merchantCompleteOrderParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -31,7 +31,7 @@ export async function completeOrder1(
 }
 
 /** 获取商家订单列表 POST /merchant/order/list */
-export async function getMerchantOrdersListQuery(
+export async function merchantGetOrdersList(
   body: API.BaseGoodsOrdersDTO,
   options?: { [key: string]: any }
 ) {
@@ -46,9 +46,9 @@ export async function getMerchantOrdersListQuery(
 }
 
 /** 获取商家订单列表分页 POST /merchant/order/page */
-export async function getMerchantOrdersPageQuery(
+export async function merchantGetOrdersPage(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getMerchantOrdersPageQueryParams,
+  params: API.merchantGetOrdersPageParams,
   body: API.BaseGoodsOrdersDTO,
   options?: { [key: string]: any }
 ) {

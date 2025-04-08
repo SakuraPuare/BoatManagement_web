@@ -9,7 +9,7 @@ export async function joinUnit(
   options?: { [key: string]: any }
 ) {
   const { types: param0, unitId: param1, ...queryParams } = params;
-  return request<API.ResponseString>(`/certify/join/${param0}/${param1}`, {
+  return request<API.ResponseVoid>(`/certify/join/${param0}/${param1}`, {
     method: "PUT",
     params: { ...queryParams },
     ...(options || {}),
@@ -23,7 +23,7 @@ export async function leaveUnit(
   options?: { [key: string]: any }
 ) {
   const { types: param0, ...queryParams } = params;
-  return request<API.ResponseString>(`/certify/leave/${param0}`, {
+  return request<API.ResponseVoid>(`/certify/leave/${param0}`, {
     method: "DELETE",
     params: { ...queryParams },
     ...(options || {}),
@@ -39,11 +39,11 @@ export async function getMerchantCertify(options?: { [key: string]: any }) {
 }
 
 /** 商户实名认证 POST /certify/merchant */
-export async function certifyMerchant(
+export async function merchantCertify(
   body: API.UnitCertifyRequestDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseString>("/certify/merchant", {
+  return request<API.ResponseVoid>("/certify/merchant", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -60,7 +60,7 @@ export async function transferUnit(
   options?: { [key: string]: any }
 ) {
   const { types: param0, userId: param1, ...queryParams } = params;
-  return request<API.ResponseString>(`/certify/transfer/${param0}/${param1}`, {
+  return request<API.ResponseVoid>(`/certify/transfer/${param0}/${param1}`, {
     method: "PUT",
     params: { ...queryParams },
     ...(options || {}),
@@ -76,11 +76,11 @@ export async function getUserCertify(options?: { [key: string]: any }) {
 }
 
 /** 用户实名认证 POST /certify/user */
-export async function certifyUser(
+export async function userCertify(
   body: API.UserCertifyRequestDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseString>("/certify/user", {
+  return request<API.ResponseVoid>("/certify/user", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -99,11 +99,11 @@ export async function getVendorCertify(options?: { [key: string]: any }) {
 }
 
 /** 供应商实名认证 POST /certify/vendor */
-export async function certifyVendor(
+export async function vendorCertify(
   body: API.UnitCertifyRequestDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseString>("/certify/vendor", {
+  return request<API.ResponseVoid>("/certify/vendor", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

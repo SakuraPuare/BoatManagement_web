@@ -3,9 +3,9 @@ import type { API } from "./typings";
 import request from "@/utils/request";
 
 /** 取消订单 POST /vendor/order/cancel/${param0} */
-export async function cancelOrder(
+export async function cancelOrder1(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.cancelOrderParams,
+  params: API.cancelOrder1Params,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -17,9 +17,9 @@ export async function cancelOrder(
 }
 
 /** 完成订单 POST /vendor/order/complete/${param0} */
-export async function completeOrder(
+export async function completeOrder1(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.completeOrderParams,
+  params: API.completeOrder1Params,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;

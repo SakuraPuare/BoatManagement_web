@@ -2,12 +2,12 @@ import type { API } from "./typings";
 /* eslint-disable */
 import request from "@/utils/request";
 
-/** 创建单位 POST /admin/unit/ */
-export async function createUnit(
-  body: API.BaseUnitsDTO,
+/** 创建商品 POST /admin/goods */
+export async function createGoods(
+  body: API.BaseGoodsDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseBaseUnitsVO>("/admin/unit/", {
+  return request<API.ResponseBaseGoodsVO>("/admin/goods", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -17,29 +17,15 @@ export async function createUnit(
   });
 }
 
-/** 获取单位详情 GET /admin/unit/${param0} */
-export async function getUnit(
+/** 更新商品 PUT /admin/goods/${param0} */
+export async function updateGoods(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getUnitParams,
+  params: API.updateGoodsParams,
+  body: API.BaseGoodsDTO,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.ResponseBaseUnitsVO>(`/admin/unit/${param0}`, {
-    method: "GET",
-    params: { ...queryParams },
-    ...(options || {}),
-  });
-}
-
-/** 更新单位 PUT /admin/unit/${param0} */
-export async function updateUnit(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.updateUnitParams,
-  body: API.BaseUnitsDTO,
-  options?: { [key: string]: any }
-) {
-  const { id: param0, ...queryParams } = params;
-  return request<API.ResponseBaseUnitsVO>(`/admin/unit/${param0}`, {
+  return request<API.ResponseBaseGoodsVO>(`/admin/goods/${param0}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -50,27 +36,27 @@ export async function updateUnit(
   });
 }
 
-/** 删除单位 DELETE /admin/unit/${param0} */
-export async function deleteUnit(
+/** 删除商品 DELETE /admin/goods/${param0} */
+export async function deleteGoods(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.deleteUnitParams,
+  params: API.deleteGoodsParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.ResponseString>(`/admin/unit/${param0}`, {
+  return request<API.ResponseVoid>(`/admin/goods/${param0}`, {
     method: "DELETE",
     params: { ...queryParams },
     ...(options || {}),
   });
 }
 
-/** 根据ID获取单位列表 GET /admin/unit/ids */
-export async function getUnitByIds(
+/** 根据ID获取商品 GET /admin/goods/ids */
+export async function getGoodsByIds(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getUnitByIdsParams,
+  params: API.getGoodsByIdsParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseListBaseUnitsVO>("/admin/unit/ids", {
+  return request<API.ResponseListBaseGoodsVO>("/admin/goods/ids", {
     method: "GET",
     params: {
       ...params,
@@ -79,15 +65,15 @@ export async function getUnitByIds(
   });
 }
 
-/** 获取单位列表 POST /admin/unit/list */
-export async function getUnitList(
+/** 获取商品列表 GET /admin/goods/list */
+export async function getGoodsList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getUnitListParams,
-  body: API.BaseUnitsDTO,
+  params: API.getGoodsListParams,
+  body: API.BaseGoodsDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseListBaseUnitsVO>("/admin/unit/list", {
-    method: "POST",
+  return request<API.ResponseListBaseGoodsVO>("/admin/goods/list", {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
@@ -99,15 +85,15 @@ export async function getUnitList(
   });
 }
 
-/** 分页获取单位列表 POST /admin/unit/page */
-export async function getUnitPage(
+/** 分页获取商品列表 GET /admin/goods/page */
+export async function getGoodsPage(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getUnitPageParams,
-  body: API.BaseUnitsDTO,
+  params: API.getGoodsPageParams,
+  body: API.BaseGoodsDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponsePageBaseUnitsVO>("/admin/unit/page", {
-    method: "POST",
+  return request<API.ResponsePageBaseGoodsVO>("/admin/goods/page", {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },

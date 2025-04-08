@@ -2,12 +2,12 @@ import type { API } from "./typings";
 /* eslint-disable */
 import request from "@/utils/request";
 
-/** 添加码头 POST /admin/dock/ */
-export async function addAdminDocks(
+/** 创建码头 POST /admin/dock/ */
+export async function createDock(
   body: API.BaseDocksDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseString>("/admin/dock/", {
+  return request<API.ResponseBaseDocksVO>("/admin/dock/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -18,9 +18,9 @@ export async function addAdminDocks(
 }
 
 /** 获取码头详情 GET /admin/dock/${param0} */
-export async function getAdminDocks(
+export async function getDock(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getAdminDocksParams,
+  params: API.getDockParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -32,14 +32,14 @@ export async function getAdminDocks(
 }
 
 /** 更新码头 PUT /admin/dock/${param0} */
-export async function updateAdminDocks(
+export async function updateDock(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.updateAdminDocksParams,
+  params: API.updateDockParams,
   body: API.BaseDocksDTO,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.ResponseString>(`/admin/dock/${param0}`, {
+  return request<API.ResponseBaseDocksVO>(`/admin/dock/${param0}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -51,9 +51,9 @@ export async function updateAdminDocks(
 }
 
 /** 删除码头 DELETE /admin/dock/${param0} */
-export async function deleteAdminDocks(
+export async function deleteDock(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.deleteAdminDocksParams,
+  params: API.deleteDockParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -64,8 +64,25 @@ export async function deleteAdminDocks(
   });
 }
 
+/** 根据ID获取码头列表 GET /admin/dock/ids */
+export async function getDockByIds1(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getDockByIds1Params,
+  options?: { [key: string]: any }
+) {
+  return request<API.ResponseListBaseDocksVO>("/admin/dock/ids", {
+    method: "GET",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
 /** 获取码头列表 POST /admin/dock/list */
-export async function getAdminDocksListQuery(
+export async function getDockList1(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getDockList1Params,
   body: API.BaseDocksDTO,
   options?: { [key: string]: any }
 ) {
@@ -74,15 +91,18 @@ export async function getAdminDocksListQuery(
     headers: {
       "Content-Type": "application/json",
     },
+    params: {
+      ...params,
+    },
     data: body,
     ...(options || {}),
   });
 }
 
-/** 获取码头列表分页 POST /admin/dock/page */
-export async function getAdminDocksPageQuery(
+/** 分页获取码头列表 POST /admin/dock/page */
+export async function getDockPage1(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getAdminDocksPageQueryParams,
+  params: API.getDockPage1Params,
   body: API.BaseDocksDTO,
   options?: { [key: string]: any }
 ) {
@@ -96,6 +116,7 @@ export async function getAdminDocksPageQuery(
       pageNum: "1",
       // pageSize has a default value: 10
       pageSize: "10",
+
       ...params,
     },
     data: body,

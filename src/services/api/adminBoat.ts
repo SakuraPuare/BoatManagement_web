@@ -3,11 +3,11 @@ import type { API } from "./typings";
 import request from "@/utils/request";
 
 /** 创建船舶 POST /admin/boat/ */
-export async function createAdminBoat(
+export async function adminCreateBoat(
   body: API.BaseBoatsDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseString>("/admin/boat/", {
+  return request<API.ResponseBaseBoatsVO>("/admin/boat/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -18,9 +18,9 @@ export async function createAdminBoat(
 }
 
 /** 获取船舶详情 GET /admin/boat/${param0} */
-export async function getAdminBoat(
+export async function adminGetBoat(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getAdminBoatParams,
+  params: API.adminGetBoatParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -32,14 +32,14 @@ export async function getAdminBoat(
 }
 
 /** 更新船舶 PUT /admin/boat/${param0} */
-export async function updateAdminBoat(
+export async function adminUpdateBoat(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.updateAdminBoatParams,
+  params: API.adminUpdateBoatParams,
   body: API.BaseBoatsDTO,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.ResponseString>(`/admin/boat/${param0}`, {
+  return request<API.ResponseBaseBoatsVO>(`/admin/boat/${param0}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -51,9 +51,9 @@ export async function updateAdminBoat(
 }
 
 /** 删除船舶 DELETE /admin/boat/${param0} */
-export async function deleteAdminBoat(
+export async function adminDeleteBoat(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.deleteAdminBoatParams,
+  params: API.adminDeleteBoatParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -64,8 +64,25 @@ export async function deleteAdminBoat(
   });
 }
 
+/** 根据 ID 获取船舶列表 GET /admin/boat/ids */
+export async function adminGetBoatByIds(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.adminGetBoatByIdsParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.ResponseListBaseBoatsVO>("/admin/boat/ids", {
+    method: "GET",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
 /** 获取船舶列表 POST /admin/boat/list */
-export async function getAdminBoatListQuery(
+export async function adminGetBoatList(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.adminGetBoatListParams,
   body: API.BaseBoatsDTO,
   options?: { [key: string]: any }
 ) {
@@ -74,15 +91,18 @@ export async function getAdminBoatListQuery(
     headers: {
       "Content-Type": "application/json",
     },
+    params: {
+      ...params,
+    },
     data: body,
     ...(options || {}),
   });
 }
 
-/** 获取船舶列表分页 POST /admin/boat/page */
-export async function getAdminBoatPageQuery(
+/** 分页获取船舶列表 POST /admin/boat/page */
+export async function adminGetBoatPage(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getAdminBoatPageQueryParams,
+  params: API.adminGetBoatPageParams,
   body: API.BaseBoatsDTO,
   options?: { [key: string]: any }
 ) {
@@ -96,6 +116,7 @@ export async function getAdminBoatPageQuery(
       pageNum: "1",
       // pageSize has a default value: 10
       pageSize: "10",
+
       ...params,
     },
     data: body,

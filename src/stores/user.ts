@@ -1,4 +1,3 @@
-import type { API } from "@/services/api/typings";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -9,6 +8,7 @@ interface UserState {
   setToken: (token: string | null) => void;
   permissions: string[];
   setPermissions: (permissions: string[]) => void;
+  logout: () => void;
 }
 
 export const useUserStore = create<UserState>()(
@@ -20,6 +20,9 @@ export const useUserStore = create<UserState>()(
       setToken: (token) => set({ token }),
       permissions: [],
       setPermissions: (permissions) => set({ permissions }),
+      logout: () => {
+        set({ user: null, token: null, permissions: [] });
+      },
     }),
     {
       name: "user-storage",

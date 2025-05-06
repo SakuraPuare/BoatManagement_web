@@ -1,11 +1,11 @@
-import { getRoleEnglishNames } from "@/lib/constants/role";
 import {
   loginWithPassword,
   registerWithPassword,
 } from "@/services/api/authController";
-import type { API } from "@/services/api/typings";
-import { getMe } from "@/services/api/userInfo";
+
+import { userGetCurrentUser } from "@/services/api/userInfo";
 import { useUserStore } from "@/stores/user";
+import { getRoleList } from "@/utils/role";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
@@ -18,15 +18,15 @@ export const useAuth = () => {
 
   const updateUser = useCallback(async () => {
     try {
-      const response = await getMe();
-      if (response.data && response.data.code === 200) {
-        const userData = response.data.data as API.BaseAccountsVO;
+      const response = await userGetCurrentUser();
+      if (response.data && response.code === 200) {
+        const userData = response.data as API.BaseAccountsVO;
         setUser(userData);
         const role = typeof userData?.role === "number" ? userData.role : 0;
-        setPermissions(getRoleEnglishNames(role));
+        setPermissions(getRoleList(role));
         return userData; // 返回用户数据
       } else {
-        throw new Error(response.data.message || "Failed to get user info");
+        throw new Error(response.message || "Failed to get user info");
       }
     } catch (error) {
       console.error("Update user error:", error);
@@ -38,13 +38,13 @@ export const useAuth = () => {
     async (credentials: API.AuthRequestDTO) => {
       try {
         const response = await loginWithPassword(credentials);
-        if (response.data && response.data.code === 200) {
-          if (!response.data.data?.token) {
-            toast.error("登录失败：无效的token");
+        if (response && response.code === 200) {
+          if (!response.data?.token) {
+            toast.error("登录失败：无效的 token");
             return false;
           }
 
-          setToken(response.data.data?.token);
+          setToken(response.data?.token);
 
           // 等待获取用户信息完成，并获取返回的用户数据
           const userData = await updateUser();
@@ -59,7 +59,7 @@ export const useAuth = () => {
           return true;
         }
 
-        toast.error(response.data.message || "登录失败");
+        toast.error(response.message || "登录失败");
         return false;
       } catch (error) {
         console.error("Login error:", error);
@@ -80,13 +80,13 @@ export const useAuth = () => {
 
         const response = await registerWithPassword(credentials);
 
-        if (response.data && response.data.code === 200) {
-          if (!response.data.data?.token) {
+        if (response.data && response.code === 200) {
+          if (!response.data?.token) {
             toast.error("注册失败：无效的token");
             return false;
           }
 
-          setToken(response.data.data?.token);
+          setToken(response.data?.token);
           await updateUser();
 
           toast.success("注册成功");
@@ -94,7 +94,7 @@ export const useAuth = () => {
           return true;
         }
 
-        toast.error(response.data.message || "注册失败");
+        toast.error(response.message || "注册失败");
         return false;
       } catch (error) {
         console.error("Registration error:", error);

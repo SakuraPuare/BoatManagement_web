@@ -1,6 +1,6 @@
-import type { API } from "./typings";
+// @ts-ignore
 /* eslint-disable */
-import request from "@/utils/request";
+import request from "@/lib/request";
 
 /** 审核操作 PUT /admin/audit/unit/${param0} */
 export async function auditAdminUnit(

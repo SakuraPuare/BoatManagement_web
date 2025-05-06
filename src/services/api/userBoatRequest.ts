@@ -1,6 +1,6 @@
-import type { API } from "./typings";
+// @ts-ignore
 /* eslint-disable */
-import request from "@/utils/request";
+import request from "@/lib/request";
 
 /** 创建用户船只请求 POST /user/boat/request */
 export async function userCreateBoatRequest(

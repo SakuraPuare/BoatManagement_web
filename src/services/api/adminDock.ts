@@ -1,6 +1,6 @@
-import type { API } from "./typings";
+// @ts-ignore
 /* eslint-disable */
-import request from "@/utils/request";
+import request from "@/lib/request";
 
 /** 创建码头 POST /admin/dock/ */
 export async function createDock(
@@ -64,7 +64,7 @@ export async function deleteDock(
   });
 }
 
-/** 根据ID获取码头列表 GET /admin/dock/ids */
+/** 根据 ID 获取码头列表 GET /admin/dock/ids */
 export async function getDockByIds1(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getDockByIds1Params,

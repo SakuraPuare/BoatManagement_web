@@ -1,6 +1,6 @@
-import type { API } from "./typings";
+// @ts-ignore
 /* eslint-disable */
-import request from "@/utils/request";
+import request from "@/lib/request";
 
 /** 获取供应商码头详情 GET /vendor/dock/${param0} */
 export async function getDock1(

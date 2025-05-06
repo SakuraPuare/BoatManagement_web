@@ -1,6 +1,6 @@
-import type { API } from "./typings";
+// @ts-ignore
 /* eslint-disable */
-import request from "@/utils/request";
+import request from "@/lib/request";
 
 /** 加入单位 PUT /certify/join/${param0}/${param1} */
 export async function joinUnit(

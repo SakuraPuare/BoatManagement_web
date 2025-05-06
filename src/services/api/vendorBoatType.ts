@@ -1,6 +1,6 @@
-import type { API } from "./typings";
+// @ts-ignore
 /* eslint-disable */
-import request from "@/utils/request";
+import request from "@/lib/request";
 
 /** 创建供应商船舶类型 POST /vendor/boat-type/ */
 export async function createBoatType(

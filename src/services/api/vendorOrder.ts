@@ -1,6 +1,6 @@
-import type { API } from "./typings";
+// @ts-ignore
 /* eslint-disable */
-import request from "@/utils/request";
+import request from "@/lib/request";
 
 /** 取消订单 POST /vendor/order/cancel/${param0} */
 export async function cancelOrder1(

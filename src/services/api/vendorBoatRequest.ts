@@ -1,6 +1,6 @@
-import type { API } from "./typings";
+// @ts-ignore
 /* eslint-disable */
-import request from "@/utils/request";
+import request from "@/lib/request";
 
 /** 根据ID获取商家船只请求 GET /vendor/boat/request/ids */
 export async function vendorGetBoatRequestByIds(

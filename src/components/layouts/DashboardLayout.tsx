@@ -44,15 +44,16 @@ export function DashboardLayout({
               !sidebarOpen && "lg:justify-center"
             )}
           >
-            {!sidebarOpen ? (
-              <MonitorCheck className="h-6 w-6" />
-            ) : (
-              <>
+            <div>
+              {!sidebarOpen ? (
                 <MonitorCheck className="h-6 w-6" />
-
-                <span className="text-lg">控制台</span>
-              </>
-            )}
+              ) : (
+                <>
+                  <MonitorCheck className="h-6 w-6" />
+                  <span className="text-lg">控制台</span>
+                </>
+              )}
+            </div>
           </Link>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}

@@ -1,0 +1,390 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# role
+
+作为一个前端设计师，你正在从事 船舶管理系统 的开发
+
+本项目使用 react nextjs tailwindcss sonner lucide-react 技术栈开发
+
+# component
+
+[index.tsx](mdc:src/components/data-table/index.tsx) 是我们自己封装的数据表格 使用示例如下
+
+```page.tsx
+"use client";
+
+import { DataTable } from "@/components/data-table";
+import { DangerAlert } from "@/components/ui/danger-alert";
+import {
+  adminDeleteRole,
+  adminGetRolePage,
+} from "@/services/api/adminRoleController";
+import { Filter, Page } from "@/types";
+import { ColumnDef } from "@tanstack/react-table";
+import { formatDate } from "date-fns";
+import { Pencil, PlusCircle, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { AddEditRoleDialog } from "./add-edit-dialog";
+
+export default function RolesPage() {
+  // State for data table
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState<Page>({
+    pageNumber: 1,
+    pageSize: 10,
+  });
+  const [filter, setFilter] = useState<Filter<API.BaseRoleVO>>({
+    filter: {},
+    filterOptions: [], // 角色目前没有预设筛选条件
+    search: null,
+    sort: null,
+    startDateTime: null,
+    endDateTime: null,
+  });
+  const [roles, setRoles] = useState<API.BaseRoleVO[]>([]);
+
+  // State for add/edit role dialog
+  const [isAddEditDialogOpen, setIsAddEditDialogOpen] = useState(false);
+  const [editingRole, setEditingRole] = useState<API.BaseRoleVO | null>(null);
+
+  // State for delete confirmation dialog
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
+
+  // Fetch roles data
+  const fetchRoles = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const res = await adminGetRolePage(
+        {
+          pageNum: page.pageNumber || 1,
+          pageSize: page.pageSize || 10,
+          ...(filter.search && { search: filter.search }),
+          ...(filter.sort && { sort: filter.sort }),
+          ...(filter.startDateTime && { startDateTime: filter.startDateTime }),
+          ...(filter.endDateTime && { endDateTime: filter.endDateTime }),
+        },
+        filter.filter, // Body 参数传递筛选条件
+      );
+
+      setPage({
+        pageNumber: res.data?.pageNumber || 1,
+        pageSize: res.data?.pageSize || 10,
+        totalPage: res.data?.totalPage,
+        totalRow: res.data?.totalRow,
+      });
+
+      setRoles(res.data?.records || []);
+    } catch (error) {
+      console.error("Failed to fetch roles:", error);
+      toast.error("获取角色列表失败");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [filter, page.pageNumber, page.pageSize]);
+
+  // Load data on component mount and when dependencies change
+  useEffect(() => {
+    fetchRoles();
+  }, [fetchRoles]);
+
+  // Function to handle opening the add/edit dialog
+  const handleOpenAddEditDialog = useCallback((role?: API.BaseRoleVO) => {
+    setEditingRole(role || null);
+    setIsAddEditDialogOpen(true);
+  }, []);
+
+  // Function to handle role deletion
+  const handleDeleteRole = useCallback(
+    async (roleToDelete: API.BaseRoleVO) => {
+      if (!roleToDelete?.id) return;
+
+      setIsDeleting(roleToDelete.id); // 标记正在删除的角色 ID
+      try {
+        await adminDeleteRole({ roleId: roleToDelete.id });
+        toast.success(`角色 "${roleToDelete.name}" 删除成功`);
+        fetchRoles(); // Refresh the list
+      } catch (error) {
+        console.error("Failed to delete role:", error);
+        toast.error(`删除角色 "${roleToDelete.name}" 失败`);
+      } finally {
+        setIsDeleting(null); // 清除正在删除的标记
+      }
+    },
+    [fetchRoles],
+  );
+
+  // Table columns definition
+  const columns: ColumnDef<API.BaseRoleVO>[] = [
+    {
+      id: "id",
+      header: "ID",
+      accessorKey: "id",
+      enableSorting: true,
+    },
+    {
+      id: "roleName",
+      header: "角色名称",
+      accessorKey: "roleName",
+      enableSorting: true,
+    },
+    {
+      id: "roleCode",
+      header: "角色代码",
+      accessorKey: "roleCode",
+      enableSorting: true,
+    },
+    {
+      id: "description",
+      header: "描述",
+      accessorKey: "description",
+      enableSorting: false, // 通常描述不需要排序
+    },
+    {
+      id: "createdAt",
+      header: "创建时间",
+      cell: ({ row }) =>
+        row.original.createdAt
+          ? formatDate(row.original.createdAt, "yyyy-MM-dd HH:mm:ss")
+          : "-",
+      enableSorting: true,
+    },
+    {
+      id: "updatedAt",
+      header: "更新时间",
+      cell: ({ row }) =>
+        row.original.updatedAt
+          ? formatDate(row.original.updatedAt, "yyyy-MM-dd HH:mm:ss")
+          : "-",
+      enableSorting: true,
+    },
+  ];
+
+  // Table row actions
+  const actions = [
+    {
+      label: "编辑",
+      icon: <Pencil className="mr-2 h-4 w-4" />,
+      onClick: handleOpenAddEditDialog,
+      disabled: (row: API.BaseRoleVO) => isDeleting === row.id, // 删除时禁用编辑
+    },
+    {
+      label: "删除",
+      icon: <Trash2 className="mr-2 h-4 w-4 text-red-500" />,
+      // 直接调用 handleDeleteRole
+      onClick: handleDeleteRole,
+      className: "text-red-500",
+      // 添加 disabled 状态和加载文本
+      disabled: (row: API.BaseRoleVO) => !!isDeleting, // 任何删除操作进行中时禁用
+      loading: (row: API.BaseRoleVO) => isDeleting === row.id, // 仅当前行删除时显示加载
+      loadingText: "删除中...",
+    },
+  ];
+
+  // Table toolbar actions
+  const toolbars = [
+    {
+      label: "添加角色",
+      icon: <PlusCircle />,
+      onClick: () => handleOpenAddEditDialog(), // 打开添加对话框
+    },
+  ];
+
+  return (
+    <>
+      <AddEditRoleDialog
+        open={isAddEditDialogOpen}
+        onOpenChange={setIsAddEditDialogOpen}
+        onSuccess={() => {
+          fetchRoles(); // 添加/编辑成功后刷新列表
+        }}
+        role={editingRole}
+      />
+
+      <DataTable<API.BaseRoleVO>
+        title="角色管理"
+        description={<DangerAlert />}
+        loading={isLoading}
+        columns={columns}
+        actions={actions}
+        data={roles}
+        toolbars={toolbars}
+        page={page}
+        onPageChange={(pageNumber) => {
+          setPage({ ...page, pageNumber });
+        }}
+        filter={filter}
+        onFilterChange={(newFilter) => {
+          setFilter(newFilter);
+          setPage({ ...page, pageNumber: 1 }); // 筛选变化时重置页码
+        }}
+      />
+    </>
+  );
+}
+
+```
+
+[index.ts](mdc:src/components/data-form/index.ts)
+
+```
+import { DialogForm, FieldConfig } from "@/components/data-form";
+import {
+  adminCreateRole,
+  adminUpdateRole,
+} from "@/services/api/adminRoleController";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+
+// 定义角色表单 Zod Schema
+export const roleFormSchema = z.object({
+  name: z.string().min(1, "角色名称不能为空"),
+  typeCode: z.string().min(1, "角色代码不能为空"),
+  description: z.string().optional(), // 描述是可选的
+});
+
+export type RoleFormValues = z.infer<typeof roleFormSchema>;
+
+// 默认表单值
+export const defaultRoleValues: Partial<RoleFormValues> = {
+  name: "",
+  typeCode: "",
+  description: "",
+};
+
+// 表单字段配置
+export const fieldConfigs: Record<keyof RoleFormValues, FieldConfig> = {
+  name: {
+    type: "input",
+    label: "角色名称",
+    placeholder: "请输入角色名称",
+  },
+  typeCode: {
+    type: "input",
+    label: "角色代码",
+    placeholder: "请输入角色代码 (例如：ROLE_ADMIN)",
+  },
+  description: {
+    type: "textarea",
+    label: "描述",
+    placeholder: "请输入角色描述 (可选)",
+  },
+};
+
+interface AddEditRoleDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSuccess: () => void;
+  role?: API.BaseRoleVO | null; // 传入的角色数据，用于编辑
+}
+
+export function AddEditRoleDialog({
+  open,
+  onOpenChange,
+  onSuccess,
+  role,
+}: AddEditRoleDialogProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const isEditing = !!role;
+
+  // 创建表单方法
+  const formMethods = useForm<RoleFormValues>({
+    resolver: zodResolver(roleFormSchema),
+    defaultValues: isEditing
+      ? {
+          name: role?.name || "",
+          typeCode: role?.typeCode || "",
+          description: role?.description || "",
+        }
+      : defaultRoleValues,
+  });
+
+  // 监听 role 变化，更新表单默认值
+  useEffect(() => {
+    if (open) {
+      if (isEditing && role) {
+        formMethods.reset({
+          name: role.name || "",
+          typeCode: role.typeCode || "",
+          description: role.description || "",
+        });
+      } else {
+        formMethods.reset(defaultRoleValues);
+      }
+    }
+  }, [role, open, isEditing, formMethods]);
+
+  // 处理表单提交
+  const handleSubmit = async (data: RoleFormValues) => {
+    setIsLoading(true);
+    try {
+      const payload: API.BaseRoleDTO = {
+        name: data.name,
+        typeCode: data.typeCode,
+        description: data.description,
+      };
+
+      if (isEditing && role?.id) {
+        // 更新角色
+        await adminUpdateRole({ roleId: role.id }, payload);
+        toast.success("角色更新成功");
+      } else {
+        // 创建角色
+        await adminCreateRole(payload);
+        toast.success("角色创建成功");
+      }
+
+      formMethods.reset(defaultRoleValues);
+      onOpenChange(false);
+      onSuccess(); // 刷新列表
+    } catch (error) {
+      console.error("Failed to save role:", error);
+      toast.error(isEditing ? "更新角色失败" : "创建角色失败");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <DialogForm
+      title={isEditing ? "编辑角色" : "添加角色"}
+      description={isEditing ? "修改角色信息" : "请填写角色信息"}
+      open={open}
+      onOpenChange={(open) => {
+        onOpenChange(open);
+        if (!open) {
+          formMethods.reset(defaultRoleValues); // 关闭时重置表单
+        }
+      }}
+      onSubmit={handleSubmit}
+      formSchema={roleFormSchema}
+      defaultValues={
+        isEditing
+          ? {
+              name: role?.name || "",
+              typeCode: role?.typeCode || "",
+              description: role?.description || "",
+            }
+          : defaultRoleValues
+      }
+      fieldConfigs={fieldConfigs}
+      formMethods={formMethods}
+      submitButtonText={isLoading ? "保存中..." : isEditing ? "更新" : "添加"}
+      cancelButtonText="取消"
+      showCancelButton={true}
+      fieldOrder={["name", "typeCode", "description"]} // 定义字段顺序
+      key={role?.id ?? "new"} // 添加 key 以便在编辑不同角色时正确重置表单
+    />
+  );
+}
+```
+
+# api
+
+本项目的 api 文档存放在 [index.ts](mdc:src/services/api/index.ts) 中

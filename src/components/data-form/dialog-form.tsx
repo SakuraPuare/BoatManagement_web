@@ -29,7 +29,7 @@ import {
 } from "react-hook-form"; // Import Resolver and UseFormReturn
 import { z } from "zod";
 import { DialogFormProps, InferredOutput, FieldConfig } from "./types"; // Import types
-import { FormControlRenderer } from "./renderers/form-control-renderer";
+import { FormControlRenderer } from "./form-control-renderer";
 
 /**
  * 一个基于 Shadcn UI Dialog 和 react-hook-form 的通用对话框表单组件。

@@ -8,14 +8,15 @@ import {
 } from "react-hook-form";
 import { z } from "zod";
 import { FieldConfig } from "./types";
-import { CustomControlRenderer } from "./renderers/custom-control-renderer";
-import { MultiSelectControlRenderer } from "./renderers/multiselect-control-renderer";
-import { SelectControlRenderer } from "./renderers/select-control-renderer";
-import { TextareaControlRenderer } from "./renderers/textarea-control-renderer";
-import { CheckboxControlRenderer } from "./renderers/checkbox-control-renderer";
-import { NumberControlRenderer } from "./renderers/number-control-renderer";
-import { ImageControlRenderer } from "./renderers/image-control-renderer";
-import { InputControlRenderer } from "./renderers/input-control-renderer";
+import { CustomControlRenderer } from "./renderers/custom";
+import { MultiSelectControlRenderer } from "./renderers/multiselect";
+import { SelectControlRenderer } from "./renderers/select";
+import { TextareaControlRenderer } from "./renderers/textarea";
+import { CheckboxControlRenderer } from "./renderers/checkbox";
+import { NumberControlRenderer } from "./renderers/number";
+import { ImageControlRenderer } from "./renderers/image";
+import { InputControlRenderer } from "./renderers/input";
+import { SwitchControlRenderer } from "./renderers/switch";
 
 interface FormControlRendererProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -102,6 +103,10 @@ export function FormControlRenderer<
           fieldKey={fieldKey}
         />
       );
+    }
+    // Switch 开关
+    case "switch": {
+      return <SwitchControlRenderer field={field} fieldConfig={config} />;
     }
     // 默认 Input 输入框
     case "input":

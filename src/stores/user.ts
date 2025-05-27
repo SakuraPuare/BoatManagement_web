@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface UserState {
-  user: API.BaseAccountsVO | null;
-  setUser: (user: API.BaseAccountsVO | null) => void;
+  user: API.UserWithRoleVO | null;
+  setUser: (user: API.UserWithRoleVO | null) => void;
   token: string | null;
   setToken: (token: string | null) => void;
   permissions: string[];

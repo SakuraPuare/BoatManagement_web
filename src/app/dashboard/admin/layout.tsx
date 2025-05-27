@@ -2,6 +2,7 @@ import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import {
   Anchor,
   BarChart,
+  Bell,
   Building2,
   CalendarRange,
   FileCheck,
@@ -10,6 +11,11 @@ import {
   UserCheck,
   Users,
   Store,
+  Package,
+  Truck,
+  TrendingUp,
+  Shield,
+  UserCog,
 } from "lucide-react";
 import React from "react";
 
@@ -20,9 +26,29 @@ const sidebarItems = [
     icon: <BarChart className="h-4 w-4" />,
   },
   {
+    title: "系统统计",
+    path: "/dashboard/admin/statistics",
+    icon: <TrendingUp className="h-4 w-4" />,
+  },
+  {
     title: "用户管理",
     path: "/dashboard/admin/users",
     icon: <Users className="h-4 w-4" />,
+  },
+  {
+    title: "角色管理",
+    path: "/dashboard/admin/roles",
+    icon: <UserCog className="h-4 w-4" />,
+  },
+  {
+    title: "权限管理",
+    path: "/dashboard/admin/permissions",
+    icon: <Shield className="h-4 w-4" />,
+  },
+  {
+    title: "通知管理",
+    path: "/dashboard/admin/notifications",
+    icon: <Bell className="h-4 w-4" />,
   },
   {
     title: "单位管理",
@@ -33,6 +59,11 @@ const sidebarItems = [
     title: "商户管理",
     path: "/dashboard/admin/merchants",
     icon: <Store className="h-4 w-4" />,
+  },
+  {
+    title: "供应商管理",
+    path: "/dashboard/admin/vendors",
+    icon: <Truck className="h-4 w-4" />,
   },
   {
     title: "用户审核",
@@ -53,6 +84,11 @@ const sidebarItems = [
     title: "船型管理",
     path: "/dashboard/admin/boat-types",
     icon: <Settings className="h-4 w-4" />,
+  },
+  {
+    title: "商品管理",
+    path: "/dashboard/admin/goods",
+    icon: <Package className="h-4 w-4" />,
   },
   {
     title: "船舶预订",

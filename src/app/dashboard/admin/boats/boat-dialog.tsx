@@ -24,8 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { updateAdminBoat } from "@/services/api/adminBoat";
-import type { API } from "@/services/api/typings";
+import { adminUpdateBoat } from "@/services/api/adminBoat";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -79,7 +78,7 @@ export function BoatDialog({
     }
     try {
       if (boat?.id) {
-        await updateAdminBoat({ id: boat.id }, values);
+        await adminUpdateBoat({ id: boat.id }, values);
       }
       onOpenChange(false);
       toast.success(boat?.id ? "更新成功" : "创建成功");

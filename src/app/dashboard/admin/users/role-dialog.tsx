@@ -21,8 +21,7 @@ import {
   ROLE_MASKS,
 } from "@/lib/constants/role";
 import { cn } from "@/lib/utils";
-import { updateAdminAccount } from "@/services/api/adminUser";
-import type { API } from "@/services/api/typings";
+import { adminUpdateUser } from "@/services/api/adminUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -45,10 +44,7 @@ export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(RoleFormSchema),
     defaultValues: {
-      role: user?.role || ROLE_MASKS.USER,
-    },
-    values: {
-      role: user?.role || ROLE_MASKS.USER,
+      role: ROLE_MASKS.USER,
     },
   });
 
@@ -66,7 +62,8 @@ export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
   const onSubmit = async (values: FormValues) => {
     try {
       if (!user.id) return;
-      await updateAdminAccount({ id: user.id }, { role: values.role });
+      // TODO: Implement role update when API supports it
+      toast.success("角色更新功能暂未实现");
       onOpenChange(false);
       form.reset();
     } catch (error) {

@@ -16,12 +16,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { API } from "@/services/api/typings";
 import {
-  cancelUserBoatRequest,
-  getUserBoatRequestsPageQuery,
+  userCancelBoatRequest,
+  userGetBoatRequestPage,
 } from "@/services/api/userBoatRequest";
-import { getUserDockListQuery } from "@/services/api/userDockController";
+import { userGetDockList } from "@/services/api/userDock";
 import { format } from "date-fns";
 import { Anchor, MoreVertical, Plus, Search, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
@@ -45,15 +44,15 @@ export default function BoatRequestsPage() {
     setIsLoading(true);
     try {
       const [requestsResponse] = await Promise.all([
-        getUserBoatRequestsPageQuery(
+        userGetBoatRequestPage(
           { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
           {},
         ),
       ]);
       await fetchDocks();
-      console.log(requestsResponse.data?.data?.records);
-      setRequests(requestsResponse.data?.data?.records || []);
-      setTotalPages(requestsResponse.data?.data?.totalPage || 0);
+      console.log(requestsResponse.data?.records);
+      setRequests(requestsResponse.data?.records || []);
+      setTotalPages(requestsResponse.data?.totalPage || 0);
     } catch (error) {
       console.error(error);
       toast.error("获取数据失败");
@@ -63,13 +62,11 @@ export default function BoatRequestsPage() {
   }, [currentPage]);
   const fetchDocks = useCallback(async () => {
     try {
-      const docksResponse = await getUserDockListQuery(
+      const docksResponse = await userGetDockList(
         {},
-        {
-          isEnabled: true,
-        },
+        {},
       );
-      setDocks(docksResponse.data?.data || []);
+      setDocks(docksResponse.data || []);
     } catch (error) {
       console.error(error);
       toast.error("获取码头列表失败");
@@ -77,7 +74,7 @@ export default function BoatRequestsPage() {
   }, []);
   const handleCancel = async (id: number) => {
     try {
-      await cancelUserBoatRequest({ id });
+      await userCancelBoatRequest({ id });
       toast.success("取消请求成功");
       await fetchRequests();
     } catch (error) {

@@ -2,12 +2,12 @@
 /* eslint-disable */
 import request from "@/lib/request";
 
-/** 创建商户 POST /admin/merchant */
-export async function createMerchant(
+/** 创建商户 POST /admin/merchant/ */
+export async function adminCreateMerchant(
   body: API.BaseMerchantsDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseBaseMerchantsVO>("/admin/merchant", {
+  return request<API.ResponseBaseMerchantsVO>("/admin/merchant/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -18,9 +18,9 @@ export async function createMerchant(
 }
 
 /** 获取商户详情 GET /admin/merchant/${param0} */
-export async function getMerchantById(
+export async function adminGetMerchant(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getMerchantByIdParams,
+  params: API.adminGetMerchantParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
@@ -32,9 +32,9 @@ export async function getMerchantById(
 }
 
 /** 更新商户 PUT /admin/merchant/${param0} */
-export async function updateMerchant(
+export async function adminUpdateMerchant(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.updateMerchantParams,
+  params: API.adminUpdateMerchantParams,
   body: API.BaseMerchantsDTO,
   options?: { [key: string]: any }
 ) {
@@ -51,23 +51,23 @@ export async function updateMerchant(
 }
 
 /** 删除商户 DELETE /admin/merchant/${param0} */
-export async function deleteMerchant(
+export async function adminDeleteMerchant(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.deleteMerchantParams,
+  params: API.adminDeleteMerchantParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.ResponseVoid>(`/admin/merchant/${param0}`, {
+  return request<API.ResponseString>(`/admin/merchant/${param0}`, {
     method: "DELETE",
     params: { ...queryParams },
     ...(options || {}),
   });
 }
 
-/** 根据ID获取商户 GET /admin/merchant/ids */
-export async function getMerchantByIds(
+/** 根据 ID 获取商户列表 GET /admin/merchant/ids */
+export async function adminGetMerchantByIds(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getMerchantByIdsParams,
+  params: API.adminGetMerchantByIdsParams,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseMerchantsVO>("/admin/merchant/ids", {
@@ -79,15 +79,15 @@ export async function getMerchantByIds(
   });
 }
 
-/** 获取商户列表 GET /admin/merchant/list */
-export async function getMerchantList(
+/** 获取商户列表 POST /admin/merchant/list */
+export async function adminGetMerchantList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getMerchantListParams,
+  params: API.adminGetMerchantListParams,
   body: API.BaseMerchantsDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseMerchantsVO>("/admin/merchant/list", {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
@@ -99,15 +99,15 @@ export async function getMerchantList(
   });
 }
 
-/** 分页获取商户列表 GET /admin/merchant/page */
-export async function getMerchantPage(
+/** 分页获取商户列表 POST /admin/merchant/page */
+export async function adminGetMerchantPage(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getMerchantPageParams,
+  params: API.adminGetMerchantPageParams,
   body: API.BaseMerchantsDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponsePageBaseMerchantsVO>("/admin/merchant/page", {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },

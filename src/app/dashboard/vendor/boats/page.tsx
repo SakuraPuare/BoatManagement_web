@@ -16,13 +16,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { API } from "@/services/api/typings";
 import {
-  deleteVendorBoat,
-  getVendorBoatsPageQuery,
+  vendorDeleteBoat,
+  vendorGetBoatPage,
 } from "@/services/api/vendorBoat";
-import { getVendorBoatTypesListQuery } from "@/services/api/vendorBoatType";
-import { getVendorDockListQuery } from "@/services/api/vendorDockController";
+import { getBoatTypeList } from "@/services/api/vendorBoatType";
+import { getDockList } from "@/services/api/vendorDock";
 import { format } from "date-fns";
 import {
   Anchor,
@@ -55,13 +54,13 @@ export default function VendorBoatsPage() {
   const fetchBoats = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await getVendorBoatsPageQuery(
+      const response = await vendorGetBoatPage(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         {},
       );
-      console.log(response.data?.data?.records);
-      setBoats(response.data?.data?.records || []);
-      setTotalPages(response.data?.data?.totalPage || 0);
+      console.log(response.data?.records);
+      setBoats(response.data?.records || []);
+      setTotalPages(response.data?.totalPage || 0);
     } catch (error) {
       console.error(error);
       toast.error("获取船只列表失败");
@@ -73,14 +72,14 @@ export default function VendorBoatsPage() {
   const fetchData = useCallback(async () => {
     try {
       const [boatTypesResponse, docksResponse] = await Promise.all([
-        getVendorBoatTypesListQuery({}, {}),
-        getVendorDockListQuery({}, {}),
+        getBoatTypeList({}, {}),
+        getDockList({}, {}),
       ]);
       console.log(boats);
       console.log(boatTypesResponse?.data);
       console.log(docksResponse?.data);
-      setBoatTypes(boatTypesResponse.data?.data || []);
-      setDocks(docksResponse.data?.data || []);
+      setBoatTypes(boatTypesResponse.data || []);
+      setDocks(docksResponse.data || []);
     } catch (error) {
       console.error(error);
       toast.error("获取数据失败");
@@ -99,7 +98,7 @@ export default function VendorBoatsPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      await deleteVendorBoat({ id });
+      await vendorDeleteBoat({ id });
       toast.success("删除成功");
       await fetchBoats();
     } catch (error) {

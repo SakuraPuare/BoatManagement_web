@@ -18,15 +18,12 @@ export async function userCancelBoatOrder(
 
 /** 获取用户船舶订单列表 GET /user/order/boat/list */
 export async function userGetBoatOrdersList(
-  body: API.BaseBoatOrdersDTO,
+  params?: { status?: string },
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseBoatOrdersVO>("/user/order/boat/list", {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
+    params: params,
     ...(options || {}),
   });
 }
@@ -34,15 +31,11 @@ export async function userGetBoatOrdersList(
 /** 获取用户船舶订单列表分页 GET /user/order/boat/page */
 export async function userGetBoatOrdersPage(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.userGetBoatOrdersPageParams,
-  body: API.BaseBoatOrdersDTO,
+  params: API.userGetBoatOrdersPageParams & { status?: string },
   options?: { [key: string]: any }
 ) {
   return request<API.ResponsePageBaseBoatOrdersVO>("/user/order/boat/page", {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
     params: {
       // pageNum has a default value: 1
       pageNum: "1",
@@ -50,7 +43,6 @@ export async function userGetBoatOrdersPage(
       pageSize: "10",
       ...params,
     },
-    data: body,
     ...(options || {}),
   });
 }
@@ -85,15 +77,12 @@ export async function userCancelGoodsOrder(
 
 /** 获取用户商品订单列表 GET /user/order/goods/list */
 export async function userGetGoodsOrdersList(
-  body: API.BaseGoodsOrdersDTO,
+  params?: { status?: string },
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseGoodsOrdersVO>("/user/order/goods/list", {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
+    params: params,
     ...(options || {}),
   });
 }
@@ -101,15 +90,11 @@ export async function userGetGoodsOrdersList(
 /** 获取用户商品订单列表分页 GET /user/order/goods/page */
 export async function userGetGoodsOrdersPage(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.userGetGoodsOrdersPageParams,
-  body: API.BaseGoodsOrdersDTO,
+  params: API.userGetGoodsOrdersPageParams & { status?: string },
   options?: { [key: string]: any }
 ) {
   return request<API.ResponsePageBaseGoodsOrdersVO>("/user/order/goods/page", {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
     params: {
       // pageNum has a default value: 1
       pageNum: "1",
@@ -117,7 +102,6 @@ export async function userGetGoodsOrdersPage(
       pageSize: "10",
       ...params,
     },
-    data: body,
     ...(options || {}),
   });
 }

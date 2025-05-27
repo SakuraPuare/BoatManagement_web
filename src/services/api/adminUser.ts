@@ -64,41 +64,22 @@ export async function adminDeleteUser(
   });
 }
 
-/** 获取用户认证详情 GET /admin/user/certify/user/${param0} */
-export async function adminGetUserCertify(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.adminGetUserCertifyParams,
-  options?: { [key: string]: any }
-) {
-  const { id: param0, ...queryParams } = params;
-  return request<API.ResponseBaseUserCertifyVO>(
-    `/admin/user/certify/user/${param0}`,
-    {
-      method: "GET",
-      params: { ...queryParams },
-      ...(options || {}),
-    }
-  );
-}
-
-/** 根据ID获取用户认证 GET /admin/user/certify/user/ids/${param0} */
+/** 根据 ID 获取用户认证列表 GET /admin/user/certify/ids */
 export async function adminGetUserCertifyByIds(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.adminGetUserCertifyByIdsParams,
   options?: { [key: string]: any }
 ) {
-  const { ids: param0, ...queryParams } = params;
-  return request<API.ResponseListBaseUserCertifyVO>(
-    `/admin/user/certify/user/ids/${param0}`,
-    {
-      method: "GET",
-      params: { ...queryParams },
-      ...(options || {}),
-    }
-  );
+  return request<API.ResponseListBaseUserCertifyVO>("/admin/user/certify/ids", {
+    method: "GET",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
 }
 
-/** 获取用户认证列表 GET /admin/user/certify/user/list */
+/** 获取用户认证列表 POST /admin/user/certify/list */
 export async function adminGetUserCertifyList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.adminGetUserCertifyListParams,
@@ -106,9 +87,9 @@ export async function adminGetUserCertifyList(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseUserCertifyVO>(
-    "/admin/user/certify/user/list",
+    "/admin/user/certify/list",
     {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -121,7 +102,7 @@ export async function adminGetUserCertifyList(
   );
 }
 
-/** 获取用户认证列表分页 GET /admin/user/certify/user/page */
+/** 分页获取用户认证列表 POST /admin/user/certify/page */
 export async function adminGetUserCertifyPage(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.adminGetUserCertifyPageParams,
@@ -129,9 +110,9 @@ export async function adminGetUserCertifyPage(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponsePageBaseUserCertifyVO>(
-    "/admin/user/certify/user/page",
+    "/admin/user/certify/page",
     {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -149,21 +130,39 @@ export async function adminGetUserCertifyPage(
   );
 }
 
-/** 根据ID获取用户 GET /admin/user/ids/${param0} */
+/** 获取用户认证详情 GET /admin/user/certify/user/${param0} */
+export async function adminGetUserCertify(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.adminGetUserCertifyParams,
+  options?: { [key: string]: any }
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.ResponseBaseUserCertifyVO>(
+    `/admin/user/certify/user/${param0}`,
+    {
+      method: "GET",
+      params: { ...queryParams },
+      ...(options || {}),
+    }
+  );
+}
+
+/** 根据 ID 获取用户列表 GET /admin/user/ids */
 export async function adminGetUserByIds(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.adminGetUserByIdsParams,
   options?: { [key: string]: any }
 ) {
-  const { ids: param0, ...queryParams } = params;
-  return request<API.ResponseListBaseAccountsVO>(`/admin/user/ids/${param0}`, {
+  return request<API.ResponseListBaseAccountsVO>("/admin/user/ids", {
     method: "GET",
-    params: { ...queryParams },
+    params: {
+      ...params,
+    },
     ...(options || {}),
   });
 }
 
-/** 获取用户列表 GET /admin/user/list */
+/** 获取用户列表 POST /admin/user/list */
 export async function adminGetUserList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.adminGetUserListParams,
@@ -171,7 +170,7 @@ export async function adminGetUserList(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseAccountsVO>("/admin/user/list", {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
@@ -183,7 +182,7 @@ export async function adminGetUserList(
   });
 }
 
-/** 获取用户列表分页 GET /admin/user/page */
+/** 分页获取用户列表 POST /admin/user/page */
 export async function adminGetUserPage(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.adminGetUserPageParams,
@@ -191,7 +190,7 @@ export async function adminGetUserPage(
   options?: { [key: string]: any }
 ) {
   return request<API.ResponsePageBaseAccountsVO>("/admin/user/page", {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },

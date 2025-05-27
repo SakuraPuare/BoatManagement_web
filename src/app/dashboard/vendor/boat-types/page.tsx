@@ -16,10 +16,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { API } from "@/services/api/typings";
 import {
-  deleteVendorBoatType,
-  getVendorBoatTypesPageQuery,
+  deleteBoatType,
+  getBoatTypePage,
 } from "@/services/api/vendorBoatType";
 import { format } from "date-fns";
 import {
@@ -49,12 +48,12 @@ export default function VendorBoatTypesPage() {
   const fetchBoatTypes = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await getVendorBoatTypesPageQuery(
+      const response = await getBoatTypePage(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         {},
       );
-      setBoatTypes(response.data?.data?.records || []);
-      setTotalPages(response.data?.data?.totalPage || 0);
+      setBoatTypes(response.data?.records || []);
+      setTotalPages(response.data?.totalPage || 0);
     } catch (error) {
       console.error(error);
       toast.error("获取船舶类型列表失败");
@@ -75,7 +74,7 @@ export default function VendorBoatTypesPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      await deleteVendorBoatType({ id });
+      await deleteBoatType({ id });
       toast.success("删除成功");
       await fetchBoatTypes();
     } catch (error) {

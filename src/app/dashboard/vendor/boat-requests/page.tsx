@@ -13,8 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { REQUEST_STATUS_MAP } from "@/lib/constants/status";
-import { getVendorDock } from "@/services/api/vendorDockController";
-import type { API } from "@/services/api/typings";
+import { getDock } from "@/services/api/vendorDock";
 import { getVendorBoatRequestsPageQuery } from "@/services/api/vendorBoatRequest";
 import { format } from "date-fns";
 import { Search, Ship } from "lucide-react";
@@ -40,12 +39,12 @@ export default function VendorBoatRequestsPage() {
           {},
         ),
       ]);
-      setRequests(requestsResponse.data?.data?.records || []);
-      setTotalPages(requestsResponse.data?.data?.totalPage || 0);
+      setRequests(requestsResponse.data?.records || []);
+      setTotalPages(requestsResponse.data?.totalPage || 0);
 
       // 获取所有请求中涉及的码头ID
       const dockIds = new Set<number>();
-      requestsResponse.data?.data?.records?.forEach((request) => {
+      requestsResponse.data?.records?.forEach((request) => {
         if (request.startDockId) dockIds.add(request.startDockId);
         if (request.endDockId) dockIds.add(request.endDockId);
       });
@@ -55,9 +54,9 @@ export default function VendorBoatRequestsPage() {
       await Promise.all(
         Array.from(dockIds).map(async (id) => {
           try {
-            const response = await getVendorDock({ id }, {});
-            if (response.data?.data?.name) {
-              dockNamesMap[id] = response.data.data.name;
+            const response = await getDock({ id });
+            if (response.data?.name) {
+              dockNamesMap[id] = response.data.name;
             }
           } catch (error) {
             console.error(`Failed to fetch dock name for ID ${id}:`, error);
@@ -149,10 +148,10 @@ export default function VendorBoatRequestsPage() {
                   <TableCell>
                     <Badge
                       className={`inline-flex items-center  rounded-full whitespace-nowrap ${
-                        REQUEST_STATUS_MAP[request?.status as string]?.color
+                        REQUEST_STATUS_MAP[request?.status as keyof typeof REQUEST_STATUS_MAP]?.color
                       }`}
                     >
-                      {REQUEST_STATUS_MAP[request?.status as string]?.label}
+                      {REQUEST_STATUS_MAP[request?.status as keyof typeof REQUEST_STATUS_MAP]?.label}
                     </Badge>
                   </TableCell>
                   <TableCell>

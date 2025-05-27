@@ -16,9 +16,22 @@ export async function userGetUser(
   });
 }
 
+/** 检查当前用户是否是指定商家 GET /user/info/merchant/${param0} */
+export async function userCheckIsMerchant(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: { merchantId: string },
+  options?: { [key: string]: any }
+) {
+  const { merchantId: param0 } = params;
+  return request<API.ResponseBoolean>(`/user/info/merchant/${param0}`, {
+    method: "GET",
+    ...(options || {}),
+  });
+}
+
 /** 获取当前用户信息 GET /user/info/me */
 export async function userGetCurrentUser(options?: { [key: string]: any }) {
-  return request<API.ResponseBaseAccountsVO>("/user/info/me", {
+  return request<API.ResponseUserWithRoleVO>("/user/info/me", {
     method: "GET",
     ...(options || {}),
   });

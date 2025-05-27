@@ -17,8 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { addAdminDocks, updateAdminDocks } from "@/services/api/adminDock";
-import type { API } from "@/services/api/typings";
+import { adminCreateDock, adminUpdateDock } from "@/services/api/adminDock";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -65,7 +64,7 @@ export function DockDialog({ open, onOpenChange, dock }: DockDialogProps) {
   const onSubmit = async (values: FormValues) => {
     try {
       if (dock?.id) {
-        await updateAdminDocks(
+        await adminUpdateDock(
           { id: dock.id },
           {
             ...values,
@@ -73,8 +72,7 @@ export function DockDialog({ open, onOpenChange, dock }: DockDialogProps) {
           }
         );
       } else {
-        await addAdminDocks(
-          {},
+        await adminCreateDock(
           {
             ...values,
             isEnabled: values.isEnabled,

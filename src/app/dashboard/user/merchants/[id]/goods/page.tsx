@@ -1,7 +1,6 @@
 "use client";
 
 import { Package } from "lucide-react";
-import type { API } from "@/services/api/typings";
 import { 
   getUserMerchantGoodsPage,
   createUserMerchantGoodsOrder 
@@ -11,6 +10,8 @@ import React, { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import { userCheckIsMerchant } from "@/services/api/userInfo";
 import {
   Dialog,
   DialogContent,
@@ -72,14 +73,14 @@ function PurchaseDialog({
         }
       );
 
-      if (response.data?.code === 200) {
+      if (response.code === 200) {
         toast.success("下单成功");
         onOpenChange(false);
         form.reset();
         onSuccess();
       } else {
         toast.error("下单失败", {
-          description: response.data?.message,
+          description: response.message,
         });
       }
     } catch (error) {
@@ -129,6 +130,7 @@ function PurchaseDialog({
 export default function MerchantGoodsPage() {
   const params = useParams();
   const merchantId = params.id as string;
+  const { user } = useAuth();
   const [goods, setGoods] = useState<API.BaseGoodsVO[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -136,6 +138,19 @@ export default function MerchantGoodsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGood, setSelectedGood] = useState<API.BaseGoodsVO | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isMerchantOwner, setIsMerchantOwner] = useState(false);
+  
+  // 检查当前用户是否是这个商家的所有者
+  const checkMerchantOwnership = useCallback(async () => {
+    if (!user || !merchantId) return;
+    try {
+      const response = await userCheckIsMerchant({ merchantId });
+      setIsMerchantOwner(!!response.data);
+    } catch (error) {
+      console.error("检查商家所有权失败:", error);
+      setIsMerchantOwner(false);
+    }
+  }, [user, merchantId]);
 
   const fetchGoods = useCallback(async () => {
     if (!merchantId) return;
@@ -146,9 +161,10 @@ export default function MerchantGoodsPage() {
         { name: searchQuery }
       );
       console.log(response.data);
-      if (response.data?.data?.records) {
-        setGoods(response.data.data.records);
-        setTotalPages(response.data.data.totalPage || 0);
+      if (response.data) {
+        const pageData = response.data as API.PageBaseGoodsVO;
+        setGoods(pageData.records || []);
+        setTotalPages(pageData.totalPage || 0);
       }
     } catch (error) {
       console.error(error);
@@ -160,7 +176,8 @@ export default function MerchantGoodsPage() {
 
   useEffect(() => {
     fetchGoods();
-  }, [fetchGoods]);
+    checkMerchantOwnership();
+  }, [fetchGoods, checkMerchantOwnership]);
 
   const columns: Column<API.BaseGoodsVO>[] = [
     {
@@ -191,17 +208,40 @@ export default function MerchantGoodsPage() {
         if (!row) return null;
         const { stock } = row.data;
         
+        // 如果库存为0，显示已售罄
+        if (stock === 0) {
+          return (
+            <Button variant="default" size="sm" disabled>
+              已售罄
+            </Button>
+          );
+        }
+        
+        // 如果用户是这个商家的所有者，显示提示信息
+        if (isMerchantOwner) {
+          return (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              disabled
+              title="商家不能购买商品"
+            >
+              商家账户
+            </Button>
+          );
+        }
+        
+        // 普通用户显示购买按钮
         return (
           <Button
             variant="default"
             size="sm"
-            disabled={stock === 0}
             onClick={() => {
               setSelectedGood(row.data);
               setIsDialogOpen(true);
             }}
           >
-            {stock === 0 ? "已售罄" : "购买"}
+            购买
           </Button>
         );
       },

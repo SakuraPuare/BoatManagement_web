@@ -7,8 +7,7 @@ import {
 } from "@/components/data-management-table";
 import { cn } from "@/lib/utils";
 import { auditAdminUnit } from "@/services/api/adminAudit";
-import { getAdminUnitPageQuery } from "@/services/api/adminUnit";
-import { API } from "@/services/api/typings";
+import { adminGetUnitPage } from "@/services/api/adminUnit";
 import { Building2, ShieldQuestion } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 
@@ -21,7 +20,7 @@ export default function UnitsPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchUnits = useCallback(async () => {
-    const response = await getAdminUnitPageQuery(
+    const response = await adminGetUnitPage(
       {
         pageNum: currentPage,
         pageSize: 10,
@@ -30,8 +29,8 @@ export default function UnitsPage() {
         ...(statusFilter !== "all" && { status: statusFilter }),
       }
     );
-    setUnits(response.data?.data?.records || []);
-    setTotalPages(response.data?.data?.totalPage || 0);
+    setUnits(response.data?.records || []);
+    setTotalPages(response.data?.totalPage || 0);
   }, [statusFilter]);
 
   useEffect(() => {
@@ -90,7 +89,7 @@ export default function UnitsPage() {
       id: unit.id || 0,
       types: unit.status === "APPROVED" ? "REJECTED" : "APPROVED",
     });
-    if (response.status === 200) {
+    if (response.data?.code === 200) {
       await fetchUnits();
     }
   };

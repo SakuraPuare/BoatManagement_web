@@ -1,12 +1,11 @@
 "use client";
 
 import { Package, Pencil, Plus, Trash2 } from "lucide-react";
-import type { API } from "@/services/api/typings";
 import {
-  addMerchantsGoods,
-  deleteMerchantsGoods,
-  getMerchantGoodsPageQuery,
-  updateMerchantsGoods,
+  merchantCreateGoods,
+  merchantDeleteGoods,
+  merchantGetGoodsPage,
+  merchantUpdateGoods,
 } from "@/services/api/merchantGoods";
 import { DataManagementTable, type Column, type Action } from "@/components/data-management-table";
 import { GoodsFormDialog, goodsFormSchema } from "./goods-form-dialog";
@@ -26,14 +25,15 @@ export default function MerchantGoodsPage() {
   const fetchGoods = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await getMerchantGoodsPageQuery(
+      const response = await merchantGetGoodsPage(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         {}
       );
 
-      if (response.data?.data?.records) {
-        setGoods(response.data.data.records);
-        setTotalPages(response.data.data.totalPage || 0);
+      if (response.data) {
+        const pageData = response.data as API.PageBaseGoodsVO;
+        setGoods(pageData.records || []);
+        setTotalPages(pageData.totalPage || 0);
       } 
     } catch (error) {
       console.error(error);
@@ -58,7 +58,7 @@ export default function MerchantGoodsPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      await deleteMerchantsGoods({ id });
+      await merchantDeleteGoods({ id });
       await fetchGoods();
     } catch (error) {
       console.error(error);
@@ -104,14 +104,15 @@ export default function MerchantGoodsPage() {
         dialog={GoodsFormDialog}
         schema={goodsFormSchema}
         queryFn={async ({ pageNum, pageSize }, searchQuery) => {
-          const response = await getMerchantGoodsPageQuery(
+          const response = await merchantGetGoodsPage(
             { pageNum, pageSize },
             { name: searchQuery } as API.BaseGoodsDTO
           );
+          const pageData = response.data as API.PageBaseGoodsVO;
           return {
-            list: response.data?.data?.records || [],
-            totalItems: response.data?.data?.records?.length || 0,
-            totalPages: response.data?.data?.totalPage || 0,
+            list: pageData?.records || [],
+            totalItems: pageData?.records?.length || 0,
+            totalPages: pageData?.totalPage || 0,
           };
         }}
         pagination={{

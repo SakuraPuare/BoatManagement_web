@@ -5,7 +5,7 @@ import {
 
 import { userGetCurrentUser } from "@/services/api/userInfo";
 import { useUserStore } from "@/stores/user";
-import { getRoleList } from "@/utils/role";
+import { getRoleList, hasPermission } from "@/utils/role";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
@@ -13,20 +13,21 @@ import { toast } from "sonner";
 
 export const useAuth = () => {
   const router = useRouter();
-  const { user, setUser, permissions, setPermissions, setToken } =
+  const { user, setUser, permissions, setPermissions, setToken, logout: clearUserData, token } =
     useUserStore();
 
   const updateUser = useCallback(async () => {
     try {
       const response = await userGetCurrentUser();
-      if (response.data && response.code === 200) {
-        const userData = response.data as API.BaseAccountsVO;
+      if (response.code === 200 && response.data) {
+        const userData = response.data as API.UserWithRoleVO;
         setUser(userData);
         const role = typeof userData?.role === "number" ? userData.role : 0;
         setPermissions(getRoleList(role));
-        return userData; // 返回用户数据
+        console.log("用户信息更新成功:", userData);
+        return userData;
       } else {
-        throw new Error(response.message || "Failed to get user info");
+        throw new Error(response.message || "获取用户信息失败");
       }
     } catch (error) {
       console.error("Update user error:", error);
@@ -38,36 +39,36 @@ export const useAuth = () => {
     async (credentials: API.AuthRequestDTO) => {
       try {
         const response = await loginWithPassword(credentials);
-        if (response && response.code === 200) {
-          if (!response.data?.token) {
-            toast.error("登录失败：无效的 token");
-            return false;
-          }
+        
+        if (response.code === 200 && response.data?.token) {
+          // 设置token
+          setToken((response.data as API.TokenVO).token!);
+          console.log("登录成功，token已设置");
 
-          setToken(response.data?.token);
-
-          // 等待获取用户信息完成，并获取返回的用户数据
-          const userData = await updateUser();
-
-          if (!userData) {
+          // 获取用户信息
+          try {
+            await updateUser();
+            toast.success("登录成功");
+            router.push("/");
+            return true;
+          } catch (userError) {
+            console.error("获取用户信息失败:", userError);
+            // 清除token
+            setToken(null);
             toast.error("登录失败：无法获取用户信息");
             return false;
           }
-
-          toast.success("登录成功");
-          router.push("/");
-          return true;
+        } else {
+          toast.error(response.message || "登录失败");
+          return false;
         }
-
-        toast.error(response.message || "登录失败");
-        return false;
       } catch (error) {
         console.error("Login error:", error);
-        toast.error("登录失败");
+        toast.error("登录失败，请检查网络连接");
         return false;
       }
     },
-    [setToken, updateUser, router] // 移除 user 和 permissions 依赖
+    [setToken, updateUser, router]
   );
 
   const register = useCallback(
@@ -80,25 +81,31 @@ export const useAuth = () => {
 
         const response = await registerWithPassword(credentials);
 
-        if (response.data && response.code === 200) {
-          if (!response.data?.token) {
-            toast.error("注册失败：无效的token");
+        if (response.code === 200 && response.data?.token) {
+          // 设置token
+          setToken((response.data as API.TokenVO).token!);
+          console.log("注册成功，token已设置");
+
+          // 获取用户信息
+          try {
+            await updateUser();
+            toast.success("注册成功");
+            router.push("/");
+            return true;
+          } catch (userError) {
+            console.error("获取用户信息失败:", userError);
+            // 清除token
+            setToken(null);
+            toast.error("注册失败：无法获取用户信息");
             return false;
           }
-
-          setToken(response.data?.token);
-          await updateUser();
-
-          toast.success("注册成功");
-          router.push("/");
-          return true;
+        } else {
+          toast.error(response.message || "注册失败");
+          return false;
         }
-
-        toast.error(response.message || "注册失败");
-        return false;
       } catch (error) {
         console.error("Registration error:", error);
-        toast.error("注册失败");
+        toast.error("注册失败，请检查网络连接");
         return false;
       }
     },
@@ -107,25 +114,22 @@ export const useAuth = () => {
 
   const logout = useCallback(async () => {
     try {
-      setUser(null);
-      setPermissions([]);
-      setToken(null);
-
+      clearUserData();
       Cookies.remove("user");
       Cookies.remove("permissions");
-
       toast.success("已成功退出登录");
+      router.push("/login");
     } catch (err: any) {
       console.error(err);
       toast.error(err?.message || "退出登录失败");
     }
-  }, [setUser, setPermissions, setToken]);
+  }, [clearUserData, router]);
 
   const checkAuth = useCallback(async () => {
     return !!user;
   }, [user]);
 
-  const hasPermission = useCallback(
+  const checkPermission = useCallback(
     (requiredPermissions: string[]) => {
       if (!permissions.length || !requiredPermissions.length) return false;
       return requiredPermissions.some((permission) =>
@@ -143,7 +147,7 @@ export const useAuth = () => {
     logout,
     checkAuth,
     updateUser,
-    hasPermission,
-    isAuthenticated: !!user,
+    hasPermission: checkPermission,
+    isAuthenticated: !!(token && user),
   };
 };

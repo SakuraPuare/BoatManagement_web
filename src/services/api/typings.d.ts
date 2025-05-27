@@ -1,9 +1,51 @@
 declare namespace API {
+  type adminAssignRoleParams = {
+    userId: number;
+    roleId: number;
+    unitId?: number;
+  };
+
   type adminDeleteBoatParams = {
     id: number;
   };
 
+  type adminDeleteBoatRequestParams = {
+    id: number;
+  };
+
+  type adminDeleteBoatTypeParams = {
+    id: number;
+  };
+
+  type adminDeleteDockParams = {
+    id: number;
+  };
+
+  type adminDeleteGoodsParams = {
+    id: number;
+  };
+
+  type adminDeleteMerchantParams = {
+    id: number;
+  };
+
+  type adminDeletePermissionParams = {
+    id: number;
+  };
+
+  type adminDeleteRoleParams = {
+    id: number;
+  };
+
+  type adminDeleteUnitParams = {
+    id: number;
+  };
+
   type adminDeleteUserParams = {
+    id: number;
+  };
+
+  type adminDeleteVendorParams = {
     id: number;
   };
 
@@ -12,6 +54,26 @@ declare namespace API {
   };
 
   type adminGetBoatListParams = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetBoatOrdersByIdsParams = {
+    ids: string;
+  };
+
+  type adminGetBoatOrdersListParams = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetBoatOrdersPageParams = {
+    pageNum?: number;
+    pageSize?: number;
     search?: string;
     sort?: string;
     startDateTime?: string;
@@ -28,6 +90,238 @@ declare namespace API {
   };
 
   type adminGetBoatParams = {
+    id: number;
+  };
+
+  type adminGetBoatRequestByIdsParams = {
+    ids: string;
+  };
+
+  type adminGetBoatRequestListParams = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetBoatRequestPageParams = {
+    pageNum?: number;
+    pageSize?: number;
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetBoatRequestParams = {
+    id: number;
+  };
+
+  type adminGetBoatTypeByIdsParams = {
+    ids: string;
+  };
+
+  type adminGetBoatTypeListParams = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetBoatTypePageParams = {
+    pageNum?: number;
+    pageSize?: number;
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetBoatTypeParams = {
+    id: number;
+  };
+
+  type adminGetDockByIdsParams = {
+    ids: string;
+  };
+
+  type adminGetDockListParams = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetDockPageParams = {
+    pageNum?: number;
+    pageSize?: number;
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetDockParams = {
+    id: number;
+  };
+
+  type adminGetGoodsByIdsParams = {
+    ids: string;
+  };
+
+  type adminGetGoodsListParams = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetGoodsOrdersByIds1Params = {
+    ids: string;
+  };
+
+  type adminGetGoodsOrdersByIdsParams = {
+    ids: string;
+  };
+
+  type adminGetGoodsOrdersList1Params = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetGoodsOrdersListParams = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetGoodsOrdersPage1Params = {
+    pageNum?: number;
+    pageSize?: number;
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetGoodsOrdersPageParams = {
+    pageNum?: number;
+    pageSize?: number;
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetGoodsPageParams = {
+    pageNum?: number;
+    pageSize?: number;
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetGoodsParams = {
+    id: number;
+  };
+
+  type adminGetMerchantByIdsParams = {
+    ids: string;
+  };
+
+  type adminGetMerchantListParams = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetMerchantPageParams = {
+    pageNum?: number;
+    pageSize?: number;
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetMerchantParams = {
+    id: number;
+  };
+
+  type adminGetPermissionByIdsParams = {
+    ids: string;
+  };
+
+  type adminGetPermissionListParams = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetPermissionPageParams = {
+    pageNum?: number;
+    pageSize?: number;
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetPermissionParams = {
+    id: number;
+  };
+
+  type adminGetRoleByIdsParams = {
+    ids: string;
+  };
+
+  type adminGetRoleListParams = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetRolePageParams = {
+    pageNum?: number;
+    pageSize?: number;
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetRoleParams = {
+    id: number;
+  };
+
+  type adminGetUnitByIdsParams = {
+    ids: string;
+  };
+
+  type adminGetUnitListParams = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetUnitPageParams = {
+    pageNum?: number;
+    pageSize?: number;
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetUnitParams = {
     id: number;
   };
 
@@ -79,11 +373,77 @@ declare namespace API {
     id: number;
   };
 
+  type adminGetVendorByIdsParams = {
+    ids: string;
+  };
+
+  type adminGetVendorListParams = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetVendorPageParams = {
+    pageNum?: number;
+    pageSize?: number;
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type adminGetVendorParams = {
+    id: number;
+  };
+
+  type adminRevokeRoleParams = {
+    userId: number;
+    roleId: number;
+    unitId?: number;
+  };
+
   type adminUpdateBoatParams = {
     id: number;
   };
 
+  type adminUpdateBoatRequestParams = {
+    id: number;
+  };
+
+  type adminUpdateBoatTypeParams = {
+    id: number;
+  };
+
+  type adminUpdateDockParams = {
+    id: number;
+  };
+
+  type adminUpdateGoodsParams = {
+    id: number;
+  };
+
+  type adminUpdateMerchantParams = {
+    id: number;
+  };
+
+  type adminUpdatePermissionParams = {
+    id: number;
+  };
+
+  type adminUpdateRoleParams = {
+    id: number;
+  };
+
+  type adminUpdateUnitParams = {
+    id: number;
+  };
+
   type adminUpdateUserParams = {
+    id: number;
+  };
+
+  type adminUpdateVendorParams = {
     id: number;
   };
 
@@ -107,7 +467,6 @@ declare namespace API {
     password?: string;
     phone?: string;
     email?: string;
-    role?: number;
     isActive?: boolean;
     isBlocked?: boolean;
   };
@@ -120,7 +479,6 @@ declare namespace API {
     password?: string;
     phone?: string;
     email?: string;
-    role?: number;
     isActive?: boolean;
     isBlocked?: boolean;
   };
@@ -241,12 +599,40 @@ declare namespace API {
     isEnabled?: boolean;
   };
 
+  type BaseFileUploadsDTO = {
+    originalName?: string;
+    storedName?: string;
+    filePath?: string;
+    fileSize?: number;
+    fileType?: string;
+    mimeType?: string;
+    uploaderId?: number;
+    businessType?: string;
+    businessId?: number;
+  };
+
+  type BaseFileUploadsVO = {
+    createdAt?: string;
+    updatedAt?: string;
+    id?: number;
+    originalName?: string;
+    storedName?: string;
+    filePath?: string;
+    fileSize?: number;
+    fileType?: string;
+    mimeType?: string;
+    uploaderId?: number;
+    businessType?: string;
+    businessId?: number;
+  };
+
   type BaseGoodsDTO = {
     name?: string;
     description?: string;
     price?: number;
     unit?: string;
     stock?: number;
+    isEnabled?: boolean;
   };
 
   type BaseGoodsOrdersDTO = {
@@ -283,6 +669,7 @@ declare namespace API {
     sales?: number;
     merchantId?: number;
     unitId?: number;
+    isEnabled?: boolean;
   };
 
   type BaseMerchantsDTO = {
@@ -298,6 +685,57 @@ declare namespace API {
     userId?: number;
     unitId?: number;
     status?: string;
+  };
+
+  type BaseNotificationsDTO = {
+    userId?: number;
+    title?: string;
+    content?: string;
+    type?: string;
+    businessType?: string;
+    businessId?: number;
+    isRead?: boolean;
+  };
+
+  type BaseNotificationsVO = {
+    createdAt?: string;
+    updatedAt?: string;
+    id?: number;
+    userId?: number;
+    title?: string;
+    content?: string;
+    type?: string;
+    businessType?: string;
+    businessId?: number;
+    isRead?: boolean;
+  };
+
+  type BasePermissionDTO = {
+    name?: string;
+    code?: string;
+    description?: string;
+  };
+
+  type BasePermissionVO = {
+    createdAt?: string;
+    updatedAt?: string;
+    id?: number;
+    name?: string;
+    code?: string;
+    description?: string;
+  };
+
+  type BaseRoleDTO = {
+    name?: string;
+    description?: string;
+  };
+
+  type BaseRoleVO = {
+    createdAt?: string;
+    updatedAt?: string;
+    id?: number;
+    name?: string;
+    description?: string;
   };
 
   type BaseUnitsDTO = {
@@ -379,83 +817,31 @@ declare namespace API {
     merchantId: number;
   };
 
-  type deleteBoatType1Params = {
-    id: number;
-  };
-
   type deleteBoatTypeParams = {
     id: number;
   };
 
-  type deleteDockParams = {
+  type deleteFileParams = {
+    fileId: number;
+  };
+
+  type deleteFileUploadParams = {
     id: number;
   };
 
-  type deleteGoodsParams = {
+  type deleteNotificationParams = {
     id: number;
   };
 
-  type deleteMerchantParams = {
-    id: number;
-  };
-
-  type deleteUnitParams = {
-    id: number;
-  };
-
-  type deleteVendorParams = {
-    id: number;
-  };
-
-  type getBoatOrdersByIdsParams = {
-    ids: string;
-  };
-
-  type getBoatOrdersListParams = {
-    search?: string;
-    sort?: string;
-    startDateTime?: string;
-    endDateTime?: string;
-  };
-
-  type getBoatOrdersPageParams = {
-    pageNum?: number;
-    pageSize?: number;
-    search?: string;
-    sort?: string;
-    startDateTime?: string;
-    endDateTime?: string;
-  };
-
-  type getBoatType1Params = {
-    id: number;
-  };
-
-  type getBoatTypeByIds1Params = {
-    ids: string;
+  type downloadFileParams = {
+    fileId: number;
   };
 
   type getBoatTypeByIdsParams = {
     ids: string;
   };
 
-  type getBoatTypeList1Params = {
-    search?: string;
-    sort?: string;
-    startDateTime?: string;
-    endDateTime?: string;
-  };
-
   type getBoatTypeListParams = {
-    search?: string;
-    sort?: string;
-    startDateTime?: string;
-    endDateTime?: string;
-  };
-
-  type getBoatTypePage1Params = {
-    pageNum?: number;
-    pageSize?: number;
     search?: string;
     sort?: string;
     startDateTime?: string;
@@ -475,35 +861,11 @@ declare namespace API {
     id: number;
   };
 
-  type getDock1Params = {
-    id: number;
-  };
-
-  type getDockByIds1Params = {
-    ids: string;
-  };
-
   type getDockByIdsParams = {
     ids: string;
   };
 
-  type getDockList1Params = {
-    search?: string;
-    sort?: string;
-    startDateTime?: string;
-    endDateTime?: string;
-  };
-
   type getDockListParams = {
-    search?: string;
-    sort?: string;
-    startDateTime?: string;
-    endDateTime?: string;
-  };
-
-  type getDockPage1Params = {
-    pageNum?: number;
-    pageSize?: number;
     search?: string;
     sort?: string;
     startDateTime?: string;
@@ -523,40 +885,23 @@ declare namespace API {
     id: number;
   };
 
-  type getGoodsByIdsParams = {
+  type getFilesByBusinessParams = {
+    businessType: string;
+    businessId: number;
+  };
+
+  type getFileUploadsByIdsParams = {
     ids: string;
   };
 
-  type getGoodsListParams = {
+  type getFileUploadsListParams = {
     search?: string;
     sort?: string;
     startDateTime?: string;
     endDateTime?: string;
   };
 
-  type getGoodsOrdersByIds1Params = {
-    ids: string;
-  };
-
-  type getGoodsOrdersByIdsParams = {
-    ids: string;
-  };
-
-  type getGoodsOrdersList1Params = {
-    search?: string;
-    sort?: string;
-    startDateTime?: string;
-    endDateTime?: string;
-  };
-
-  type getGoodsOrdersListParams = {
-    search?: string;
-    sort?: string;
-    startDateTime?: string;
-    endDateTime?: string;
-  };
-
-  type getGoodsOrdersPage1Params = {
+  type getFileUploadsPageParams = {
     pageNum?: number;
     pageSize?: number;
     search?: string;
@@ -565,7 +910,28 @@ declare namespace API {
     endDateTime?: string;
   };
 
-  type getGoodsOrdersPageParams = {
+  type getNotificationsByIdsParams = {
+    ids: string;
+  };
+
+  type getNotificationsList1Params = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type getNotificationsListParams = {
+    userId: number;
+    isRead?: boolean;
+    type?: string;
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type getNotificationsPage1Params = {
     pageNum?: number;
     pageSize?: number;
     search?: string;
@@ -574,7 +940,30 @@ declare namespace API {
     endDateTime?: string;
   };
 
-  type getGoodsPageParams = {
+  type getNotificationsPageParams = {
+    userId: number;
+    pageNum?: number;
+    pageSize?: number;
+    isRead?: boolean;
+    type?: string;
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type getPublicBoatTypeByIdsParams = {
+    ids: string;
+  };
+
+  type getPublicBoatTypeListParams = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type getPublicBoatTypePageParams = {
     pageNum?: number;
     pageSize?: number;
     search?: string;
@@ -583,22 +972,22 @@ declare namespace API {
     endDateTime?: string;
   };
 
-  type getMerchantByIdParams = {
+  type getPublicBoatTypeParams = {
     id: number;
   };
 
-  type getMerchantByIdsParams = {
+  type getPublicDockByIdsParams = {
     ids: string;
   };
 
-  type getMerchantListParams = {
+  type getPublicDockListParams = {
     search?: string;
     sort?: string;
     startDateTime?: string;
     endDateTime?: string;
   };
 
-  type getMerchantPageParams = {
+  type getPublicDockPageParams = {
     pageNum?: number;
     pageSize?: number;
     search?: string;
@@ -607,28 +996,45 @@ declare namespace API {
     endDateTime?: string;
   };
 
-  type getUnitByIdsParams = {
-    ids: string;
-  };
-
-  type getUnitListParams = {
-    search?: string;
-    sort?: string;
-    startDateTime?: string;
-    endDateTime?: string;
-  };
-
-  type getUnitPageParams = {
-    pageNum?: number;
-    pageSize?: number;
-    search?: string;
-    sort?: string;
-    startDateTime?: string;
-    endDateTime?: string;
-  };
-
-  type getUnitParams = {
+  type getPublicDockParams = {
     id: number;
+  };
+
+  type getPublicGoodsByIdsParams = {
+    ids: string;
+  };
+
+  type getPublicGoodsListParams = {
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type getPublicGoodsPageParams = {
+    pageNum?: number;
+    pageSize?: number;
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  };
+
+  type getPublicGoodsParams = {
+    id: number;
+  };
+
+  type getUnreadCountParams = {
+    userId: number;
+  };
+
+  type getUserFilesListParams = {
+    userId: number;
+    businessType?: string;
+    search?: string;
+    sort?: string;
+    startDateTime?: string;
+    endDateTime?: string;
   };
 
   type getUserMerchantGoodsListParams = {
@@ -666,33 +1072,9 @@ declare namespace API {
     endDateTime?: string;
   };
 
-  type getVendorByIdParams = {
-    id: number;
-  };
-
-  type getVendorByIdsParams = {
-    ids: string;
-  };
-
-  type getVendorListParams = {
-    search?: string;
-    sort?: string;
-    startDateTime?: string;
-    endDateTime?: string;
-  };
-
   type getVendorOrdersPageQueryParams = {
     pageNum?: number;
     pageSize?: number;
-  };
-
-  type getVendorPageParams = {
-    pageNum?: number;
-    pageSize?: number;
-    search?: string;
-    sort?: string;
-    startDateTime?: string;
-    endDateTime?: string;
   };
 
   type handleOrderParams = {
@@ -706,6 +1088,15 @@ declare namespace API {
 
   type leaveUnitParams = {
     types: string;
+  };
+
+  type markAsReadParams = {
+    userId: number;
+    notificationId: number;
+  };
+
+  type markMultipleAsReadParams = {
+    userId: number;
   };
 
   type merchantCancelOrderParams = {
@@ -796,6 +1187,15 @@ declare namespace API {
     optimizeCountQuery?: boolean;
   };
 
+  type PageBaseFileUploadsVO = {
+    records?: BaseFileUploadsVO[];
+    pageNumber?: number;
+    pageSize?: number;
+    totalPage?: number;
+    totalRow?: number;
+    optimizeCountQuery?: boolean;
+  };
+
   type PageBaseGoodsOrdersVO = {
     records?: BaseGoodsOrdersVO[];
     pageNumber?: number;
@@ -816,6 +1216,33 @@ declare namespace API {
 
   type PageBaseMerchantsVO = {
     records?: BaseMerchantsVO[];
+    pageNumber?: number;
+    pageSize?: number;
+    totalPage?: number;
+    totalRow?: number;
+    optimizeCountQuery?: boolean;
+  };
+
+  type PageBaseNotificationsVO = {
+    records?: BaseNotificationsVO[];
+    pageNumber?: number;
+    pageSize?: number;
+    totalPage?: number;
+    totalRow?: number;
+    optimizeCountQuery?: boolean;
+  };
+
+  type PageBasePermissionVO = {
+    records?: BasePermissionVO[];
+    pageNumber?: number;
+    pageSize?: number;
+    totalPage?: number;
+    totalRow?: number;
+    optimizeCountQuery?: boolean;
+  };
+
+  type PageBaseRoleVO = {
+    records?: BaseRoleVO[];
     pageNumber?: number;
     pageSize?: number;
     totalPage?: number;
@@ -848,6 +1275,10 @@ declare namespace API {
     totalPage?: number;
     totalRow?: number;
     optimizeCountQuery?: boolean;
+  };
+
+  type previewFileParams = {
+    fileId: number;
   };
 
   type ResponseBaseAccountsVO = {
@@ -885,6 +1316,13 @@ declare namespace API {
     time?: number;
   };
 
+  type ResponseBaseFileUploadsVO = {
+    code?: number;
+    message?: string;
+    data?: BaseFileUploadsVO;
+    time?: number;
+  };
+
   type ResponseBaseGoodsVO = {
     code?: number;
     message?: string;
@@ -896,6 +1334,27 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: BaseMerchantsVO;
+    time?: number;
+  };
+
+  type ResponseBaseNotificationsVO = {
+    code?: number;
+    message?: string;
+    data?: BaseNotificationsVO;
+    time?: number;
+  };
+
+  type ResponseBasePermissionVO = {
+    code?: number;
+    message?: string;
+    data?: BasePermissionVO;
+    time?: number;
+  };
+
+  type ResponseBaseRoleVO = {
+    code?: number;
+    message?: string;
+    data?: BaseRoleVO;
     time?: number;
   };
 
@@ -969,6 +1428,13 @@ declare namespace API {
     time?: number;
   };
 
+  type ResponseListBaseFileUploadsVO = {
+    code?: number;
+    message?: string;
+    data?: BaseFileUploadsVO[];
+    time?: number;
+  };
+
   type ResponseListBaseGoodsOrdersVO = {
     code?: number;
     message?: string;
@@ -990,6 +1456,27 @@ declare namespace API {
     time?: number;
   };
 
+  type ResponseListBaseNotificationsVO = {
+    code?: number;
+    message?: string;
+    data?: BaseNotificationsVO[];
+    time?: number;
+  };
+
+  type ResponseListBasePermissionVO = {
+    code?: number;
+    message?: string;
+    data?: BasePermissionVO[];
+    time?: number;
+  };
+
+  type ResponseListBaseRoleVO = {
+    code?: number;
+    message?: string;
+    data?: BaseRoleVO[];
+    time?: number;
+  };
+
   type ResponseListBaseUnitsVO = {
     code?: number;
     message?: string;
@@ -1008,6 +1495,13 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: BaseVendorsVO[];
+    time?: number;
+  };
+
+  type ResponseLong = {
+    code?: number;
+    message?: string;
+    data?: number;
     time?: number;
   };
 
@@ -1053,6 +1547,13 @@ declare namespace API {
     time?: number;
   };
 
+  type ResponsePageBaseFileUploadsVO = {
+    code?: number;
+    message?: string;
+    data?: PageBaseFileUploadsVO;
+    time?: number;
+  };
+
   type ResponsePageBaseGoodsOrdersVO = {
     code?: number;
     message?: string;
@@ -1071,6 +1572,27 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: PageBaseMerchantsVO;
+    time?: number;
+  };
+
+  type ResponsePageBaseNotificationsVO = {
+    code?: number;
+    message?: string;
+    data?: PageBaseNotificationsVO;
+    time?: number;
+  };
+
+  type ResponsePageBasePermissionVO = {
+    code?: number;
+    message?: string;
+    data?: PageBasePermissionVO;
+    time?: number;
+  };
+
+  type ResponsePageBaseRoleVO = {
+    code?: number;
+    message?: string;
+    data?: PageBaseRoleVO;
     time?: number;
   };
 
@@ -1116,11 +1638,27 @@ declare namespace API {
     time?: number;
   };
 
+  type ResponseUserWithRoleVO = {
+    code?: number;
+    message?: string;
+    data?: UserWithRoleVO;
+    time?: number;
+  };
+
   type ResponseVoid = {
     code?: number;
     message?: string;
     data?: Record<string, any>;
     time?: number;
+  };
+
+  type sendNotificationParams = {
+    userId: number;
+    title: string;
+    content: string;
+    type: string;
+    businessType?: string;
+    businessId?: number;
   };
 
   type TokenVO = {
@@ -1140,32 +1678,29 @@ declare namespace API {
     contactPhone?: string;
   };
 
-  type updateBoatType1Params = {
-    id: number;
-  };
-
   type updateBoatTypeParams = {
     id: number;
   };
 
-  type updateDockParams = {
+  type updateFileUploadParams = {
     id: number;
   };
 
-  type updateGoodsParams = {
+  type updateNotificationParams = {
     id: number;
   };
 
-  type updateMerchantParams = {
-    id: number;
+  type uploadFileParams = {
+    uploaderId: number;
+    businessType: string;
+    businessId?: number;
   };
 
-  type updateUnitParams = {
-    id: number;
-  };
-
-  type updateVendorParams = {
-    id: number;
+  type uploadFilesParams = {
+    files: string[];
+    uploaderId: number;
+    businessType: string;
+    businessId?: number;
   };
 
   type userCancelBoatOrderParams = {
@@ -1262,6 +1797,19 @@ declare namespace API {
 
   type userUpdateBoatRequestParams = {
     id: number;
+  };
+
+  type UserWithRoleVO = {
+    createdAt?: string;
+    updatedAt?: string;
+    id?: number;
+    username?: string;
+    password?: string;
+    phone?: string;
+    email?: string;
+    isActive?: boolean;
+    isBlocked?: boolean;
+    role?: number;
   };
 
   type vendorDeleteBoatParams = {

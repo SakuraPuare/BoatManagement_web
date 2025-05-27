@@ -4,10 +4,9 @@ import {
   DataManagementTable,
 } from "@/components/data-management-table";
 import { MERCHANT_CERTIFY_STATUS_MAP } from "@/lib/constants/status";
-import { getAdminMerchantPageQuery } from "@/services/api/adminMerchant";
-import { getAdminUnitListQuery } from "@/services/api/adminUnit";
-import { getAdminUserListQuery } from "@/services/api/adminUser";
-import type { API } from "@/services/api/typings";
+import { adminGetMerchantPage } from "@/services/api/adminMerchant";
+import { adminGetUnitList } from "@/services/api/adminUnit";
+import { adminGetUserList } from "@/services/api/adminUser";
 import { Store } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 
@@ -31,20 +30,18 @@ export default function MerchantsPage() {
   );
 
   const fetchData = useCallback(async () => {
-    const users = (await getAdminUserListQuery({})).data?.data || [];
-    const units = (await getAdminUnitListQuery({})).data?.data || [];
-    const merchants =
-      (
-        await getAdminMerchantPageQuery(
-          {
-            pageNum: currentPage,
-            pageSize: 10,
-          },
-          {
-            ...(statusFilter !== "all" && { status: statusFilter }),
-          }
-        )
-      ).data?.data?.records || [];
+                const users = ((await adminGetUserList({}, {})).data as API.BaseAccountsVO[]) || [];
+      const units = ((await adminGetUnitList({}, {})).data as API.BaseUnitsVO[]) || [];
+    const response = await adminGetMerchantPage(
+      {
+        pageNum: currentPage,
+        pageSize: 10,
+      },
+      {
+        ...(statusFilter !== "all" && { status: statusFilter }),
+      }
+    );
+    const merchants = (response.data as API.PageBaseMerchantsVO)?.records || [];
     setMerchants(merchants);
     setUsers(users);
     setUnits(units);

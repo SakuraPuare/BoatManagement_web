@@ -1,8 +1,7 @@
 "use client";
 
-import type { API } from "@/services/api/typings";
 import { useState, useEffect, useCallback } from "react";
-import { getMerchantOrdersPageQuery, cancelOrder1, completeOrder1 } from "@/services/api/merchantOrder";
+import { merchantGetOrdersPage, merchantCancelOrder, merchantCompleteOrder } from "@/services/api/merchantOrder";
 import { DataManagementTable, type Column, type Action } from "@/components/data-management-table";
 import { toast } from "sonner";
 import { Trash2, CheckCircle, Package, Ship, ShoppingBag } from "lucide-react";
@@ -24,12 +23,12 @@ export default function MerchantOrdersPage() {
   const fetchOrders = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await getMerchantOrdersPageQuery(
+      const response = await merchantGetOrdersPage(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         { status: statusFilter === "all" ? undefined : statusFilter }
       );
-      setOrders(response.data?.data?.records || []);
-      setTotalPages(response.data?.data?.totalPage || 0);
+      setOrders(response.data?.records || []);
+      setTotalPages(response.data?.totalPage || 0);
     } catch (error) {
       console.error(error);
       toast.error("获取订单列表失败");
@@ -87,12 +86,12 @@ export default function MerchantOrdersPage() {
   // 先定义处理函数
   const handleCancelOrder = async (order: API.BaseBoatOrdersVO) => {
     try {
-      const res = await cancelOrder1({ id: order.orderId! });
-      if (res.data?.code === 200) {
+      const res = await merchantCancelOrder({ id: order.orderId! });
+      if (res.data) {
         toast.success("取消订单成功");
         fetchOrders(); // 刷新订单列表
       } else {
-        toast.error(res.data?.message || "取消订单失败");
+        toast.error("取消订单失败");
       }
     } catch (error) {
       console.error(error);
@@ -102,12 +101,12 @@ export default function MerchantOrdersPage() {
 
   const handleCompleteOrder = async (order: API.BaseBoatOrdersVO) => {
     try {
-      const res = await completeOrder1({ id: order.orderId! });
-      if (res.data?.code === 200) {
+      const res = await merchantCompleteOrder({ id: order.orderId! });
+      if (res.data) {
         toast.success("完成订单成功");
         fetchOrders(); // 刷新订单列表
       } else {
-        toast.error(res.data?.message || "完成订单失败");
+        toast.error("完成订单失败");
       }
     } catch (error) {
       console.error(error);

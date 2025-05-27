@@ -24,10 +24,9 @@ import {
 } from "@/lib/constants/role";
 import { cn } from "@/lib/utils";
 import {
-  createAdminAccount,
-  updateAdminAccount,
+  adminCreateUser,
+  adminUpdateUser,
 } from "@/services/api/adminUser";
-import type { API } from "@/services/api/typings";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -91,7 +90,7 @@ export function UserDialog({ open, onOpenChange, user }: UserDialogProps) {
       username: user?.username || "",
       email: user?.email || "",
       phone: user?.phone || "",
-      role: user?.role || ROLE_MASKS.USER,
+      role: ROLE_MASKS.USER,
       isActive: user?.isActive || false,
     },
   });
@@ -110,9 +109,9 @@ export function UserDialog({ open, onOpenChange, user }: UserDialogProps) {
   const onSubmit = async (values: FormValues) => {
     try {
       if (user.id) {
-        await updateAdminAccount({ id: user.id }, values);
+        await adminUpdateUser({ id: user.id }, values);
       } else {
-        await createAdminAccount(values);
+        await adminCreateUser(values);
       }
       onOpenChange(false);
       form.reset();

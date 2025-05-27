@@ -17,10 +17,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-  createAdminBoatType,
-  updateAdminBoatType,
+  adminCreateBoatType,
+  adminUpdateBoatType,
 } from "@/services/api/adminBoatType";
-import type { API } from "@/services/api/typings";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -96,9 +95,9 @@ export function BoatTypeDialog({
   const onSubmit = async (values: FormValues) => {
     try {
       if (boatType?.id) {
-        await updateAdminBoatType({ id: boatType.id }, values);
+        await adminUpdateBoatType({ id: boatType.id }, values);
       } else {
-        await createAdminBoatType(values);
+        await adminCreateBoatType(values);
       }
       onOpenChange(false);
       form.reset();

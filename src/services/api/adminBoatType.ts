@@ -2,12 +2,12 @@
 /* eslint-disable */
 import request from "@/lib/request";
 
-/** 创建船舶类型 POST /admin/boat/type/ */
-export async function createBoatType1(
+/** 创建船艇类型 POST /admin/boat-type/ */
+export async function adminCreateBoatType(
   body: API.BaseBoatTypesDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseBaseBoatTypesVO>("/admin/boat/type/", {
+  return request<API.ResponseBaseBoatTypesVO>("/admin/boat-type/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -17,29 +17,29 @@ export async function createBoatType1(
   });
 }
 
-/** 获取船舶类型详情 GET /admin/boat/type/${param0} */
-export async function getBoatType1(
+/** 获取船艇类型详情 GET /admin/boat-type/${param0} */
+export async function adminGetBoatType(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getBoatType1Params,
+  params: API.adminGetBoatTypeParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.ResponseBaseBoatTypesVO>(`/admin/boat/type/${param0}`, {
+  return request<API.ResponseBaseBoatTypesVO>(`/admin/boat-type/${param0}`, {
     method: "GET",
     params: { ...queryParams },
     ...(options || {}),
   });
 }
 
-/** 更新船舶类型 PUT /admin/boat/type/${param0} */
-export async function updateBoatType1(
+/** 更新船艇类型 PUT /admin/boat-type/${param0} */
+export async function adminUpdateBoatType(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.updateBoatType1Params,
+  params: API.adminUpdateBoatTypeParams,
   body: API.BaseBoatTypesDTO,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.ResponseBaseBoatTypesVO>(`/admin/boat/type/${param0}`, {
+  return request<API.ResponseBaseBoatTypesVO>(`/admin/boat-type/${param0}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -50,27 +50,27 @@ export async function updateBoatType1(
   });
 }
 
-/** 删除船舶类型 DELETE /admin/boat/type/${param0} */
-export async function deleteBoatType1(
+/** 删除船艇类型 DELETE /admin/boat-type/${param0} */
+export async function adminDeleteBoatType(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.deleteBoatType1Params,
+  params: API.adminDeleteBoatTypeParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.ResponseString>(`/admin/boat/type/${param0}`, {
+  return request<API.ResponseString>(`/admin/boat-type/${param0}`, {
     method: "DELETE",
     params: { ...queryParams },
     ...(options || {}),
   });
 }
 
-/** 根据 ID 获取船舶类型列表 GET /admin/boat/type/ids */
-export async function getBoatTypeByIds1(
+/** 根据 ID 获取船艇类型列表 GET /admin/boat-type/ids */
+export async function adminGetBoatTypeByIds(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getBoatTypeByIds1Params,
+  params: API.adminGetBoatTypeByIdsParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseListBaseBoatTypesVO>("/admin/boat/type/ids", {
+  return request<API.ResponseListBaseBoatTypesVO>("/admin/boat-type/ids", {
     method: "GET",
     params: {
       ...params,
@@ -79,14 +79,14 @@ export async function getBoatTypeByIds1(
   });
 }
 
-/** 获取船舶类型列表 POST /admin/boat/type/list */
-export async function getBoatTypeList1(
+/** 获取船艇类型列表 POST /admin/boat-type/list */
+export async function adminGetBoatTypeList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getBoatTypeList1Params,
+  params: API.adminGetBoatTypeListParams,
   body: API.BaseBoatTypesDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseListBaseBoatTypesVO>("/admin/boat/type/list", {
+  return request<API.ResponseListBaseBoatTypesVO>("/admin/boat-type/list", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -99,14 +99,14 @@ export async function getBoatTypeList1(
   });
 }
 
-/** 分页获取船舶类型列表 POST /admin/boat/type/page */
-export async function getBoatTypePage1(
+/** 分页获取船艇类型列表 POST /admin/boat-type/page */
+export async function adminGetBoatTypePage(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getBoatTypePage1Params,
+  params: API.adminGetBoatTypePageParams,
   body: API.BaseBoatTypesDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponsePageBaseBoatTypesVO>("/admin/boat/type/page", {
+  return request<API.ResponsePageBaseBoatTypesVO>("/admin/boat-type/page", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

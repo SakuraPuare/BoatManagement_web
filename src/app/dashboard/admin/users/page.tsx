@@ -11,11 +11,10 @@ import {
   ROLE_MASKS,
 } from "@/lib/constants/role";
 import {
-  deleteAdminAccount,
-  getAdminUserPageQuery,
-  updateAdminAccount,
+  adminDeleteUser,
+  adminGetUserPage,
+  adminUpdateUser,
 } from "@/services/api/adminUser";
-import { API } from "@/services/api/typings";
 import {
   Ban,
   Mail,
@@ -59,7 +58,7 @@ export default function UsersPage() {
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await getAdminUserPageQuery(
+      const response = await adminGetUserPage(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         {
           ...(statusFilter === "active" && {
@@ -70,9 +69,9 @@ export default function UsersPage() {
           ...(statusFilter === "inactive" && { isActive: false }),
         }
       );
-      if (response.data?.data?.records) {
-        setUsers(response.data.data.records);
-        setTotalPages(response.data.data.totalPage || 0);
+      if (response.data?.records) {
+        setUsers(response.data.records);
+        setTotalPages(response.data.totalPage || 0);
       }
     } catch (error) {
       console.error(error);
@@ -93,7 +92,7 @@ export default function UsersPage() {
 
   const handleDelete = async (userId: number) => {
     try {
-      await deleteAdminAccount({ id: userId });
+      await adminDeleteUser({ id: userId });
       await fetchUsers();
     } catch (error) {
       console.error(error);
@@ -103,7 +102,7 @@ export default function UsersPage() {
   const handleBlock = async (userId: number) => {
     const isBlocked = users.find((user) => user.id === userId)?.isBlocked;
     try {
-      await updateAdminAccount({ id: userId }, { isBlocked: !isBlocked });
+      await adminUpdateUser({ id: userId }, { isBlocked: !isBlocked });
       await fetchUsers();
     } catch (error) {
       console.error(error);
@@ -216,13 +215,13 @@ export default function UsersPage() {
         dialog={UserDialog}
         schema={userFormSchema}
         queryFn={async ({ pageNum, pageSize }, searchQuery) => {
-          const response = await getAdminUserPageQuery({ pageNum, pageSize }, {
+          const response = await adminGetUserPage({ pageNum, pageSize }, {
             username: searchQuery,
           } as API.BaseAccountsDTO);
           return {
-            list: response.data?.data?.records || [],
-            totalItems: response.data?.data?.records?.length || 0,
-            totalPages: response.data?.data?.totalPage || 0,
+            list: response.data?.records || [],
+            totalItems: response.data?.records?.length || 0,
+            totalPages: response.data?.totalPage || 0,
           };
         }}
         statusFilter={{

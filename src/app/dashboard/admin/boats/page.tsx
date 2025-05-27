@@ -4,11 +4,10 @@ import {
   Column,
   DataManagementTable,
 } from "@/components/data-management-table";
-import { getAdminUnitListQuery } from "@/services/api/adminUnit";
-import { getAdminBoatPageQuery } from "@/services/api/adminBoat";
-import { getAdminBoatTypeListQuery } from "@/services/api/adminBoatType";
-import { getAdminDocksListQuery } from "@/services/api/adminDock";
-import { API } from "@/services/api/typings";
+import { adminGetUnitList } from "@/services/api/adminUnit";
+import { adminGetBoatPage } from "@/services/api/adminBoat";
+import { adminGetBoatTypeList } from "@/services/api/adminBoatType";
+import { adminGetDockList } from "@/services/api/adminDock";
 import { Pencil, Ship } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { BoatDialog } from "./boat-dialog";
@@ -42,12 +41,12 @@ export default function BoatsPage() {
 
   const fetchBoats = useCallback(async () => {
     try {
-      const response = await getAdminBoatPageQuery(
+      const response = await adminGetBoatPage(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         {}
       );
-      console.log(response.data?.data?.records);
-      setBaseBoats(response.data?.data?.records || []);
+      console.log(response.data?.records);
+      setBaseBoats(response.data?.records || []);
     } catch (error) {
       console.error(error);
     }
@@ -55,8 +54,8 @@ export default function BoatsPage() {
 
   const fetchBoatTypes = useCallback(async () => {
     try {
-      const response = await getAdminBoatTypeListQuery({});
-      setBoatTypes(response.data?.data || []);
+      const response = await adminGetBoatTypeList({}, {});
+      setBoatTypes(response.data || []);
       return response;
     } catch (error) {
       console.error(error);
@@ -65,8 +64,8 @@ export default function BoatsPage() {
 
   const fetchDocks = useCallback(async () => {
     try {
-      const response = await getAdminDocksListQuery({});
-      setDocks(response.data?.data || []);
+      const response = await adminGetDockList({}, {});
+      setDocks(response.data || []);
       return response;
     } catch (error) {
       console.error(error);
@@ -75,8 +74,8 @@ export default function BoatsPage() {
 
   const fetchUnits = useCallback(async () => {
     try {
-      const response = await getAdminUnitListQuery({}, {});
-      setUnits(response.data?.data || []);
+      const response = await adminGetUnitList({}, {});
+      setUnits(response.data || []);
       return response;
     } catch (error) {
       console.error(error);
@@ -160,11 +159,11 @@ export default function BoatsPage() {
         dialog={BoatDialog}
         schema={boatFormSchema}
         queryFn={async ({ pageNum, pageSize }, searchQuery) => {
-          const response = await getAdminBoatPageQuery({ pageNum, pageSize }, {
+          const response = await adminGetBoatPage({ pageNum, pageSize }, {
             name: searchQuery,
           } as API.BaseBoatsDTO);
-          const records = response.data?.data?.records || [];
-          const boatVOs = records.map((boat) => ({
+          const records = response.data?.records || [];
+          const boatVOs = records.map((boat: API.BaseBoatsVO) => ({
             boat,
             boatType: boatTypes.find((bt) => bt.id === boat.typeId)!,
             dock: docks.find((d) => d.id === boat.dockId)!,
@@ -173,7 +172,7 @@ export default function BoatsPage() {
           return {
             list: boatVOs,
             totalItems: records.length,
-            totalPages: response.data?.data?.totalPage || 0,
+            totalPages: response.data?.totalPage || 0,
           };
         }}
         statusFilter={{

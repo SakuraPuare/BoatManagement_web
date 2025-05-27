@@ -13,11 +13,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ShoppingCart, Search } from "lucide-react";
-import type { API } from "@/services/api/typings";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { 
-  cancelOrder,
-  completeOrder,
+  cancelOrder1,
+  completeOrder1,
   getVendorOrdersPageQuery,
   handleOrder
 } from "@/services/api/vendorOrder";
@@ -40,8 +39,8 @@ export default function VendorOrdersPage() {
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         {}
       );
-      setOrders(response.data?.data?.records || []);
-      setTotalPages(response.data?.data?.totalPage || 0);
+      setOrders(response.data?.records || []);
+      setTotalPages(response.data?.totalPage || 0);
     } catch (error) {
       console.error(error);
       toast.error("获取订单列表失败");
@@ -52,7 +51,7 @@ export default function VendorOrdersPage() {
 
   const handleCancel = async (id: number) => {
     try {
-      await cancelOrder({ id });
+      await cancelOrder1({ id });
       toast.success("订单已取消");
       fetchOrders();
     } catch (error) {
@@ -63,7 +62,7 @@ export default function VendorOrdersPage() {
 
   const handleComplete = async (id: number) => {
     try {
-      await completeOrder({ id });
+      await completeOrder1({ id });
       toast.success("订单已完成");
       fetchOrders();
     } catch (error) {

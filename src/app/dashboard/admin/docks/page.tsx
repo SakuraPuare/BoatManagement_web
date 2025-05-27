@@ -6,11 +6,10 @@ import {
   DataManagementTable,
 } from "@/components/data-management-table";
 import {
-  deleteAdminDocks,
-  getAdminDocksPageQuery,
-  updateAdminDocks,
+  adminDeleteDock,
+  adminGetDockPage,
+  adminUpdateDock,
 } from "@/services/api/adminDock";
-import type { API } from "@/services/api/typings";
 
 import { Anchor, Ban, Pencil, Trash2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
@@ -32,7 +31,7 @@ export default function DocksPage() {
   const fetchDocks = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await getAdminDocksPageQuery(
+      const response = await adminGetDockPage(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         {
           ...(statusFilter !== "all" && {
@@ -40,8 +39,9 @@ export default function DocksPage() {
           }),
         }
       );
-      setDocks(response.data?.data?.records || []);
-      setTotalPages(response.data?.data?.totalPage || 0);
+      const pageData = response.data as API.PageBaseDocksVO;
+      setDocks(pageData?.records || []);
+      setTotalPages(pageData?.totalPage || 0);
     } catch (error) {
       console.error(error);
     } finally {
@@ -61,7 +61,7 @@ export default function DocksPage() {
 
   const handleDelete = async (dockId: number) => {
     try {
-      await deleteAdminDocks({ id: dockId });
+      await adminDeleteDock({ id: dockId });
       await fetchDocks();
     } catch (error) {
       console.error(error);
@@ -71,7 +71,7 @@ export default function DocksPage() {
   const handleToggleStatus = async (dockId: number) => {
     const isEnabled = docks.find((dock) => dock.id === dockId)?.isEnabled;
     try {
-      await updateAdminDocks(
+      await adminUpdateDock(
         { id: dockId },
         {
           isEnabled: !isEnabled,
@@ -147,13 +147,14 @@ export default function DocksPage() {
         dialog={DockDialog}
         schema={dockFormSchema}
         queryFn={async ({ pageNum, pageSize }, searchQuery) => {
-          const response = await getAdminDocksPageQuery({ pageNum, pageSize }, {
+          const response = await adminGetDockPage({ pageNum, pageSize }, {
             name: searchQuery,
           } as API.BaseDocksDTO);
+          const pageData = response.data as API.PageBaseDocksVO;
           return {
-            list: response.data?.data?.records || [],
-            totalItems: response.data?.data?.records?.length || 0,
-            totalPages: response.data?.data?.totalPage || 0,
+            list: pageData?.records || [],
+            totalItems: pageData?.records?.length || 0,
+            totalPages: pageData?.totalPage || 0,
           };
         }}
         statusFilter={{

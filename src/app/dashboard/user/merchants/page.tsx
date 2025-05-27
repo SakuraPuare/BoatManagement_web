@@ -1,7 +1,6 @@
 "use client";
 
 import { Store, ShoppingCart } from "lucide-react";
-import type { API } from "@/services/api/typings";
 import { getUserMerchantPageQuery } from "@/services/api/userMerchant";
 import { DataManagementTable, type Column, type TableRow } from "@/components/data-management-table";
 import { useState, useCallback, useEffect } from "react";
@@ -23,9 +22,9 @@ export default function UserMerchantsPage() {
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         { status: "APPROVED" } as API.BaseMerchantsDTO // 只获取已通过审核的商家
       );
-      if (response.data?.data?.records) {
-        setMerchants(response.data.data.records);
-        setTotalPages(response.data.data.totalPage || 0);
+      if (response.data?.records) {
+        setMerchants(response.data.records);
+        setTotalPages(response.data.totalPage || 0);
       }
     } catch (error) {
       console.error(error);

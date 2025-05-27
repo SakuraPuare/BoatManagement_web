@@ -2,10 +2,10 @@
 /* eslint-disable */
 import request from "@/lib/request";
 
-/** 根据ID获取船舶订单 GET /admin/order/boat/ids */
-export async function getBoatOrdersByIds(
+/** 根据 ID 获取船舶订单 GET /admin/order/boat/ids */
+export async function adminGetBoatOrdersByIds(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getBoatOrdersByIdsParams,
+  params: API.adminGetBoatOrdersByIdsParams,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseBoatOrdersVO>("/admin/order/boat/ids", {
@@ -17,15 +17,15 @@ export async function getBoatOrdersByIds(
   });
 }
 
-/** 获取船舶订单列表 GET /admin/order/boat/list */
-export async function getBoatOrdersList(
+/** 获取船舶订单列表 POST /admin/order/boat/list */
+export async function adminGetBoatOrdersList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getBoatOrdersListParams,
+  params: API.adminGetBoatOrdersListParams,
   body: API.BaseBoatOrdersDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseBoatOrdersVO>("/admin/order/boat/list", {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
@@ -37,15 +37,15 @@ export async function getBoatOrdersList(
   });
 }
 
-/** 分页获取船舶订单列表 GET /admin/order/boat/page */
-export async function getBoatOrdersPage(
+/** 分页获取船舶订单列表 POST /admin/order/boat/page */
+export async function adminGetBoatOrdersPage(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getBoatOrdersPageParams,
+  params: API.adminGetBoatOrdersPageParams,
   body: API.BaseBoatOrdersDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponsePageBaseBoatOrdersVO>("/admin/order/boat/page", {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
@@ -62,10 +62,10 @@ export async function getBoatOrdersPage(
   });
 }
 
-/** 根据ID获取商品订单 GET /admin/order/goods/ids */
-export async function getGoodsOrdersByIds(
+/** 根据 ID 获取商品订单 GET /admin/order/goods/ids */
+export async function adminGetGoodsOrdersByIds(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getGoodsOrdersByIdsParams,
+  params: API.adminGetGoodsOrdersByIdsParams,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseBoatOrdersVO>("/admin/order/goods/ids", {
@@ -77,15 +77,15 @@ export async function getGoodsOrdersByIds(
   });
 }
 
-/** 获取商品订单列表 GET /admin/order/goods/list */
-export async function getGoodsOrdersList(
+/** 获取商品订单列表 POST /admin/order/goods/list */
+export async function adminGetGoodsOrdersList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getGoodsOrdersListParams,
+  params: API.adminGetGoodsOrdersListParams,
   body: API.BaseBoatOrdersDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseBoatOrdersVO>("/admin/order/goods/list", {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
@@ -97,15 +97,15 @@ export async function getGoodsOrdersList(
   });
 }
 
-/** 分页获取商品订单列表 GET /admin/order/goods/page */
-export async function getGoodsOrdersPage(
+/** 分页获取商品订单列表 POST /admin/order/goods/page */
+export async function adminGetGoodsOrdersPage(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getGoodsOrdersPageParams,
+  params: API.adminGetGoodsOrdersPageParams,
   body: API.BaseBoatOrdersDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponsePageBaseBoatOrdersVO>("/admin/order/goods/page", {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },

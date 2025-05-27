@@ -18,10 +18,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { updateMerchantsGoods, addMerchantsGoods } from "@/services/api/merchantGoods";
+import { merchantUpdateGoods, merchantCreateGoods } from "@/services/api/merchantGoods";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import type { API } from "@/services/api/typings";
 import { toast } from "sonner";
 
 const goodsFormSchema = z.object({
@@ -89,7 +88,7 @@ export function GoodsFormDialog({
   const onSubmit = async (values: z.infer<typeof goodsFormSchema>) => {
     try {
       if (selectedGood?.id) {
-        const res = await updateMerchantsGoods(
+        const res = await merchantUpdateGoods(
           { id: selectedGood.id },
           {
             ...values,
@@ -98,18 +97,18 @@ export function GoodsFormDialog({
           } as API.BaseGoodsDTO
         );
         console.log(res);
-        if (res.data?.code === 200) {
+        if (res.code === 200) {
           toast.success("更新成功");
         } else {
           toast.error("更新失败");
         }
       } else {
-        const res = await addMerchantsGoods({
+        const res = await merchantCreateGoods({
           ...values,
           price: parseFloat(values.price),
           stock: parseInt(values.stock, 10),
         } as API.BaseGoodsDTO);
-        if (res.data?.code === 200) {
+        if (res.code === 200) {
           toast.success("添加成功");
         } else {
           toast.error("添加失败");

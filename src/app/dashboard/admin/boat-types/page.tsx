@@ -18,11 +18,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  deleteAdminBoatType,
-  getAdminBoatTypePageQuery,
-  updateAdminBoatType,
+  adminDeleteBoatType,
+  adminGetBoatTypePage,
+  adminUpdateBoatType,
 } from "@/services/api/adminBoatType";
-import type { API } from "@/services/api/typings";
 import { format } from "date-fns";
 import {
   Anchor,
@@ -52,12 +51,12 @@ export default function BoatTypesPage() {
   const fetchBoatTypes = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await getAdminBoatTypePageQuery(
+      const response = await adminGetBoatTypePage(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         {}
       );
-      setBoatTypes(response.data?.data?.records || []);
-      setTotalPages(response.data?.data?.totalPage || 0);
+      setBoatTypes(response.data?.records || []);
+      setTotalPages(response.data?.totalPage || 0);
     } catch (error) {
       console.error(error);
     } finally {
@@ -77,7 +76,7 @@ export default function BoatTypesPage() {
 
   const handleDelete = async (boatTypeId: number) => {
     try {
-      await deleteAdminBoatType({ id: boatTypeId });
+      await adminDeleteBoatType({ id: boatTypeId });
       await fetchBoatTypes();
     } catch (error) {
       console.error(error);
@@ -93,7 +92,7 @@ export default function BoatTypesPage() {
 
   const handleStatus = async (boatTypeId: number, isEnabled: boolean) => {
     try {
-      await updateAdminBoatType({ id: boatTypeId }, { isEnabled });
+      await adminUpdateBoatType({ id: boatTypeId }, { isEnabled });
       await fetchBoatTypes();
     } catch (error) {
       console.error(error);

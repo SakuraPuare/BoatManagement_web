@@ -22,11 +22,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import type { API } from "@/services/api/typings";
 import { toast } from "sonner";
 import {
-  addVendorBoatType,
-  updateVendorBoatType,
+  createBoatType,
+  updateBoatType,
 } from "@/services/api/vendorBoatType";
 
 const boatTypeFormSchema = z.object({
@@ -98,10 +97,10 @@ export function BoatTypeDialog({
   const onSubmit = async (values: z.infer<typeof boatTypeFormSchema>) => {
     try {
       if (boatType?.id) {
-        await updateVendorBoatType({ id: boatType.id }, values);
+        await updateBoatType({ id: boatType.id }, values);
         toast.success("更新成功");
       } else {
-        await addVendorBoatType(values);
+        await createBoatType(values);
         toast.success("添加成功");
       }
       onOpenChange(false);

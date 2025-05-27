@@ -1,14 +1,13 @@
 "use client";
 
 import { Package, Ship } from "lucide-react";
-import type { API } from "@/services/api/typings";
 import { 
-    getUserGoodsOrdersPageQuery,
-  cancelUserGoodsOrder,
-  payUserGoodsOrder,
-  getUserBoatOrdersPageQuery,
-  cancelUserBoatOrder,
-  payUserBoatOrders
+  userGetGoodsOrdersPage,
+  userCancelGoodsOrder,
+  userPayGoodsOrder,
+  userGetBoatOrdersPage,
+  userCancelBoatOrder,
+  userPayBoatOrder
 } from "@/services/api/userOrder";
 import { DataManagementTable, type Column, type TableRow } from "@/components/data-management-table";
 import React, { useState } from "react";
@@ -63,7 +62,7 @@ const columns: Column<API.BaseGoodsOrdersVO>[] = [
 
       const handlePay = async () => {
         try {
-          await payUserGoodsOrder({ id: id! });
+          await userPayGoodsOrder({ id: id! });
           toast.success("支付成功");
           window.location.reload();
         } catch (error) {
@@ -73,7 +72,7 @@ const columns: Column<API.BaseGoodsOrdersVO>[] = [
 
       const handleCancel = async () => {
         try {
-          await cancelUserGoodsOrder({ id: id! });
+          await userCancelGoodsOrder({ id: id! });
           toast.success("取消成功");
           window.location.reload();
         } catch (error) {
@@ -83,7 +82,7 @@ const columns: Column<API.BaseGoodsOrdersVO>[] = [
 
       return (
         <div className="flex justify-end space-x-2">
-          {status === "PENDING" && (
+          {status === "UNPAID" && (
             <>
               <Button variant="default" size="sm" onClick={handlePay}>
                 支付
@@ -157,7 +156,7 @@ const boatColumns: Column<API.BaseBoatOrdersVO>[] = [
 
       const handlePay = async () => {
         try {
-          await payUserBoatOrders({ id: id! });
+          await userPayBoatOrder({ id: id! });
           toast.success("支付成功");
           window.location.reload();
         } catch (error) {
@@ -167,7 +166,7 @@ const boatColumns: Column<API.BaseBoatOrdersVO>[] = [
 
       const handleCancel = async () => {
         try {
-          await cancelUserBoatOrder({ id: id! });
+          await userCancelBoatOrder({ id: id! });
           toast.success("取消成功");
           window.location.reload();
         } catch (error) {
@@ -177,7 +176,7 @@ const boatColumns: Column<API.BaseBoatOrdersVO>[] = [
 
       return (
         <div className="flex justify-end space-x-2">
-          {status === "PENDING" && (
+          {status === "UNPAID" && (
             <>
               <Button variant="default" size="sm" onClick={handlePay}>
                 支付
@@ -214,14 +213,16 @@ export default function UserOrdersPage() {
             isLoading={isLoading}
             searchPlaceholder="搜索订单..."
             queryFn={async ({ pageNum, pageSize }, searchQuery) => {
-              const response = await getUserGoodsOrdersPageQuery(
-                { pageNum, pageSize },
-                { status: statusFilter !== "all" ? statusFilter : undefined }
-              );
+              const response = await userGetGoodsOrdersPage({
+                pageNum,
+                pageSize,
+                status: statusFilter !== "all" ? statusFilter : undefined
+              });
+              const pageData = response.data as API.PageBaseGoodsOrdersVO;
               return {
-                list: response.data?.data?.records || [],
-                totalItems: response.data?.data?.records?.length || 0,
-                totalPages: response.data?.data?.totalPage || 0,
+                list: pageData?.records || [],
+                totalItems: pageData?.totalRow || 0,
+                totalPages: pageData?.totalPage || 0,
               };
             }}
             statusFilter={{
@@ -229,7 +230,7 @@ export default function UserOrdersPage() {
               onChange: setStatusFilter,
               options: [
                 { value: "all", label: "全部状态" },
-                { value: "PENDING", label: "待支付" },
+                { value: "UNPAID", label: "待支付" },
                 { value: "PAID", label: "已支付" },
                 { value: "COMPLETED", label: "已完成" },
                 { value: "CANCELLED", label: "已取消" },
@@ -251,14 +252,16 @@ export default function UserOrdersPage() {
             isLoading={isLoading}
             searchPlaceholder="搜索订单..."
             queryFn={async ({ pageNum, pageSize }, searchQuery) => {
-              const response = await getUserBoatOrdersPageQuery(
-                { pageNum, pageSize },
-                { status: statusFilter !== "all" ? statusFilter : undefined }
-              );
+              const response = await userGetBoatOrdersPage({
+                pageNum,
+                pageSize,
+                status: statusFilter !== "all" ? statusFilter : undefined
+              });
+              const pageData = response.data as API.PageBaseBoatOrdersVO;
               return {
-                list: response.data?.data?.records || [],
-                totalItems: response.data?.data?.records?.length || 0,
-                totalPages: response.data?.data?.totalPage || 0,
+                list: pageData?.records || [],
+                totalItems: pageData?.totalRow || 0,
+                totalPages: pageData?.totalPage || 0,
               };
             }}
             statusFilter={{
@@ -266,7 +269,7 @@ export default function UserOrdersPage() {
               onChange: setStatusFilter,
               options: [
                 { value: "all", label: "全部状态" },
-                { value: "PENDING", label: "待支付" },
+                { value: "UNPAID", label: "待支付" },
                 { value: "PAID", label: "已支付" },
                 { value: "COMPLETED", label: "已完成" },
                 { value: "CANCELLED", label: "已取消" },

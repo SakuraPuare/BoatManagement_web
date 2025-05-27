@@ -26,8 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import type { API } from "@/services/api/typings";
-import { addVendorBoat, updateVendorBoat } from "@/services/api/vendorBoat";
+import { vendorCreateBoat, vendorUpdateBoat } from "@/services/api/vendorBoat";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
@@ -89,7 +88,7 @@ export function BoatDialog({
     try {
       if (boat?.id) {
         console.log("更新", values);
-        const response = await updateVendorBoat(
+        const response = await vendorUpdateBoat(
           { id: boat.id },
           {
             ...values,
@@ -100,7 +99,7 @@ export function BoatDialog({
         console.log(response);
         toast.success("更新成功");
       } else {
-        await addVendorBoat({
+        await vendorCreateBoat({
           ...values,
           typeId: parseInt(values.typeId),
           dockId: parseInt(values.dockId),

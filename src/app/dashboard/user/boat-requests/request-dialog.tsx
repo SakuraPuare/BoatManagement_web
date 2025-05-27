@@ -30,9 +30,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-import type { API } from "@/services/api/typings";
-import { createUserBoatRequest } from "@/services/api/userBoatRequest";
+import { cn } from "@/lib/utils"
+import { userCreateBoatRequest } from "@/services/api/userBoatRequest";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
@@ -72,17 +71,17 @@ export function RequestDialog({
 
   const onSubmit = async (values: z.infer<typeof requestFormSchema>) => {
     try {
-      const res = await createUserBoatRequest({
+      const res = await userCreateBoatRequest({
         ...values,
-        startTime: format(values.startTime, "yyyy-MM-dd HH:mm:ss"),
-        endTime: format(values.endTime, "yyyy-MM-dd HH:mm:ss"),
+        startTime: format(values.startTime, "yyyy-MM-dd'T'HH:mm:ss"),
+        endTime: format(values.endTime, "yyyy-MM-dd'T'HH:mm:ss"),
       });
-      if (res.data.code === 200) {
+      if (res.data) {
         toast.success("创建请求成功");
         onOpenChange(false);
         form.reset();
       } else {
-        toast.error(res.data.message);
+        toast.error("创建请求失败");
       }
     } catch (error) {
       console.error("创建请求失败:", error);

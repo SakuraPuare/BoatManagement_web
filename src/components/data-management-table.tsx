@@ -31,6 +31,9 @@ function getValue<T, K extends NestedKeyOf<T>>(
   obj: T,
   path: K
 ): NestedValue<T, K> {
+  if (!path || typeof path !== 'string') {
+    return undefined as NestedValue<T, K>;
+  }
   const [first, second] = path.split(".") as [keyof T & string, string];
 
   if (second === undefined) {
@@ -51,8 +54,11 @@ export interface TableRow<T> {
   handleDelete?: (id: number) => void;
 }
 export interface Column<T> {
-  header: string;
-  accessor: NestedKeyOf<T>;
+  header?: string;
+  title?: string;
+  accessor?: NestedKeyOf<T>;
+  key?: NestedKeyOf<T>;
+  width?: string;
   render?: (value: any, row?: TableRow<T>) => ReactNode;
 }
 
@@ -166,9 +172,9 @@ export function DataManagementTable<T>({
         <Table>
           <TableHeader>
             <TableRow>
-              {columns.map((column) => (
-                <TableHead key={String(column.accessor)}>
-                  {column.header}
+              {columns.map((column, index) => (
+                <TableHead key={String(column.accessor || column.key || index)}>
+                  {column.header || column.title}
                 </TableHead>
               ))}
               {actions && actions.length > 0 && (
@@ -197,16 +203,19 @@ export function DataManagementTable<T>({
               </TableRow>
             ) : (
               data.map((item, index) => (
-                <TableRow key={index}>
-                  {columns.map((column) => (
-                    <TableCell key={String(column.accessor)}>
-                      {column.render
-                        ? column.render(getValue(item, column.accessor), {
-                            data: item,
-                          })
-                        : String(getValue(item, column.accessor))}
-                    </TableCell>
-                  ))}
+                <TableRow key={(item as any)?.id || index}>
+                  {columns.map((column, index) => {
+                    const accessor = column.accessor || column.key;
+                    return (
+                      <TableCell key={String(accessor || index)}>
+                        {column.render
+                          ? column.render(accessor ? getValue(item, accessor) : undefined, {
+                              data: item,
+                            })
+                          : accessor ? String(getValue(item, accessor)) : "-"}
+                      </TableCell>
+                    );
+                  })}
                   {actions && actions.length > 0 && (
                     <TableCell>
                       <DropdownMenu>

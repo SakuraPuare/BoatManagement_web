@@ -2,12 +2,12 @@
 /* eslint-disable */
 import request from "@/lib/request";
 
-/** 创建商品 POST /admin/goods */
-export async function createGoods(
+/** 创建商品 POST /admin/goods/ */
+export async function adminCreateGoods(
   body: API.BaseGoodsDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.ResponseBaseGoodsVO>("/admin/goods", {
+  return request<API.ResponseBaseGoodsVO>("/admin/goods/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -17,10 +17,24 @@ export async function createGoods(
   });
 }
 
-/** 更新商品 PUT /admin/goods/${param0} */
-export async function updateGoods(
+/** 获取商品详情 GET /admin/goods/${param0} */
+export async function adminGetGoods(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.updateGoodsParams,
+  params: API.adminGetGoodsParams,
+  options?: { [key: string]: any }
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.ResponseBaseGoodsVO>(`/admin/goods/${param0}`, {
+    method: "GET",
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
+/** 更新商品 PUT /admin/goods/${param0} */
+export async function adminUpdateGoods(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.adminUpdateGoodsParams,
   body: API.BaseGoodsDTO,
   options?: { [key: string]: any }
 ) {
@@ -37,23 +51,23 @@ export async function updateGoods(
 }
 
 /** 删除商品 DELETE /admin/goods/${param0} */
-export async function deleteGoods(
+export async function adminDeleteGoods(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.deleteGoodsParams,
+  params: API.adminDeleteGoodsParams,
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.ResponseVoid>(`/admin/goods/${param0}`, {
+  return request<API.ResponseString>(`/admin/goods/${param0}`, {
     method: "DELETE",
     params: { ...queryParams },
     ...(options || {}),
   });
 }
 
-/** 根据ID获取商品 GET /admin/goods/ids */
-export async function getGoodsByIds(
+/** 根据 ID 获取商品列表 GET /admin/goods/ids */
+export async function adminGetGoodsByIds(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getGoodsByIdsParams,
+  params: API.adminGetGoodsByIdsParams,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseGoodsVO>("/admin/goods/ids", {
@@ -65,15 +79,15 @@ export async function getGoodsByIds(
   });
 }
 
-/** 获取商品列表 GET /admin/goods/list */
-export async function getGoodsList(
+/** 获取商品列表 POST /admin/goods/list */
+export async function adminGetGoodsList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getGoodsListParams,
+  params: API.adminGetGoodsListParams,
   body: API.BaseGoodsDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponseListBaseGoodsVO>("/admin/goods/list", {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
@@ -85,15 +99,15 @@ export async function getGoodsList(
   });
 }
 
-/** 分页获取商品列表 GET /admin/goods/page */
-export async function getGoodsPage(
+/** 分页获取商品列表 POST /admin/goods/page */
+export async function adminGetGoodsPage(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getGoodsPageParams,
+  params: API.adminGetGoodsPageParams,
   body: API.BaseGoodsDTO,
   options?: { [key: string]: any }
 ) {
   return request<API.ResponsePageBaseGoodsVO>("/admin/goods/page", {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },

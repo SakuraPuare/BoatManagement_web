@@ -259,7 +259,7 @@ export function DataTable<T>({
     if (timeRange.startDateTime) {
       const formattedStart = format(
         timeRange.startDateTime,
-        "yyyy-MM-dd HH:mm:ss"
+        "yyyy-MM-dd'T'HH:mm:ss"
       );
       if (newFilter.startDateTime !== formattedStart) {
         newFilter.startDateTime = formattedStart;
@@ -273,7 +273,7 @@ export function DataTable<T>({
 
     // 处理结束时间
     if (timeRange.endDateTime) {
-      const formattedEnd = format(timeRange.endDateTime, "yyyy-MM-dd HH:mm:ss");
+      const formattedEnd = format(timeRange.endDateTime, "yyyy-MM-dd'T'HH:mm:ss");
       if (newFilter.endDateTime !== formattedEnd) {
         newFilter.endDateTime = formattedEnd;
         changed = true;

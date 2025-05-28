@@ -7,15 +7,15 @@ import {
   UseFormSetValue,
 } from "react-hook-form";
 import { z } from "zod";
-import { CheckboxControlRenderer } from "./renderers/checkbox-control-renderer";
-import { CustomControlRenderer } from "./renderers/custom-control-renderer";
-import { ImageControlRenderer } from "./renderers/image-control-renderer";
-import { InputControlRenderer } from "./renderers/input-control-renderer";
-import { MultiSelectControlRenderer } from "./renderers/multiselect-control-renderer";
-import { NumberControlRenderer } from "./renderers/number-control-renderer";
-import { SelectControlRenderer } from "./renderers/select-control-renderer";
-import { TextareaControlRenderer } from "./renderers/textarea-control-renderer";
-import { FieldConfig } from "./types";
+import { FieldConfig } from "../types";
+import { CheckboxControlRenderer } from "./checkbox-control-renderer";
+import { CustomControlRenderer } from "./custom-control-renderer";
+import { ImageControlRenderer } from "./image-control-renderer";
+import { InputControlRenderer } from "./input-control-renderer";
+import { MultiSelectControlRenderer } from "./multiselect-control-renderer";
+import { NumberControlRenderer } from "./number-control-renderer";
+import { SelectControlRenderer } from "./select-control-renderer";
+import { TextareaControlRenderer } from "./textarea-control-renderer";
 
 interface FormControlRendererProps<
   TFieldValues extends FieldValues = FieldValues,

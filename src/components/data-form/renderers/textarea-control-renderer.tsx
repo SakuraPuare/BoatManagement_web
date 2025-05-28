@@ -1,11 +1,11 @@
+import { Textarea } from "@/components/ui/textarea";
 import React from "react";
 import { ControllerRenderProps, FieldValues, Path } from "react-hook-form";
-import { Textarea } from "@/components/ui/textarea";
 import { FieldConfig } from "../types";
 
 interface TextareaControlRendererProps<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>
+  TName extends Path<TFieldValues>,
 > {
   field: ControllerRenderProps<TFieldValues, TName>;
   fieldConfig: FieldConfig;
@@ -13,7 +13,7 @@ interface TextareaControlRendererProps<
 
 export function TextareaControlRenderer<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>
+  TName extends Path<TFieldValues>,
 >({ field, fieldConfig }: TextareaControlRendererProps<TFieldValues, TName>) {
   return (
     <Textarea

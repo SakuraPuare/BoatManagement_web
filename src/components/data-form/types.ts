@@ -1,10 +1,10 @@
+import { ReactNode } from "react";
 import type {
   Control,
   DefaultValues,
-  UseFormSetValue,
   UseFormReturn,
+  UseFormSetValue,
 } from "react-hook-form";
-import { ReactNode } from "react";
 import { z } from "zod";
 
 /**
@@ -24,8 +24,7 @@ export type FieldConfig = {
     | "custom"
     | "multiselect"
     | "number"
-    | "image"
-    | "switch";
+    | "image";
   /** 字段的标签 */
   label?: string;
   /** 字段的占位符 */

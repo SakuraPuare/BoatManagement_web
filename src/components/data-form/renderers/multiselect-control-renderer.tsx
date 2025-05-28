@@ -1,3 +1,7 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { X } from "lucide-react";
 import React from "react";
 import {
   ControllerRenderProps,
@@ -5,15 +9,11 @@ import {
   Path,
   PathValue,
 } from "react-hook-form";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { X } from "lucide-react";
 import { FieldConfig } from "../types";
 
 interface MultiSelectControlRendererProps<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>
+  TName extends Path<TFieldValues>,
 > {
   field: ControllerRenderProps<TFieldValues, TName>;
   fieldConfig: FieldConfig;
@@ -22,7 +22,7 @@ interface MultiSelectControlRendererProps<
 
 export function MultiSelectControlRenderer<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>
+  TName extends Path<TFieldValues>,
 >({
   field,
   fieldConfig,
@@ -67,7 +67,7 @@ export function MultiSelectControlRenderer<
           {selectedValues.length > 0 ? (
             selectedValues.map((value: string) => {
               const option = fieldConfig.options?.find(
-                (opt) => opt.value === value
+                (opt) => opt.value === value,
               );
               return (
                 <Badge
@@ -80,10 +80,10 @@ export function MultiSelectControlRenderer<
                     type="button"
                     onClick={() => {
                       const newValues = selectedValues.filter(
-                        (v: string) => v !== value
+                        (v: string) => v !== value,
                       );
                       field.onChange(
-                        newValues as PathValue<TFieldValues, TName>
+                        newValues as PathValue<TFieldValues, TName>,
                       );
                       if (fieldConfig.onChange) {
                         fieldConfig.onChange(newValues);
@@ -131,7 +131,7 @@ export function MultiSelectControlRenderer<
                     newValues = [...selectedValues, option.value];
                   } else {
                     newValues = selectedValues.filter(
-                      (v: string) => v !== option.value
+                      (v: string) => v !== option.value,
                     );
                   }
                   field.onChange(newValues as PathValue<TFieldValues, TName>);

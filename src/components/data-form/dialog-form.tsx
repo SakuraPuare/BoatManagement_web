@@ -20,16 +20,16 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect } from "react"; // Import useEffect
 import {
-  Path,
-  useForm,
-  Resolver,
-  UseFormReturn,
-  FieldValues,
   ControllerRenderProps,
+  FieldValues,
+  Path,
+  Resolver,
+  useForm,
+  UseFormReturn,
 } from "react-hook-form"; // Import Resolver and UseFormReturn
 import { z } from "zod";
-import { DialogFormProps, InferredOutput, FieldConfig } from "./types"; // Import types
-import { FormControlRenderer } from "./form-control-renderer";
+import { FormControlRenderer } from "./renderers/form-control-renderer";
+import { DialogFormProps, FieldConfig, InferredOutput } from "./types"; // Import types
 
 /**
  * 一个基于 Shadcn UI Dialog 和 react-hook-form 的通用对话框表单组件。
@@ -39,7 +39,7 @@ import { FormControlRenderer } from "./form-control-renderer";
 export function DialogForm<
   Schema extends z.ZodObject<z.ZodRawShape>,
   // Directly use InferredOutput<Schema> for the form values type
-  TFormValues extends FieldValues = InferredOutput<Schema>
+  TFormValues extends FieldValues = InferredOutput<Schema>,
 >({
   title,
   description,
@@ -110,7 +110,7 @@ export function DialogForm<
   // 确定需要渲染的字段列表，过滤掉 hideFields 中指定的字段
   const fieldsToRender = Object.keys(formSchema.shape).filter(
     // Cast hideFields to string[] for includes check, assuming keys are strings
-    (key) => !(hideFields as string[]).includes(key)
+    (key) => !(hideFields as string[]).includes(key),
   );
 
   // 根据 fieldOrder 对字段进行排序，如果未提供 fieldOrder，则使用默认顺序

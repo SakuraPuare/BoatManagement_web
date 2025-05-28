@@ -1,11 +1,11 @@
-import React from "react";
 import Image from "next/image";
+import React from "react";
 import { ControllerRenderProps, FieldValues, Path } from "react-hook-form";
 import { FieldConfig } from "../types";
 
 interface ImageControlRendererProps<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>
+  TName extends Path<TFieldValues>,
 > {
   field: ControllerRenderProps<TFieldValues, TName>;
   fieldConfig: FieldConfig;
@@ -14,7 +14,7 @@ interface ImageControlRendererProps<
 
 export function ImageControlRenderer<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>
+  TName extends Path<TFieldValues>,
 >({
   field,
   fieldConfig,

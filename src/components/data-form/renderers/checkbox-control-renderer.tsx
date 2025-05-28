@@ -1,3 +1,4 @@
+import { Checkbox } from "@/components/ui/checkbox";
 import React from "react";
 import {
   ControllerRenderProps,
@@ -5,24 +6,23 @@ import {
   Path,
   PathValue,
 } from "react-hook-form";
-import { Switch } from "@/components/ui/switch"; // 导入 Switch 组件
 import { FieldConfig } from "../types";
 
-interface SwitchControlRendererProps<
+interface CheckboxControlRendererProps<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>
+  TName extends Path<TFieldValues>,
 > {
   field: ControllerRenderProps<TFieldValues, TName>;
   fieldConfig: FieldConfig;
 }
 
-export function SwitchControlRenderer<
+export function CheckboxControlRenderer<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>
->({ field, fieldConfig }: SwitchControlRendererProps<TFieldValues, TName>) {
+  TName extends Path<TFieldValues>,
+>({ field, fieldConfig }: CheckboxControlRendererProps<TFieldValues, TName>) {
   return (
-    <Switch
-      checked={field.value as boolean | undefined} // 确保值为 boolean
+    <Checkbox
+      checked={field.value as boolean | "indeterminate" | undefined}
       onCheckedChange={(checked) => {
         field.onChange(checked as PathValue<TFieldValues, TName>);
         if (fieldConfig.onChange) {

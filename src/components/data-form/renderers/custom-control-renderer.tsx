@@ -1,15 +1,14 @@
-import React from "react";
 import {
   Control,
-  FieldValues,
   ControllerRenderProps,
+  FieldValues,
   Path,
 } from "react-hook-form";
 import { FieldConfig } from "../types";
 
 interface CustomControlRendererProps<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>
+  TName extends Path<TFieldValues>,
 > {
   field: ControllerRenderProps<TFieldValues, TName>;
   fieldConfig: FieldConfig;
@@ -18,7 +17,7 @@ interface CustomControlRendererProps<
 
 export function CustomControlRenderer<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>
+  TName extends Path<TFieldValues>,
 >({
   field,
   fieldConfig,

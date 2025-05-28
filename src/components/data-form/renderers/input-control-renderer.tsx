@@ -1,44 +1,40 @@
+import { Input } from "@/components/ui/input";
 import React from "react";
 import {
   ControllerRenderProps,
   FieldValues,
   Path,
-  PathValue,
   UseFormSetValue,
 } from "react-hook-form";
-import { Input } from "@/components/ui/input";
 import { FieldConfig } from "../types";
 
-interface NumberControlRendererProps<
+interface InputControlRendererProps<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>
+  TName extends Path<TFieldValues>,
 > {
   field: ControllerRenderProps<TFieldValues, TName>;
   fieldConfig: FieldConfig;
   setValue: UseFormSetValue<TFieldValues>;
 }
 
-export function NumberControlRenderer<
+export function InputControlRenderer<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>
+  TName extends Path<TFieldValues>,
 >({
   field,
   fieldConfig,
   setValue,
-}: NumberControlRendererProps<TFieldValues, TName>) {
+}: InputControlRendererProps<TFieldValues, TName>) {
   const inputElement = (
     <Input
       {...field}
-      type="number"
       placeholder={fieldConfig.placeholder}
       disabled={fieldConfig.disabled}
-      value={(field.value as number | string | undefined) ?? ""}
+      value={(field.value as string | number | undefined) ?? ""}
       onChange={(e) => {
-        const value = e.target.value;
-        const numValue = value === "" ? undefined : parseFloat(value);
-        field.onChange(numValue as PathValue<TFieldValues, TName>);
+        field.onChange(e);
         if (fieldConfig.onChange) {
-          fieldConfig.onChange(numValue);
+          fieldConfig.onChange(e.target.value);
         }
       }}
     />

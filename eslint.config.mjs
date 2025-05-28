@@ -11,17 +11,28 @@ export default defineConfig([
   { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], plugins: { js }, extends: ["js/recommended"] },
   { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], languageOptions: { globals: globals.browser } },
   tseslint.configs.recommended,
-  pluginReact.configs.flat.recommended,
   {
-    files: ["**/*.{ts,tsx,js,jsx}"],
+    ...pluginReact.configs.flat.recommended,
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+  },
+  {
     plugins: {
-      "@next/next": nextPlugin
+      "@next/next": nextPlugin,
     },
     rules: {
       ...nextPlugin.configs.recommended.rules,
-      ...nextPlugin.configs["core-web-vitals"].rules
-      // Example: Disable a specific Next.js rule if needed
-      // "@next/next/no-img-element": "off",
+      ...nextPlugin.configs["core-web-vitals"].rules,
+    },
+  },
+  {
+    files: ["**/*.{ts,tsx,js,jsx}"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
 ]);

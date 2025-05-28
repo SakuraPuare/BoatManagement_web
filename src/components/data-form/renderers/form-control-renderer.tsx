@@ -15,6 +15,7 @@ import { InputControlRenderer } from "./input-control-renderer";
 import { MultiSelectControlRenderer } from "./multiselect-control-renderer";
 import { NumberControlRenderer } from "./number-control-renderer";
 import { SelectControlRenderer } from "./select-control-renderer";
+import { SwitchControlRenderer } from "./switch-control-renderer";
 import { TextareaControlRenderer } from "./textarea-control-renderer";
 
 interface FormControlRendererProps<
@@ -82,6 +83,10 @@ export function FormControlRenderer<
     // Checkbox 复选框
     case "checkbox": {
       return <CheckboxControlRenderer field={field} fieldConfig={config} />;
+    }
+    // Switch 开关
+    case "switch": {
+      return <SwitchControlRenderer field={field} fieldConfig={config} />;
     }
     // Number 输入框
     case "number": {

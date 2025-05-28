@@ -21,6 +21,7 @@ export type FieldConfig = {
     | "select"
     | "textarea"
     | "checkbox"
+    | "switch"
     | "custom"
     | "multiselect"
     | "number"

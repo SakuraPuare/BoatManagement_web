@@ -1,5 +1,4 @@
-"use client";
-
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ColumnDef,
   getCoreRowModel,
@@ -8,7 +7,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { format } from "date-fns/format";
-import React, { useEffect, useMemo, useState } from "react";
 import DataPagination from "./data-pagination";
 // 导入新的子组件
 import { DataTableCore } from "./data-table-core";
@@ -17,6 +15,8 @@ import { DataTableHeader } from "./data-table-header";
 import { camelToSnakeCase } from "./utils";
 // 导入类型定义
 import { Filter, Page, TimeRange } from "./types";
+
+("use client");
 
 /**
  * DataTable 组件的 Props
@@ -220,7 +220,7 @@ export function DataTable<T>({
       // 仅处理可以被隐藏的列
       if (column.enableHiding !== false) {
         newColumnVisibility[column.id as string] = columnsWithData.has(
-          column.id as string,
+          column.id as string
         );
       } else {
         // 不能隐藏的列始终可见
@@ -244,7 +244,7 @@ export function DataTable<T>({
       .map(
         (sort) =>
           // 将驼峰式列名转换为下划线式，并附加排序方向
-          `${camelToSnakeCase(sort.id)}.${sort.desc ? "desc" : "asc"}`,
+          `${camelToSnakeCase(sort.id)}.${sort.desc ? "desc" : "asc"}`
       )
       .join(","); // 多个排序条件用逗号分隔
 
@@ -272,7 +272,7 @@ export function DataTable<T>({
     if (timeRange.startDateTime) {
       const formattedStart = format(
         timeRange.startDateTime,
-        "yyyy-MM-dd HH:mm:ss",
+        "yyyy-MM-dd HH:mm:ss"
       );
       if (newFilter.startDateTime !== formattedStart) {
         newFilter.startDateTime = formattedStart;

@@ -1,3 +1,4 @@
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -8,7 +9,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Column, Table as ReactTableType } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
-import React from "react";
 
 interface DataTableHeaderProps<T> {
   title: string;
@@ -32,7 +32,7 @@ interface DataTableHeaderProps<T> {
  * @param column @tanstack/react-table 的 Column 对象
  * @returns 列标题字符串
  */
-const getColumnHeaderText = <T,>(column: Column<T, unknown>): string => {
+const getColumnHeaderText = <T,>(column: Column<T>): string => {
   const headerContent = column.columnDef.header;
   // 如果 header 是字符串，直接返回；否则使用列 ID 作为备选
   return typeof headerContent === "string"
@@ -99,7 +99,9 @@ export function DataTableHeader<T>({
                       onCheckedChange={(value) =>
                         column.toggleVisibility(!!value)
                       } // 直接用 Checkbox 控制
-                      aria-label={`Toggle column ${getColumnHeaderText(column)}`}
+                      aria-label={`Toggle column ${getColumnHeaderText(
+                        column
+                      )}`}
                     />
                     <span>{getColumnHeaderText(column)}</span>
                   </div>

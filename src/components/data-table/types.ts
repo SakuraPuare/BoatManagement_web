@@ -1,3 +1,5 @@
+import React from "react";
+
 export interface Page {
   pageNumber?: number;
   pageSize?: number;

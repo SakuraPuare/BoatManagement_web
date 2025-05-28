@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Pagination,
   PaginationContent,
@@ -61,7 +62,7 @@ export default function DataPagination({
           >
             1
           </PaginationLink>
-        </PaginationItem>,
+        </PaginationItem>
       );
 
       // Show ellipsis if not near start
@@ -69,7 +70,7 @@ export default function DataPagination({
         items.push(
           <PaginationItem key="ellipsis-1">
             <PaginationEllipsis />
-          </PaginationItem>,
+          </PaginationItem>
         );
       }
 
@@ -88,7 +89,7 @@ export default function DataPagination({
             >
               {i}
             </PaginationLink>
-          </PaginationItem>,
+          </PaginationItem>
         );
       }
 
@@ -97,7 +98,7 @@ export default function DataPagination({
         items.push(
           <PaginationItem key="ellipsis-2">
             <PaginationEllipsis />
-          </PaginationItem>,
+          </PaginationItem>
         );
       }
 
@@ -112,7 +113,7 @@ export default function DataPagination({
             >
               {totalPage}
             </PaginationLink>
-          </PaginationItem>,
+          </PaginationItem>
         );
       }
     } else {
@@ -127,7 +128,7 @@ export default function DataPagination({
             >
               {page}
             </PaginationLink>
-          </PaginationItem>,
+          </PaginationItem>
         );
       });
     }

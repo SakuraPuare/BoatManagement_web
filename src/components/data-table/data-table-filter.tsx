@@ -1,3 +1,4 @@
+import React, { Dispatch, SetStateAction } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -9,7 +10,6 @@ import {
 import { TimeRangePicker } from "@/components/ui/time-range-picker";
 import { Table } from "@tanstack/react-table";
 import { Search } from "lucide-react";
-import React, { Dispatch, SetStateAction } from "react";
 // 导入类型定义
 import { Filter, TimeRange } from "./types";
 
@@ -39,7 +39,7 @@ export default function DataTableFilter<T>({
    */
   const handleFilterOptionChange = (
     optionId: keyof T | string, // 允许字符串类型的 key
-    value: string | T[keyof T], // 值可以是 'all' 或具体类型的值
+    value: string | T[keyof T] // 值可以是 'all' 或具体类型的值
   ) => {
     if (!filter) return;
 
@@ -133,12 +133,12 @@ export default function DataTableFilter<T>({
                       <SelectItem key={selection.value} value={selection.value}>
                         {selection.label} {/* 显示选项标签 */}
                       </SelectItem>
-                    ),
+                    )
                   )}
                 </SelectContent>
               </Select>
             </div>
-          ),
+          )
         )}
       </div>
 

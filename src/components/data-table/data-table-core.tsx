@@ -1,3 +1,4 @@
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -16,7 +17,6 @@ import {
   Table as ReactTableType,
 } from "@tanstack/react-table";
 import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
-import React from "react";
 import { DataTableRowActions } from "./data-table-row-actions"; // 导入行操作组件
 
 interface DataTableCoreProps<T> {
@@ -48,7 +48,7 @@ export function DataTableCore<T>({
    * 处理表头点击事件，用于切换排序状态
    * @param column 被点击的列对象
    */
-  const handleSortClick = (column: Column<T, unknown>) => {
+  const handleSortClick = (column: Column<T>) => {
     // 切换排序状态：未排序 -> 升序 -> 降序 -> 未排序
     column.toggleSorting(column.getIsSorted() === "asc");
   };
@@ -105,7 +105,7 @@ export function DataTableCore<T>({
                       {/* 渲染表头内容 */}
                       {flexRender(
                         header.column.columnDef.header,
-                        header.getContext(),
+                        header.getContext()
                       )}
 
                       {/* 如果列允许排序，则显示排序图标 */}
@@ -148,7 +148,9 @@ export function DataTableCore<T>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"} // 根据选择状态设置 data-state
-                className={index % 2 === 1 ? "bg-gray-50 dark:bg-gray-700/50" : ""} // 斑马纹效果
+                className={
+                  index % 2 === 1 ? "bg-gray-50 dark:bg-gray-700/50" : ""
+                } // 斑马纹效果
               >
                 {/* 行选择 Checkbox */}
                 {showCheckboxColumn && (
@@ -165,7 +167,7 @@ export function DataTableCore<T>({
                   <TableCell key={cell.id}>
                     {flexRender(
                       cell.column.columnDef.cell, // 使用列定义中的 cell 渲染函数
-                      cell.getContext(), // 传递上下文
+                      cell.getContext() // 传递上下文
                     )}
                   </TableCell>
                 ))}

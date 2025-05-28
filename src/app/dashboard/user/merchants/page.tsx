@@ -1,14 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ShoppingCart, Store } from "lucide-react";
 import { getUserMerchantPageQuery } from "@/services/api/userMerchant";
-import {
-  type Column,
-  DataManagementTable,
-  type TableRow,
-} from "@/components/data-management-table";
+
 import { Button } from "@/components/ui/button";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/dialog";
 import { VENDOR_STATUS_MAP } from "@/lib/constants/status";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

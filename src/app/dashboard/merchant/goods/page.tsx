@@ -4,14 +4,10 @@ import {
   merchantDeleteGoods,
   merchantGetGoodsPage,
 } from "@/services/api/merchantGoods";
-import {
-  type Action,
-  type Column,
-  DataManagementTable,
-} from "@/components/data-management-table";
+
 import { GoodsFormDialog, goodsFormSchema } from "./goods-form-dialog";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

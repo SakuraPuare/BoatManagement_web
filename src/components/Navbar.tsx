@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, Ship, User, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
-("use client");
+
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);

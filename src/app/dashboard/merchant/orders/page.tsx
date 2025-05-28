@@ -4,17 +4,13 @@ import {
   merchantCompleteOrder,
   merchantGetOrdersPage,
 } from "@/services/api/merchantOrder";
-import {
-  type Action,
-  type Column,
-  DataManagementTable,
-} from "@/components/data-management-table";
+
 import { toast } from "sonner";
 import { CheckCircle, Ship, ShoppingBag, Trash2 } from "lucide-react";
 import { ORDER_STATUS } from "@/lib/constants/status";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

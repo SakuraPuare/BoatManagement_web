@@ -8,17 +8,13 @@ import {
   userPayBoatOrder,
   userPayGoodsOrder,
 } from "@/services/api/userOrder";
-import {
-  type Column,
-  DataManagementTable,
-  type TableRow,
-} from "@/components/data-management-table";
+
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ORDER_STATUS } from "@/lib/constants/status";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-("use client");
+
 
 const columns: Column<API.BaseGoodsOrdersVO>[] = [
   {

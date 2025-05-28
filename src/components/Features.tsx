@@ -8,7 +8,7 @@ import {
   ShoppingCart,
 } from "lucide-react";
 
-("use client");
+
 
 const features = [
   {

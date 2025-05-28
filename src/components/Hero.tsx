@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
-("use client");
+
 
 export function Hero() {
   const router = useRouter();

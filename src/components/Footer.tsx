@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Mail, MapPin, Phone, Ship } from "lucide-react";
 
-("use client");
+
 
 export function Footer() {
   return (

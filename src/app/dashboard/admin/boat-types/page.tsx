@@ -33,7 +33,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

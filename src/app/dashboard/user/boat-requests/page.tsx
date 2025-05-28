@@ -31,7 +31,7 @@ import {
 } from "@/lib/constants/status";
 import { clsx } from "clsx";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

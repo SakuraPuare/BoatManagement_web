@@ -16,7 +16,7 @@ import { camelToSnakeCase } from "./utils";
 // 导入类型定义
 import { Filter, Page, TimeRange } from "./types";
 
-("use client");
+
 
 /**
  * DataTable 组件的 Props
@@ -253,7 +253,7 @@ export function DataTable<T>({
       const newFilter = { ...filter, sort: params };
       onFilterChange(newFilter);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [sorting]); // 依赖项只需要 sorting，以避免不必要的触发
 
   /**
@@ -301,7 +301,7 @@ export function DataTable<T>({
     if (changed) {
       onFilterChange(newFilter);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [timeRange]); // 依赖项只需要 timeRange，以避免不必要的触发
 
   /**
@@ -327,7 +327,7 @@ export function DataTable<T>({
         endDateTime: newEnd,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [filter?.startDateTime, filter?.endDateTime]); // 依赖外部 filter 的时间戳
 
   /**
@@ -337,7 +337,7 @@ export function DataTable<T>({
     if (filter?.search !== searchTerm) {
       setSearchTerm(filter?.search ?? "");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [filter?.search]);
 
   /**

@@ -1,9 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  type Action,
-  type Column,
-  DataManagementTable,
-} from "@/components/data-management-table";
+
 import {
   getNotificationsPage,
   getUnreadCount,
@@ -29,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-("use client");
+
 
 interface AuthGuardProps {
   children: ReactNode;

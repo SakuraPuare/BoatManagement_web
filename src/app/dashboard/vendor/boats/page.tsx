@@ -31,7 +31,7 @@ import {
 import { toast } from "sonner";
 import { BoatDialog } from "./boat-dialog";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

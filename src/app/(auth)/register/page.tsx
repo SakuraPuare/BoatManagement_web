@@ -7,7 +7,7 @@ import { Lock, Ship, User } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-("use client");
+
 
 export default function RegisterPage() {
   const { register } = useAuth();

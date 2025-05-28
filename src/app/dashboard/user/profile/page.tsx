@@ -22,7 +22,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-("use client");
+
 
 // 模拟当前用户ID，实际应该从认证状态获取
 const CURRENT_USER_ID = 1;

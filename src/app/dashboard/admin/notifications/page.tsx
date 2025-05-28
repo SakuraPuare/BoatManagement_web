@@ -2,11 +2,7 @@ import React, { useState } from "react";
 import { Bell, Edit, Plus, Send, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import {
-  type Column,
-  DataManagementTable,
-  type TableRow,
-} from "@/components/data-management-table";
+
 import {
   createNotification,
   deleteNotification,
@@ -42,7 +38,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
-("use client");
+
 
 const notificationSchema = z.object({
   userId: z.number().min(1, "用户ID不能为空"),

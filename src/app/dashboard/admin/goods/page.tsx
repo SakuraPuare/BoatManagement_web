@@ -30,7 +30,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

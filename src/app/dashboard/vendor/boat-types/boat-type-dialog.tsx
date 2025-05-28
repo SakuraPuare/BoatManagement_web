@@ -24,7 +24,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { createBoatType, updateBoatType } from "@/services/api/vendorBoatType";
 
-("use client");
+
 
 const boatTypeFormSchema = z.object({
   typeName: z.string().min(1, "请输入类型名称"),

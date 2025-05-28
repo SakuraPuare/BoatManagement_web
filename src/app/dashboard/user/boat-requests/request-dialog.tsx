@@ -38,7 +38,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
-("use client");
+
 
 const requestFormSchema = z.object({
   startDockId: z.number().min(1, "请选择起始码头"),

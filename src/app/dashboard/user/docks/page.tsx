@@ -1,8 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  type Column,
-  DataManagementTable,
-} from "@/components/data-management-table";
+
 import { userGetDockPage } from "@/services/api/userDock";
 import { Badge } from "@/components/ui/badge";
 import { Anchor, MapPin, Phone } from "lucide-react";
@@ -15,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

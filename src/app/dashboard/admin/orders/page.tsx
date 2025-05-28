@@ -1,9 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  type Action,
-  type Column,
-  DataManagementTable,
-} from "@/components/data-management-table";
+
 import { adminGetBoatOrdersPage } from "@/services/api/adminOrder";
 import { adminGetGoodsOrdersPage1 as adminGetGoodsOrdersPage } from "@/services/api/adminGoodsOrder";
 import { adminGetUserList } from "@/services/api/adminUser";
@@ -20,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { ORDER_STATUS } from "@/lib/constants/status";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

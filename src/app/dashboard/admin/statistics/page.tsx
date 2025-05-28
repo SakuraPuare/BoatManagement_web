@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-("use client");
+
 
 interface SystemStats {
   users: {

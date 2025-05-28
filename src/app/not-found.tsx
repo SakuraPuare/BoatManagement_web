@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Ship } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-("use client");
+
 
 export default function NotFound() {
   const router = useRouter();

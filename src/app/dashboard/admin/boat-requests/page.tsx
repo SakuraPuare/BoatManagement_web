@@ -1,9 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  type Action,
-  type Column,
-  DataManagementTable,
-} from "@/components/data-management-table";
+
 import {
   adminDeleteBoatRequest,
   adminGetBoatRequestPage,
@@ -25,7 +21,7 @@ import {
   BOAT_ORDER_TYPE_MAP,
 } from "@/lib/constants/status";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

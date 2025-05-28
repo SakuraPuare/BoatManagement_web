@@ -1,9 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  type Action,
-  type Column,
-  DataManagementTable,
-} from "@/components/data-management-table";
+
 import { adminGetUserCertifyPage } from "@/services/api/adminUser";
 import { auditAdminUser } from "@/services/api/adminAudit";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +21,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

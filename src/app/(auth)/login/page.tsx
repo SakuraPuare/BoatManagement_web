@@ -9,7 +9,7 @@ import { Lock, QrCode, Ship, Smartphone, User as UserIcon } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-("use client");
+
 
 export default function LoginPage() {
   const { login } = useAuth();

@@ -1,7 +1,7 @@
 import React from "react";
 import { CheckCircle, TrendingUp, Users, Zap } from "lucide-react";
 
-("use client");
+
 
 const advantages = [
   {

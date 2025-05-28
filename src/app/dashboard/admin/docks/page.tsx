@@ -1,9 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Action,
-  Column,
-  DataManagementTable,
-} from "@/components/data-management-table";
+
 import {
   adminDeleteDock,
   adminGetDockPage,
@@ -13,7 +9,7 @@ import {
 import { Anchor, Ban, Pencil, Trash2 } from "lucide-react";
 import { DockDialog, dockFormSchema } from "./dock-dialog";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

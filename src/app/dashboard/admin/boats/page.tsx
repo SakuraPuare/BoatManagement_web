@@ -1,9 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Action,
-  Column,
-  DataManagementTable,
-} from "@/components/data-management-table";
+
 import { adminGetUnitList } from "@/services/api/adminUnit";
 import { adminGetBoatPage } from "@/services/api/adminBoat";
 import { adminGetBoatTypeList } from "@/services/api/adminBoatType";
@@ -11,7 +7,7 @@ import { adminGetDockList } from "@/services/api/adminDock";
 import { Pencil, Ship } from "lucide-react";
 import { BoatDialog, boatFormSchema } from "./boat-dialog";
 
-("use client");
+
 
 type BoatVO = {
   boat: API.BaseBoatsVO;

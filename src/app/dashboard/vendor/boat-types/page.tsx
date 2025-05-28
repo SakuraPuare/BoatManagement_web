@@ -29,7 +29,7 @@ import {
 import { toast } from "sonner";
 import { BoatTypeDialog } from "./boat-type-dialog";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

@@ -21,7 +21,7 @@ import {
 import { toast } from "sonner";
 import { ORDER_STATUS } from "@/lib/constants/status";
 
-("use client");
+
 
 const ITEMS_PER_PAGE = 10;
 

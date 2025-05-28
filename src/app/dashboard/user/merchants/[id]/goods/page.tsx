@@ -4,11 +4,7 @@ import {
   createUserMerchantGoodsOrder,
   getUserMerchantGoodsPage,
 } from "@/services/api/userMerchant";
-import {
-  type Column,
-  DataManagementTable,
-  type TableRow,
-} from "@/components/data-management-table";
+
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
@@ -33,7 +29,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-("use client");
+
 
 const orderFormSchema = z.object({
   quantity: z.string().min(1, "请输入购买数量"),

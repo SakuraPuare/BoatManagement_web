@@ -1,281 +1,351 @@
-import React, { useState } from "react";
-import { Edit, Plus, Shield, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+"use client";
+
+import React, { useCallback, useEffect, useState } from "react";
+import { DataTable } from "@/components/data-table";
+import { DialogForm } from "@/components/data-form";
+import { Filter, Page } from "@/components/data-table/types";
+import { ColumnDef } from "@tanstack/react-table";
+import { formatDate } from "date-fns";
+import { Pencil, PlusCircle, Shield, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  type Column,
-  DataManagementTable,
-  type TableRow,
-} from "@/components/data-management-table";
+import { z } from "zod";
 import {
   adminCreatePermission,
   adminDeletePermission,
   adminGetPermissionPage,
   adminUpdatePermission,
 } from "@/services/api/adminPermission";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 
-("use client");
-
-const permissionSchema = z.object({
+// 定义权限表单 Zod Schema
+const permissionFormSchema = z.object({
   name: z.string().min(1, "权限名称不能为空"),
   code: z.string().min(1, "权限代码不能为空"),
   description: z.string().optional(),
 });
 
-type PermissionFormData = z.infer<typeof permissionSchema>;
+type PermissionFormValues = z.infer<typeof permissionFormSchema>;
 
-const columns: Column<API.BasePermissionVO>[] = [
-  {
-    accessor: "id",
-    header: "ID",
-  },
-  {
-    accessor: "name",
-    header: "权限名称",
-  },
-  {
-    accessor: "code",
-    header: "权限代码",
-  },
-  {
-    accessor: "description",
-    header: "描述",
-  },
-  {
-    accessor: "createdAt",
-    header: "创建时间",
-    render: (date) => (date ? new Date(date).toLocaleString() : "-"),
-  },
-];
+// 默认表单值
+const defaultPermissionValues: Partial<PermissionFormValues> = {
+  name: "",
+  code: "",
+  description: "",
+};
 
-function PermissionDialog({
-  permission,
+// 表单字段配置
+const fieldConfigs = {
+  name: {
+    type: "input" as const,
+    label: "权限名称",
+    placeholder: "请输入权限名称",
+  },
+  code: {
+    type: "input" as const,
+    label: "权限代码",
+    placeholder: "如: USER_READ, ADMIN_WRITE",
+  },
+  description: {
+    type: "textarea" as const,
+    label: "描述",
+    placeholder: "请输入权限描述 (可选)",
+  },
+};
+
+// 添加/编辑权限对话框组件
+function AddEditPermissionDialog({
+  open,
+  onOpenChange,
   onSuccess,
-  trigger,
+  permission,
 }: {
-  permission?: API.BasePermissionVO;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
-  trigger: React.ReactNode;
+  permission?: API.BasePermissionVO | null;
 }) {
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const isEditing = !!permission;
 
-  const form = useForm<PermissionFormData>({
-    resolver: zodResolver(permissionSchema),
-    defaultValues: {
-      name: permission?.name || "",
-      code: permission?.code || "",
-      description: permission?.description || "",
-    },
+  // 创建表单方法
+  const formMethods = useForm<PermissionFormValues>({
+    resolver: zodResolver(permissionFormSchema),
+    defaultValues: isEditing
+      ? {
+          name: permission?.name || "",
+          code: permission?.code || "",
+          description: permission?.description || "",
+        }
+      : defaultPermissionValues,
   });
 
-  const onSubmit = async (data: PermissionFormData) => {
-    setLoading(true);
+  // 监听 permission 变化，更新表单默认值
+  useEffect(() => {
+    if (open) {
+      if (isEditing && permission) {
+        formMethods.reset({
+          name: permission.name || "",
+          code: permission.code || "",
+          description: permission.description || "",
+        });
+      } else {
+        formMethods.reset(defaultPermissionValues);
+      }
+    }
+  }, [permission, open, isEditing, formMethods]);
+
+  // 处理表单提交
+  const handleSubmit = async (data: PermissionFormValues) => {
+    setIsLoading(true);
     try {
-      if (permission?.id) {
-        await adminUpdatePermission({ id: permission.id }, data);
+      const payload = {
+        name: data.name,
+        code: data.code,
+        description: data.description,
+      };
+
+      if (isEditing && permission?.id) {
+        // 更新权限
+        await adminUpdatePermission({ id: permission.id }, payload);
         toast.success("权限更新成功");
       } else {
-        await adminCreatePermission(data);
+        // 创建权限
+        await adminCreatePermission(payload);
         toast.success("权限创建成功");
       }
-      setOpen(false);
-      onSuccess();
-      form.reset();
+
+      formMethods.reset(defaultPermissionValues);
+      onOpenChange(false);
+      onSuccess(); // 刷新列表
     } catch (error) {
-      toast.error(permission?.id ? "权限更新失败" : "权限创建失败");
+      console.error("Failed to save permission:", error);
+      toast.error(isEditing ? "更新权限失败" : "创建权限失败");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>{permission?.id ? "编辑权限" : "创建权限"}</DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>权限名称</FormLabel>
-                  <FormControl>
-                    <Input placeholder="请输入权限名称" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>描述</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="请输入权限描述" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>权限代码</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="如: USER_READ, ADMIN_WRITE"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex justify-end space-x-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setOpen(false)}
-              >
-                取消
-              </Button>
-              <Button type="submit" disabled={loading}>
-                {loading ? "保存中..." : "保存"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <DialogForm
+      title={isEditing ? "编辑权限" : "添加权限"}
+      description={isEditing ? "修改权限信息" : "请填写权限信息"}
+      open={open}
+      onOpenChange={(open) => {
+        onOpenChange(open);
+        if (!open) {
+          formMethods.reset(defaultPermissionValues);
+        }
+      }}
+      onSubmit={handleSubmit}
+      formSchema={permissionFormSchema}
+      defaultValues={
+        isEditing
+          ? {
+              name: permission?.name || "",
+              code: permission?.code || "",
+              description: permission?.description || "",
+            }
+          : defaultPermissionValues
+      }
+      fieldConfigs={fieldConfigs}
+      formMethods={formMethods}
+      submitButtonText={isLoading ? "保存中..." : isEditing ? "更新" : "添加"}
+      cancelButtonText="取消"
+      showCancelButton={true}
+      fieldOrder={["name", "code", "description"]}
+      key={permission?.id ?? "new"}
+    />
   );
 }
 
 export default function PermissionsPage() {
-  const [currentPage, setCurrentPage] = useState(1);
+  // State for data table
   const [isLoading, setIsLoading] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [page, setPage] = useState<Page>({
+    pageNumber: 1,
+    pageSize: 10,
+  });
+  const [filter, setFilter] = useState<Filter<API.BasePermissionVO>>({
+    filter: {},
+    filterOptions: [],
+    search: null,
+    sort: null,
+    startDateTime: null,
+    endDateTime: null,
+  });
+  const [permissions, setPermissions] = useState<API.BasePermissionVO[]>([]);
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("确定要删除这个权限吗？")) return;
+  // State for add/edit permission dialog
+  const [isAddEditDialogOpen, setIsAddEditDialogOpen] = useState(false);
+  const [editingPermission, setEditingPermission] = useState<API.BasePermissionVO | null>(null);
 
+  // State for delete confirmation dialog
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
+
+  // Fetch permissions data
+  const fetchPermissions = useCallback(async () => {
+    setIsLoading(true);
     try {
-      await adminDeletePermission({ id });
-      toast.success("权限删除成功");
-      setRefreshKey((prev) => prev + 1);
-    } catch (error) {
-      toast.error("权限删除失败");
-    }
-  };
-
-  const handleSuccess = () => {
-    setRefreshKey((prev) => prev + 1);
-    setShowCreateDialog(false);
-  };
-
-  const actionColumn: Column<API.BasePermissionVO> = {
-    accessor: "id.",
-    header: "操作",
-    render: (_: any, row?: TableRow<API.BasePermissionVO>) => {
-      if (!row) return null;
-      const permission = row.data;
-
-      return (
-        <div className="flex justify-end space-x-2">
-          <PermissionDialog
-            permission={permission}
-            onSuccess={handleSuccess}
-            trigger={
-              <Button variant="outline" size="sm">
-                <Edit className="h-4 w-4" />
-              </Button>
-            }
-          />
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => handleDelete(permission.id!)}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
+      const res = await adminGetPermissionPage(
+        {
+          pageNum: page.pageNumber || 1,
+          pageSize: page.pageSize || 10,
+          ...(filter.search && { search: filter.search }),
+          ...(filter.sort && { sort: filter.sort }),
+          ...(filter.startDateTime && { startDateTime: filter.startDateTime }),
+          ...(filter.endDateTime && { endDateTime: filter.endDateTime }),
+        },
+        filter.filter,
       );
+
+      const pageData = res.data?.data; // First data is response wrapper, second data is actual PageBasePermissionVO
+      setPage({
+        pageNumber: pageData?.pageNumber || 1,
+        pageSize: pageData?.pageSize || 10,
+        totalPage: pageData?.totalPage,
+        totalRow: pageData?.totalRow,
+      });
+
+      setPermissions(pageData?.records || []);
+    } catch (error) {
+      console.error("Failed to fetch permissions:", error);
+      toast.error("获取权限列表失败");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [filter, page.pageNumber, page.pageSize]);
+
+  // Load data on component mount and when dependencies change
+  useEffect(() => {
+    fetchPermissions();
+  }, [fetchPermissions]);
+
+  // Function to handle opening the add/edit dialog
+  const handleOpenAddEditDialog = useCallback((permission?: API.BasePermissionVO) => {
+    setEditingPermission(permission || null);
+    setIsAddEditDialogOpen(true);
+  }, []);
+
+  // Function to handle permission deletion
+  const handleDeletePermission = useCallback(
+    async (permissionToDelete: API.BasePermissionVO) => {
+      if (!permissionToDelete?.id) return;
+
+      setIsDeleting(permissionToDelete.id);
+      try {
+        await adminDeletePermission({ id: permissionToDelete.id });
+        toast.success(`权限 "${permissionToDelete.name}" 删除成功`);
+        fetchPermissions();
+      } catch (error) {
+        console.error("Failed to delete permission:", error);
+        toast.error(`删除权限 "${permissionToDelete.name}" 失败`);
+      } finally {
+        setIsDeleting(null);
+      }
     },
-  };
+    [fetchPermissions],
+  );
+
+  // Table columns definition
+  const columns: ColumnDef<API.BasePermissionVO>[] = [
+    {
+      id: "id",
+      header: "ID",
+      accessorKey: "id",
+      enableSorting: true,
+    },
+    {
+      id: "name",
+      header: "权限名称",
+      accessorKey: "name",
+      enableSorting: true,
+    },
+    {
+      id: "code",
+      header: "权限代码",
+      accessorKey: "code",
+      enableSorting: true,
+    },
+    {
+      id: "description",
+      header: "描述",
+      accessorKey: "description",
+      enableSorting: false,
+    },
+    {
+      id: "createdAt",
+      header: "创建时间",
+      cell: ({ row }) =>
+        row.original.createdAt
+          ? formatDate(row.original.createdAt, "yyyy-MM-dd HH:mm:ss")
+          : "-",
+      enableSorting: true,
+    },
+  ];
+
+  // Table row actions
+  const actions = [
+    {
+      label: "编辑",
+      icon: <Pencil className="mr-2 h-4 w-4" />,
+      onClick: handleOpenAddEditDialog,
+      disabled: (row: API.BasePermissionVO) => isDeleting === row.id,
+    },
+    {
+      label: "删除",
+      icon: <Trash2 className="mr-2 h-4 w-4 text-red-500" />,
+      onClick: handleDeletePermission,
+      className: "text-red-500",
+      disabled: (row: API.BasePermissionVO) => !!isDeleting,
+      loading: (row: API.BasePermissionVO) => isDeleting === row.id,
+      loadingText: "删除中...",
+    },
+  ];
+
+  // Table toolbar actions
+  const toolbars = [
+    {
+      label: "添加权限",
+      icon: <PlusCircle />,
+      onClick: () => handleOpenAddEditDialog(),
+    },
+  ];
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Shield className="h-6 w-6" />
-          <h1 className="text-2xl font-semibold">权限管理</h1>
-        </div>
-        <PermissionDialog
-          onSuccess={handleSuccess}
-          trigger={
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              创建权限
-            </Button>
-          }
-        />
-      </div>
-
-      <DataManagementTable
-        key={refreshKey}
-        title=""
-        icon={<></>}
-        columns={[...columns, actionColumn]}
-        isLoading={isLoading}
-        searchPlaceholder="搜索权限..."
-        queryFn={async ({ pageNum, pageSize }) => {
-          const response = await adminGetPermissionPage(
-            { pageNum, pageSize },
-            {}
-          );
-          const pageData = response.data as API.PageBasePermissionVO;
-          return {
-            list: pageData?.records || [],
-            totalItems: pageData?.totalRow || 0,
-            totalPages: pageData?.totalPage || 0,
-          };
+    <>
+      <AddEditPermissionDialog
+        open={isAddEditDialogOpen}
+        onOpenChange={setIsAddEditDialogOpen}
+        onSuccess={() => {
+          fetchPermissions();
         }}
-        pagination={{
-          currentPage,
-          totalPages: 1,
-          totalItems: 0,
-          onPageChange: setCurrentPage,
+        permission={editingPermission}
+      />
+
+      <DataTable<API.BasePermissionVO>
+        title="权限管理"
+        description={
+          <div className="flex items-center gap-2">
+            <Shield className="h-5 w-5" />
+            <span>管理系统权限配置</span>
+          </div>
+        }
+        loading={isLoading}
+        columns={columns}
+        actions={actions}
+        data={permissions}
+        toolbars={toolbars}
+        page={page}
+        onPageChange={(pageNumber) => {
+          setPage({ ...page, pageNumber });
+        }}
+        filter={filter}
+        onFilterChange={(newFilter) => {
+          setFilter(newFilter);
+          setPage({ ...page, pageNumber: 1 });
         }}
       />
-    </div>
+    </>
   );
 }

@@ -2,7 +2,7 @@ import React from "react";
 
 import { Home, Settings, User } from "lucide-react";
 
-("use client");
+
 
 const sidebarItems = [
   {

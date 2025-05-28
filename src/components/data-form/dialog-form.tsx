@@ -28,7 +28,7 @@ import {
 import { z } from "zod";
 import { FormControlRenderer } from "./renderers/form-control-renderer";
 import { DialogFormProps, FieldConfig, InferredOutput } from "./types"; // Import types
-("use client"); // Add this if using Next.js App Router and hooks like useForm
+ // Add this if using Next.js App Router and hooks like useForm
 
 /**
  * 一个基于 Shadcn UI Dialog 和 react-hook-form 的通用对话框表单组件。

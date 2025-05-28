@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-("use client");
+
 
 const goodsFormSchema = z.object({
   name: z.string().min(1, "商品名称不能为空").max(50, "商品名称最多50个字符"),

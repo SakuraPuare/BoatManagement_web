@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertOctagon } from "lucide-react";
 
-("use client");
+
 
 export default function Error({
   error,

@@ -1,21 +1,27 @@
-"use client";
-
-import { useState, useCallback, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Users, 
-  Building2, 
-  Store, 
-  Ship, 
-  Package, 
-  ShoppingCart, 
-  TrendingUp, 
-  TrendingDown,
+import {
   Activity,
-  DollarSign
+  Building2,
+  DollarSign,
+  Package,
+  Ship,
+  ShoppingCart,
+  Store,
+  TrendingDown,
+  TrendingUp,
+  Users,
 } from "lucide-react";
 import { toast } from "sonner";
+
+("use client");
 
 interface SystemStats {
   users: {
@@ -95,7 +101,7 @@ export default function AdminStatisticsPage() {
           growth: 18.9,
         },
       };
-      
+
       setStats(mockStats);
     } catch (error) {
       console.error(error);
@@ -110,19 +116,28 @@ export default function AdminStatisticsPage() {
   }, [fetchStats]);
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('zh-CN', {
-      style: 'currency',
-      currency: 'CNY',
+    return new Intl.NumberFormat("zh-CN", {
+      style: "currency",
+      currency: "CNY",
     }).format(amount);
   };
 
   const formatGrowth = (growth: number) => {
     const isPositive = growth >= 0;
     return (
-      <div className={`flex items-center gap-1 ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-        {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+      <div
+        className={`flex items-center gap-1 ${
+          isPositive ? "text-green-600" : "text-red-600"
+        }`}
+      >
+        {isPositive ? (
+          <TrendingUp className="w-4 h-4" />
+        ) : (
+          <TrendingDown className="w-4 h-4" />
+        )}
         <span className="text-sm font-medium">
-          {isPositive ? '+' : ''}{growth.toFixed(1)}%
+          {isPositive ? "+" : ""}
+          {growth.toFixed(1)}%
         </span>
       </div>
     );
@@ -166,7 +181,9 @@ export default function AdminStatisticsPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.users.total.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              {stats.users.total.toLocaleString()}
+            </div>
             <div className="flex items-center justify-between mt-2">
               <p className="text-xs text-muted-foreground">
                 活跃: {stats.users.active} | 封禁: {stats.users.blocked}
@@ -214,11 +231,11 @@ export default function AdminStatisticsPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(stats.orders.revenue)}</div>
+            <div className="text-2xl font-bold">
+              {formatCurrency(stats.orders.revenue)}
+            </div>
             <div className="flex items-center justify-between mt-2">
-              <p className="text-xs text-muted-foreground">
-                本月收入
-              </p>
+              <p className="text-xs text-muted-foreground">本月收入</p>
               {formatGrowth(stats.orders.growth)}
             </div>
           </CardContent>
@@ -249,7 +266,9 @@ export default function AdminStatisticsPage() {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">使用中</span>
-              <Badge variant="secondary">{stats.boats.total - stats.boats.available}</Badge>
+              <Badge variant="secondary">
+                {stats.boats.total - stats.boats.available}
+              </Badge>
             </div>
           </CardContent>
         </Card>
@@ -266,17 +285,23 @@ export default function AdminStatisticsPage() {
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">总商品数</span>
               <div className="flex items-center gap-2">
-                <span className="text-lg font-bold">{stats.goods.total.toLocaleString()}</span>
+                <span className="text-lg font-bold">
+                  {stats.goods.total.toLocaleString()}
+                </span>
                 {formatGrowth(stats.goods.growth)}
               </div>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">在售商品</span>
-              <Badge variant="default">{stats.goods.enabled.toLocaleString()}</Badge>
+              <Badge variant="default">
+                {stats.goods.enabled.toLocaleString()}
+              </Badge>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">下架商品</span>
-              <Badge variant="secondary">{(stats.goods.total - stats.goods.enabled).toLocaleString()}</Badge>
+              <Badge variant="secondary">
+                {(stats.goods.total - stats.goods.enabled).toLocaleString()}
+              </Badge>
             </div>
           </CardContent>
         </Card>
@@ -293,18 +318,25 @@ export default function AdminStatisticsPage() {
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">总订单数</span>
               <div className="flex items-center gap-2">
-                <span className="text-lg font-bold">{stats.orders.total.toLocaleString()}</span>
+                <span className="text-lg font-bold">
+                  {stats.orders.total.toLocaleString()}
+                </span>
                 {formatGrowth(stats.orders.growth)}
               </div>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">已完成</span>
-              <Badge variant="default">{stats.orders.completed.toLocaleString()}</Badge>
+              <Badge variant="default">
+                {stats.orders.completed.toLocaleString()}
+              </Badge>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">完成率</span>
               <Badge variant="outline">
-                {((stats.orders.completed / stats.orders.total) * 100).toFixed(1)}%
+                {((stats.orders.completed / stats.orders.total) * 100).toFixed(
+                  1
+                )}
+                %
               </Badge>
             </div>
           </CardContent>
@@ -328,13 +360,22 @@ export default function AdminStatisticsPage() {
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">商户活跃率</span>
               <Badge variant="outline">
-                {((stats.merchants.active / stats.merchants.total) * 100).toFixed(1)}%
+                {(
+                  (stats.merchants.active / stats.merchants.total) *
+                  100
+                ).toFixed(1)}
+                %
               </Badge>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">船舶利用率</span>
               <Badge variant="secondary">
-                {(((stats.boats.total - stats.boats.available) / stats.boats.total) * 100).toFixed(1)}%
+                {(
+                  ((stats.boats.total - stats.boats.available) /
+                    stats.boats.total) *
+                  100
+                ).toFixed(1)}
+                %
               </Badge>
             </div>
           </CardContent>
@@ -378,4 +419,4 @@ export default function AdminStatisticsPage() {
       </Card>
     </div>
   );
-} 
+}

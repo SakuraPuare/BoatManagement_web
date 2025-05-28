@@ -1,5 +1,4 @@
-"use client";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { DataPagination } from "@/components/ui/data-pagination";
@@ -17,8 +16,9 @@ import { getDock } from "@/services/api/vendorDock";
 import { getVendorBoatRequestsPageQuery } from "@/services/api/vendorBoatRequest";
 import { format } from "date-fns";
 import { Search, Ship } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+
+("use client");
 
 const ITEMS_PER_PAGE = 10;
 
@@ -36,7 +36,7 @@ export default function VendorBoatRequestsPage() {
       const [requestsResponse] = await Promise.all([
         getVendorBoatRequestsPageQuery(
           { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-          {},
+          {}
         ),
       ]);
       setRequests(requestsResponse.data?.records || []);
@@ -61,7 +61,7 @@ export default function VendorBoatRequestsPage() {
           } catch (error) {
             console.error(`Failed to fetch dock name for ID ${id}:`, error);
           }
-        }),
+        })
       );
       setDockNames(dockNamesMap);
     } catch (error) {
@@ -138,7 +138,7 @@ export default function VendorBoatRequestsPage() {
                     {request.startTime &&
                       format(
                         new Date(request.startTime),
-                        "yyyy-MM-dd HH:mm:ss",
+                        "yyyy-MM-dd HH:mm:ss"
                       )}
                   </TableCell>
                   <TableCell>
@@ -148,24 +148,30 @@ export default function VendorBoatRequestsPage() {
                   <TableCell>
                     <Badge
                       className={`inline-flex items-center  rounded-full whitespace-nowrap ${
-                        REQUEST_STATUS_MAP[request?.status as keyof typeof REQUEST_STATUS_MAP]?.color
+                        REQUEST_STATUS_MAP[
+                          request?.status as keyof typeof REQUEST_STATUS_MAP
+                        ]?.color
                       }`}
                     >
-                      {REQUEST_STATUS_MAP[request?.status as keyof typeof REQUEST_STATUS_MAP]?.label}
+                      {
+                        REQUEST_STATUS_MAP[
+                          request?.status as keyof typeof REQUEST_STATUS_MAP
+                        ]?.label
+                      }
                     </Badge>
                   </TableCell>
                   <TableCell>
                     {request.createdAt &&
                       format(
                         new Date(request.createdAt),
-                        "yyyy-MM-dd HH:mm:ss",
+                        "yyyy-MM-dd HH:mm:ss"
                       )}
                   </TableCell>
                   <TableCell>
                     {request.updatedAt &&
                       format(
                         new Date(request.updatedAt),
-                        "yyyy-MM-dd HH:mm:ss",
+                        "yyyy-MM-dd HH:mm:ss"
                       )}
                   </TableCell>
                 </TableRow>

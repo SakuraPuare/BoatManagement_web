@@ -1,15 +1,17 @@
-"use client";
-
 import React, { useState } from "react";
-import { Shield, Plus, Edit, Trash2 } from "lucide-react";
+import { Edit, Plus, Shield, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { DataManagementTable, type Column, type TableRow } from "@/components/data-management-table";
 import {
-  adminGetPermissionPage,
+  type Column,
+  DataManagementTable,
+  type TableRow,
+} from "@/components/data-management-table";
+import {
   adminCreatePermission,
-  adminUpdatePermission,
   adminDeletePermission,
+  adminGetPermissionPage,
+  adminUpdatePermission,
 } from "@/services/api/adminPermission";
 import {
   Dialog,
@@ -31,6 +33,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+
+("use client");
 
 const permissionSchema = z.object({
   name: z.string().min(1, "权限名称不能为空"),
@@ -60,7 +64,7 @@ const columns: Column<API.BasePermissionVO>[] = [
   {
     accessor: "createdAt",
     header: "创建时间",
-    render: (date) => date ? new Date(date).toLocaleString() : "-",
+    render: (date) => (date ? new Date(date).toLocaleString() : "-"),
   },
 ];
 
@@ -110,9 +114,7 @@ function PermissionDialog({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>
-            {permission?.id ? "编辑权限" : "创建权限"}
-          </DialogTitle>
+          <DialogTitle>{permission?.id ? "编辑权限" : "创建权限"}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -149,7 +151,10 @@ function PermissionDialog({
                 <FormItem>
                   <FormLabel>权限代码</FormLabel>
                   <FormControl>
-                    <Input placeholder="如: USER_READ, ADMIN_WRITE" {...field} />
+                    <Input
+                      placeholder="如: USER_READ, ADMIN_WRITE"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -182,18 +187,18 @@ export default function PermissionsPage() {
 
   const handleDelete = async (id: number) => {
     if (!confirm("确定要删除这个权限吗？")) return;
-    
+
     try {
       await adminDeletePermission({ id });
       toast.success("权限删除成功");
-      setRefreshKey(prev => prev + 1);
+      setRefreshKey((prev) => prev + 1);
     } catch (error) {
       toast.error("权限删除失败");
     }
   };
 
   const handleSuccess = () => {
-    setRefreshKey(prev => prev + 1);
+    setRefreshKey((prev) => prev + 1);
     setShowCreateDialog(false);
   };
 
@@ -244,7 +249,7 @@ export default function PermissionsPage() {
           }
         />
       </div>
-      
+
       <DataManagementTable
         key={refreshKey}
         title=""
@@ -273,4 +278,4 @@ export default function PermissionsPage() {
       />
     </div>
   );
-} 
+}

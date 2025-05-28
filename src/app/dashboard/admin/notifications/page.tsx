@@ -1,16 +1,18 @@
-"use client";
-
 import React, { useState } from "react";
-import { Bell, Plus, Edit, Trash2, Send } from "lucide-react";
+import { Bell, Edit, Plus, Send, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { DataManagementTable, type Column, type TableRow } from "@/components/data-management-table";
 import {
-  getNotificationsPage1,
+  type Column,
+  DataManagementTable,
+  type TableRow,
+} from "@/components/data-management-table";
+import {
   createNotification,
-  updateNotification,
   deleteNotification,
+  getNotificationsPage1,
   sendNotification,
+  updateNotification,
 } from "@/services/api/adminNotificationController";
 import {
   Dialog,
@@ -39,6 +41,8 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+
+("use client");
 
 const notificationSchema = z.object({
   userId: z.number().min(1, "用户ID不能为空"),
@@ -95,7 +99,7 @@ const columns: Column<API.BaseNotificationsVO>[] = [
   {
     accessor: "createdAt",
     header: "创建时间",
-    render: (date) => date ? new Date(date).toLocaleString() : "-",
+    render: (date) => (date ? new Date(date).toLocaleString() : "-"),
   },
 ];
 
@@ -161,9 +165,9 @@ function NotificationDialog({
                 <FormItem>
                   <FormLabel>用户ID</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number" 
-                      placeholder="请输入用户ID" 
+                    <Input
+                      type="number"
+                      placeholder="请输入用户ID"
                       {...field}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
@@ -204,7 +208,10 @@ function NotificationDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>类型</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="选择通知类型" />
@@ -241,11 +248,13 @@ function NotificationDialog({
                 <FormItem>
                   <FormLabel>业务ID（可选）</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number" 
-                      placeholder="相关业务的ID" 
+                    <Input
+                      type="number"
+                      placeholder="相关业务的ID"
                       {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value) || undefined)}
+                      onChange={(e) =>
+                        field.onChange(Number(e.target.value) || undefined)
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -330,9 +339,9 @@ function SendNotificationDialog({
                 <FormItem>
                   <FormLabel>用户ID</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number" 
-                      placeholder="请输入用户ID" 
+                    <Input
+                      type="number"
+                      placeholder="请输入用户ID"
                       {...field}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
@@ -373,7 +382,10 @@ function SendNotificationDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>类型</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="选择通知类型" />
@@ -416,18 +428,18 @@ export default function NotificationsPage() {
 
   const handleDelete = async (id: number) => {
     if (!confirm("确定要删除这个通知吗？")) return;
-    
+
     try {
       await deleteNotification({ id });
       toast.success("通知删除成功");
-      setRefreshKey(prev => prev + 1);
+      setRefreshKey((prev) => prev + 1);
     } catch (error) {
       toast.error("通知删除失败");
     }
   };
 
   const handleSuccess = () => {
-    setRefreshKey(prev => prev + 1);
+    setRefreshKey((prev) => prev + 1);
   };
 
   const actionColumn: Column<API.BaseNotificationsVO> = {
@@ -488,7 +500,7 @@ export default function NotificationsPage() {
           />
         </div>
       </div>
-      
+
       <DataManagementTable
         key={refreshKey}
         title=""
@@ -517,4 +529,4 @@ export default function NotificationsPage() {
       />
     </div>
   );
-} 
+}

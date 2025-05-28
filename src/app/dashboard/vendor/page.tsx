@@ -1,7 +1,8 @@
-"use client";
 import React from "react";
 
 import { Building2, Home, Monitor, Settings } from "lucide-react";
+
+("use client");
 
 const sidebarItems = [
   {

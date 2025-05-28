@@ -1,20 +1,24 @@
-"use client";
-
-import { Package, Ship } from "lucide-react";
-import { 
-  userGetGoodsOrdersPage,
-  userCancelGoodsOrder,
-  userPayGoodsOrder,
-  userGetBoatOrdersPage,
-  userCancelBoatOrder,
-  userPayBoatOrder
-} from "@/services/api/userOrder";
-import { DataManagementTable, type Column, type TableRow } from "@/components/data-management-table";
 import React, { useState } from "react";
+import { Package, Ship } from "lucide-react";
+import {
+  userCancelBoatOrder,
+  userCancelGoodsOrder,
+  userGetBoatOrdersPage,
+  userGetGoodsOrdersPage,
+  userPayBoatOrder,
+  userPayGoodsOrder,
+} from "@/services/api/userOrder";
+import {
+  type Column,
+  DataManagementTable,
+  type TableRow,
+} from "@/components/data-management-table";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ORDER_STATUS } from "@/lib/constants/status";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+("use client");
 
 const columns: Column<API.BaseGoodsOrdersVO>[] = [
   {
@@ -39,11 +43,12 @@ const columns: Column<API.BaseGoodsOrdersVO>[] = [
     accessor: "status",
     header: "状态",
     render: (status) => {
-      const { label, color } =
-        ORDER_STATUS[status as keyof typeof ORDER_STATUS] || {
-          label: status,
-          color: "",
-        };
+      const { label, color } = ORDER_STATUS[
+        status as keyof typeof ORDER_STATUS
+      ] || {
+        label: status,
+        color: "",
+      };
       return (
         <span
           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${color}`}
@@ -133,11 +138,12 @@ const boatColumns: Column<API.BaseBoatOrdersVO>[] = [
     accessor: "status",
     header: "状态",
     render: (status) => {
-      const { label, color } =
-        ORDER_STATUS[status as keyof typeof ORDER_STATUS] || {
-          label: status,
-          color: "",
-        };
+      const { label, color } = ORDER_STATUS[
+        status as keyof typeof ORDER_STATUS
+      ] || {
+        label: status,
+        color: "",
+      };
       return (
         <span
           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${color}`}
@@ -200,7 +206,10 @@ export default function UserOrdersPage() {
 
   return (
     <div className="space-y-4">
-      <Tabs defaultValue="goods" onValueChange={(value) => setOrderType(value as "goods" | "boat")}>
+      <Tabs
+        defaultValue="goods"
+        onValueChange={(value) => setOrderType(value as "goods" | "boat")}
+      >
         <TabsList>
           <TabsTrigger value="goods">商品订单</TabsTrigger>
           <TabsTrigger value="boat">船舶订单</TabsTrigger>
@@ -216,7 +225,7 @@ export default function UserOrdersPage() {
               const response = await userGetGoodsOrdersPage({
                 pageNum,
                 pageSize,
-                status: statusFilter !== "all" ? statusFilter : undefined
+                status: statusFilter !== "all" ? statusFilter : undefined,
               });
               const pageData = response.data as API.PageBaseGoodsOrdersVO;
               return {
@@ -255,7 +264,7 @@ export default function UserOrdersPage() {
               const response = await userGetBoatOrdersPage({
                 pageNum,
                 pageSize,
-                status: statusFilter !== "all" ? statusFilter : undefined
+                status: statusFilter !== "all" ? statusFilter : undefined,
               });
               const pageData = response.data as API.PageBaseBoatOrdersVO;
               return {
@@ -286,4 +295,4 @@ export default function UserOrdersPage() {
       </Tabs>
     </div>
   );
-} 
+}

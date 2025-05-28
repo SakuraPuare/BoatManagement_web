@@ -1,6 +1,15 @@
-import { DashboardLayout } from "@/components/layouts/DashboardLayout";
-import { Anchor, Bell, Home, ShoppingBag, Store, Ticket, User, MapPin, UserCheck } from "lucide-react";
 import React from "react";
+import { DashboardLayout } from "@/components/layouts/DashboardLayout";
+import {
+  Anchor,
+  Bell,
+  Home,
+  MapPin,
+  ShoppingBag,
+  Store,
+  User,
+  UserCheck,
+} from "lucide-react";
 
 const sidebarItems = [
   {

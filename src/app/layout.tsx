@@ -1,3 +1,4 @@
+import React from "react";
 import { Providers } from "@/app/providers";
 import { Metadata } from "next";
 import "./globals.css";

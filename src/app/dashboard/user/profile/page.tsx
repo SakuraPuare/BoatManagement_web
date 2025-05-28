@@ -1,14 +1,17 @@
-"use client";
-
-import { useState, useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { userGetCurrentUser } from "@/services/api/userInfo";
-import { User, Mail, Phone, Calendar, Shield, Edit } from "lucide-react";
+import { Calendar, Edit, Mail, Phone, Shield, User } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -18,6 +21,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+("use client");
 
 // 模拟当前用户ID，实际应该从认证状态获取
 const CURRENT_USER_ID = 1;
@@ -129,27 +134,31 @@ export default function UserProfilePage() {
             </div>
             <div>
               <Label className="text-sm font-medium">用户名</Label>
-              <p className="text-sm text-muted-foreground">{user.username || "-"}</p>
+              <p className="text-sm text-muted-foreground">
+                {user.username || "-"}
+              </p>
             </div>
             <div>
               <Label className="text-sm font-medium">邮箱</Label>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">{user.email || "-"}</p>
+                <p className="text-sm text-muted-foreground">
+                  {user.email || "-"}
+                </p>
               </div>
             </div>
             <div>
               <Label className="text-sm font-medium">电话</Label>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">{user.phone || "-"}</p>
+                <p className="text-sm text-muted-foreground">
+                  {user.phone || "-"}
+                </p>
               </div>
             </div>
             <div>
               <Label className="text-sm font-medium">账户状态</Label>
-              <div className="mt-1">
-                {getUserStatusBadge(user)}
-              </div>
+              <div className="mt-1">{getUserStatusBadge(user)}</div>
             </div>
           </CardContent>
         </Card>
@@ -185,7 +194,9 @@ export default function UserProfilePage() {
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-muted-foreground" />
                 <p className="text-sm text-muted-foreground">
-                  {user.createdAt ? new Date(user.createdAt).toLocaleString() : "-"}
+                  {user.createdAt
+                    ? new Date(user.createdAt).toLocaleString()
+                    : "-"}
                 </p>
               </div>
             </div>
@@ -194,7 +205,9 @@ export default function UserProfilePage() {
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-muted-foreground" />
                 <p className="text-sm text-muted-foreground">
-                  {user.updatedAt ? new Date(user.updatedAt).toLocaleString() : "-"}
+                  {user.updatedAt
+                    ? new Date(user.updatedAt).toLocaleString()
+                    : "-"}
                 </p>
               </div>
             </div>
@@ -232,7 +245,9 @@ export default function UserProfilePage() {
               <Input
                 id="username"
                 value={editForm.username}
-                onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, username: e.target.value })
+                }
                 placeholder="请输入用户名"
               />
             </div>
@@ -242,7 +257,9 @@ export default function UserProfilePage() {
                 id="email"
                 type="email"
                 value={editForm.email}
-                onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, email: e.target.value })
+                }
                 placeholder="请输入邮箱"
               />
             </div>
@@ -251,13 +268,19 @@ export default function UserProfilePage() {
               <Input
                 id="phone"
                 value={editForm.phone}
-                onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, phone: e.target.value })
+                }
                 placeholder="请输入电话号码"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsEditDialogOpen(false)}
+            >
               取消
             </Button>
             <Button type="button" onClick={handleEditSubmit}>
@@ -268,4 +291,4 @@ export default function UserProfilePage() {
       </Dialog>
     </div>
   );
-} 
+}

@@ -1,5 +1,4 @@
-"use client";
-
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Action,
   Column,
@@ -12,8 +11,9 @@ import {
 } from "@/services/api/adminDock";
 
 import { Anchor, Ban, Pencil, Trash2 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
 import { DockDialog, dockFormSchema } from "./dock-dialog";
+
+("use client");
 
 const ITEMS_PER_PAGE = 10;
 

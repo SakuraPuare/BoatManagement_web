@@ -9,4 +9,4 @@ export const merchantFormSchema = z.object({
 
 export function MerchantDialog() {
   return null; // 暂时返回空组件
-} 
+}

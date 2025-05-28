@@ -1,13 +1,13 @@
-"use client";
-
+import React, { useCallback, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { checkAvailability, sendCode } from "@/services/api/authController";
 import { Lock, Ship, User } from "lucide-react";
 import Link from "next/link";
-import React, { useCallback, useState, useRef } from "react";
 import { toast } from "sonner";
+
+("use client");
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -20,19 +20,19 @@ export default function RegisterPage() {
   const [verifyCode, setVerifyCode] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [showVerifyCode, setShowVerifyCode] = useState(false);
-  
+
   // 防重复提交
   const isSubmittingRef = useRef(false);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // 防重复提交检查
     if (isSubmittingRef.current || isLoading) {
       console.log("防重复提交：请求已在处理中");
       return;
     }
-    
+
     if (usernameError) {
       toast.error("请解决用户名问题后再注册");
       return;
@@ -67,9 +67,9 @@ export default function RegisterPage() {
     // 设置提交状态
     isSubmittingRef.current = true;
     setIsLoading(true);
-    
+
     console.log("开始注册请求:", username.trim());
-    
+
     try {
       await register({
         username: username.trim(),
@@ -131,7 +131,8 @@ export default function RegisterPage() {
     // 检查是否为手机号或邮箱
     return (
       username.match(/^(?:0|86|\+86)?1[3-9]\d{9}$/) !== null ||
-      username.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) !== null
+      username.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) !==
+        null
     );
   };
 
@@ -223,7 +224,11 @@ export default function RegisterPage() {
                   onClick={handleSendCode}
                   disabled={isCodeLoading || countdown > 0}
                 >
-                  {isCodeLoading ? "发送中..." : countdown > 0 ? `${countdown}s` : "获取验证码"}
+                  {isCodeLoading
+                    ? "发送中..."
+                    : countdown > 0
+                    ? `${countdown}s`
+                    : "获取验证码"}
                 </Button>
               </div>
             )}

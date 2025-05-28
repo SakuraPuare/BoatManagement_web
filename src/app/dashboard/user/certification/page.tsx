@@ -1,14 +1,18 @@
-"use client";
-
-import { useState, useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { userCertify } from "@/services/api/certifyController";
-import { UserCheck, AlertCircle, CheckCircle, Clock, X } from "lucide-react";
+import { AlertCircle, CheckCircle, Clock, UserCheck, X } from "lucide-react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,12 +26,22 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
+("use client");
+
 // 模拟当前用户ID和认证状态，实际应该从认证状态获取
 const CURRENT_USER_ID = 1;
 
 const certifyFormSchema = z.object({
-  realName: z.string().min(2, "真实姓名至少2个字符").max(50, "真实姓名不能超过50个字符"),
-  idCard: z.string().regex(/^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/, "请输入正确的身份证号码"),
+  realName: z
+    .string()
+    .min(2, "真实姓名至少2个字符")
+    .max(50, "真实姓名不能超过50个字符"),
+  idCard: z
+    .string()
+    .regex(
+      /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/,
+      "请输入正确的身份证号码"
+    ),
 });
 
 type CertifyStatus = "NONE" | "PENDING" | "APPROVED" | "REJECTED";
@@ -61,7 +75,9 @@ const STATUS_CONFIG = {
 
 export default function UserCertificationPage() {
   const [certifyStatus, setCertifyStatus] = useState<CertifyStatus>("NONE");
-  const [certifyInfo, setCertifyInfo] = useState<API.BaseUserCertifyVO | null>(null);
+  const [certifyInfo, setCertifyInfo] = useState<API.BaseUserCertifyVO | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -82,10 +98,10 @@ export default function UserCertificationPage() {
         status: "NONE" as CertifyStatus,
         data: null as API.BaseUserCertifyVO | null,
       };
-      
+
       setCertifyStatus(mockResponse.status);
       setCertifyInfo(mockResponse.data);
-      
+
       if (mockResponse.data) {
         form.reset({
           realName: mockResponse.data.realName || "",
@@ -137,7 +153,9 @@ export default function UserCertificationPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">实名认证</h1>
-          <p className="text-muted-foreground">完成实名认证以获得更多功能权限</p>
+          <p className="text-muted-foreground">
+            完成实名认证以获得更多功能权限
+          </p>
         </div>
       </div>
 
@@ -151,19 +169,26 @@ export default function UserCertificationPage() {
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-3 mb-4">
-            <Badge variant={statusConfig.variant} className="flex items-center gap-1">
+            <Badge
+              variant={statusConfig.variant}
+              className="flex items-center gap-1"
+            >
               {statusConfig.icon}
               {statusConfig.label}
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground">{statusConfig.description}</p>
-          
+          <p className="text-sm text-muted-foreground">
+            {statusConfig.description}
+          </p>
+
           {certifyInfo && (
             <div className="mt-4 space-y-2">
               <div>
                 <Label className="text-sm font-medium">申请时间</Label>
                 <p className="text-sm text-muted-foreground">
-                  {certifyInfo.createdAt ? new Date(certifyInfo.createdAt).toLocaleString() : "-"}
+                  {certifyInfo.createdAt
+                    ? new Date(certifyInfo.createdAt).toLocaleString()
+                    : "-"}
                 </p>
               </div>
               {certifyInfo.updatedAt && (
@@ -190,7 +215,10 @@ export default function UserCertificationPage() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="realName"
@@ -217,7 +245,11 @@ export default function UserCertificationPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" disabled={isSubmitting} className="w-full">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full"
+                >
                   {isSubmitting ? "提交中..." : "提交认证申请"}
                 </Button>
               </form>
@@ -234,7 +266,9 @@ export default function UserCertificationPage() {
         <CardContent>
           <div className="space-y-3 text-sm text-muted-foreground">
             <div>
-              <h4 className="font-medium text-foreground mb-1">为什么需要实名认证？</h4>
+              <h4 className="font-medium text-foreground mb-1">
+                为什么需要实名认证？
+              </h4>
               <p>实名认证有助于保障您的账户安全，并让您享受更多平台功能。</p>
             </div>
             <div>
@@ -248,7 +282,9 @@ export default function UserCertificationPage() {
             </div>
             <div>
               <h4 className="font-medium text-foreground mb-1">隐私保护</h4>
-              <p>我们承诺严格保护您的个人信息，仅用于身份验证，不会泄露给第三方。</p>
+              <p>
+                我们承诺严格保护您的个人信息，仅用于身份验证，不会泄露给第三方。
+              </p>
             </div>
           </div>
         </CardContent>
@@ -258,9 +294,10 @@ export default function UserCertificationPage() {
       <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          <strong>注意：</strong>请确保填写的信息真实有效，虚假信息将导致认证失败。认证通过后，个人信息将无法修改，请仔细核对。
+          <strong>注意：</strong>
+          请确保填写的信息真实有效，虚假信息将导致认证失败。认证通过后，个人信息将无法修改，请仔细核对。
         </AlertDescription>
       </Alert>
     </div>
   );
-} 
+}

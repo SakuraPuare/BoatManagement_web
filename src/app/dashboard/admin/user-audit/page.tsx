@@ -1,7 +1,9 @@
-"use client";
-
-import { useState, useCallback, useEffect } from "react";
-import { DataManagementTable, type Column, type Action } from "@/components/data-management-table";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  type Action,
+  type Column,
+  DataManagementTable,
+} from "@/components/data-management-table";
 import { adminGetUserCertifyPage } from "@/services/api/adminUser";
 import { auditAdminUser } from "@/services/api/adminAudit";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserCheck, UserX, Eye } from "lucide-react";
+import { Eye, UserCheck, UserX } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -23,24 +25,37 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+("use client");
+
 const ITEMS_PER_PAGE = 10;
 
 type CertifyStatus = "PENDING" | "APPROVED" | "REJECTED";
 
-const STATUS_MAP: Record<CertifyStatus, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+const STATUS_MAP: Record<
+  CertifyStatus,
+  {
+    label: string;
+    variant: "default" | "secondary" | "destructive" | "outline";
+  }
+> = {
   PENDING: { label: "待审核", variant: "outline" },
   APPROVED: { label: "已通过", variant: "default" },
   REJECTED: { label: "已拒绝", variant: "destructive" },
 };
 
 export default function UserAuditPage() {
-  const [certifications, setCertifications] = useState<API.BaseUserCertifyVO[]>([]);
-  const [selectedCertification, setSelectedCertification] = useState<API.BaseUserCertifyVO | null>(null);
+  const [certifications, setCertifications] = useState<API.BaseUserCertifyVO[]>(
+    []
+  );
+  const [selectedCertification, setSelectedCertification] =
+    useState<API.BaseUserCertifyVO | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<"all" | CertifyStatus>("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | CertifyStatus>(
+    "all"
+  );
 
   const fetchCertifications = useCallback(async () => {
     setIsLoading(true);
@@ -144,8 +159,6 @@ export default function UserAuditPage() {
     },
   ];
 
-
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -158,7 +171,9 @@ export default function UserAuditPage() {
       <div className="flex items-center space-x-4 mb-4">
         <Select
           value={statusFilter}
-          onValueChange={(value) => setStatusFilter(value as "all" | CertifyStatus)}
+          onValueChange={(value) =>
+            setStatusFilter(value as "all" | CertifyStatus)
+          }
         >
           <SelectTrigger className="w-[160px]">
             <SelectValue placeholder="选择状态" />
@@ -211,15 +226,23 @@ export default function UserAuditPage() {
               <div>
                 <label className="text-sm font-medium">审核状态</label>
                 <div className="mt-1">
-                  <Badge variant={STATUS_MAP[selectedCertification.status as CertifyStatus]?.variant || "outline"}>
-                    {STATUS_MAP[selectedCertification.status as CertifyStatus]?.label || "未知"}
+                  <Badge
+                    variant={
+                      STATUS_MAP[selectedCertification.status as CertifyStatus]
+                        ?.variant || "outline"
+                    }
+                  >
+                    {STATUS_MAP[selectedCertification.status as CertifyStatus]
+                      ?.label || "未知"}
                   </Badge>
                 </div>
               </div>
               <div>
                 <label className="text-sm font-medium">申请时间</label>
                 <p className="text-sm text-muted-foreground">
-                  {selectedCertification.createdAt ? new Date(selectedCertification.createdAt).toLocaleString() : "-"}
+                  {selectedCertification.createdAt
+                    ? new Date(selectedCertification.createdAt).toLocaleString()
+                    : "-"}
                 </p>
               </div>
               {selectedCertification.status === "PENDING" && (
@@ -253,4 +276,4 @@ export default function UserAuditPage() {
       </Dialog>
     </div>
   );
-} 
+}

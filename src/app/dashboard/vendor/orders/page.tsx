@@ -1,6 +1,4 @@
-"use client";
-
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { format } from "date-fns";
 import {
   Table,
@@ -12,19 +10,21 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ShoppingCart, Search } from "lucide-react";
+import { Search, ShoppingCart } from "lucide-react";
 import { DataPagination } from "@/components/ui/data-pagination";
-import { 
+import {
   cancelOrder1,
   completeOrder1,
   getVendorOrdersPageQuery,
-  handleOrder
+  handleOrder,
 } from "@/services/api/vendorOrder";
 import { toast } from "sonner";
+import { ORDER_STATUS } from "@/lib/constants/status";
+
+("use client");
 
 const ITEMS_PER_PAGE = 10;
-import { ORDER_STATUS } from "@/lib/constants/status";
-                                    
+
 export default function VendorOrdersPage() {
   const [orders, setOrders] = useState<API.BaseBoatOrdersVO[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -53,7 +53,7 @@ export default function VendorOrdersPage() {
     try {
       await cancelOrder1({ id });
       toast.success("订单已取消");
-      fetchOrders();
+      await fetchOrders();
     } catch (error) {
       console.error(error);
       toast.error("取消订单失败");
@@ -64,7 +64,7 @@ export default function VendorOrdersPage() {
     try {
       await completeOrder1({ id });
       toast.success("订单已完成");
-      fetchOrders();
+      await fetchOrders();
     } catch (error) {
       console.error(error);
       toast.error("完成订单失败");
@@ -80,7 +80,7 @@ export default function VendorOrdersPage() {
         }
       );
       toast.success("订单已接受");
-      fetchOrders();
+      await fetchOrders();
     } catch (error) {
       console.error(error);
       toast.error("接受订单失败");
@@ -151,19 +151,25 @@ export default function VendorOrdersPage() {
                   <TableCell>
                     <span
                       className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-medium min-w-[80px] ${
-                        ORDER_STATUS[order.status as keyof typeof ORDER_STATUS]?.color
+                        ORDER_STATUS[order.status as keyof typeof ORDER_STATUS]
+                          ?.color
                       }`}
                     >
-                      {ORDER_STATUS[order.status as keyof typeof ORDER_STATUS]?.label}
+                      {
+                        ORDER_STATUS[order.status as keyof typeof ORDER_STATUS]
+                          ?.label
+                      }
                     </span>
                   </TableCell>
                   <TableCell>{order.price?.toFixed(2)}</TableCell>
                   <TableCell>{order.discount}%</TableCell>
                   <TableCell>
-                    {order.createdAt && format(new Date(order.createdAt), "yyyy-MM-dd HH:mm:ss")}
+                    {order.createdAt &&
+                      format(new Date(order.createdAt), "yyyy-MM-dd HH:mm:ss")}
                   </TableCell>
                   <TableCell>
-                    {order.updatedAt && format(new Date(order.updatedAt), "yyyy-MM-dd HH:mm:ss")}
+                    {order.updatedAt &&
+                      format(new Date(order.updatedAt), "yyyy-MM-dd HH:mm:ss")}
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
@@ -211,4 +217,4 @@ export default function VendorOrdersPage() {
       />
     </div>
   );
-} 
+}

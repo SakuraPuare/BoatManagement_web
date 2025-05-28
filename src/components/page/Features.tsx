@@ -1,5 +1,5 @@
-import { Anchor, BarChart3, Navigation, Shield } from "lucide-react";
 import React from "react";
+import { Anchor, BarChart3, Navigation, Shield } from "lucide-react";
 
 export function Features() {
   const features = [

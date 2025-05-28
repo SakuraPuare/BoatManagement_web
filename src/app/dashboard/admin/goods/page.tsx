@@ -1,6 +1,4 @@
-"use client";
-
-import { useState, useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { Input } from "@/components/ui/input";
@@ -19,10 +17,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { adminGetGoodsPage, adminDeleteGoods } from "@/services/api/adminGoods";
+import { adminDeleteGoods, adminGetGoodsPage } from "@/services/api/adminGoods";
 import { adminGetMerchantList } from "@/services/api/adminMerchant";
 import { adminGetUnitList } from "@/services/api/adminUnit";
-import { Package, MoreVertical, Search, Trash2, Eye, Ban, CheckCircle } from "lucide-react";
+import { Eye, MoreVertical, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -31,6 +29,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+("use client");
 
 const ITEMS_PER_PAGE = 10;
 
@@ -41,31 +41,38 @@ type GoodsWithDetails = API.BaseGoodsVO & {
 
 export default function AdminGoodsPage() {
   const [goods, setGoods] = useState<API.BaseGoodsVO[]>([]);
-  const [goodsWithDetails, setGoodsWithDetails] = useState<GoodsWithDetails[]>([]);
+  const [goodsWithDetails, setGoodsWithDetails] = useState<GoodsWithDetails[]>(
+    []
+  );
   const [merchants, setMerchants] = useState<API.BaseMerchantsVO[]>([]);
   const [units, setUnits] = useState<API.BaseUnitsVO[]>([]);
-  const [selectedGoods, setSelectedGoods] = useState<GoodsWithDetails | null>(null);
+  const [selectedGoods, setSelectedGoods] = useState<GoodsWithDetails | null>(
+    null
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<"all" | "enabled" | "disabled">("all");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "enabled" | "disabled"
+  >("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [goodsResponse, merchantsResponse, unitsResponse] = await Promise.all([
-        adminGetGoodsPage(
-          { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-          {
-            ...(statusFilter === "enabled" && { isEnabled: true }),
-            ...(statusFilter === "disabled" && { isEnabled: false }),
-          }
-        ),
-        adminGetMerchantList({}, {}),
-        adminGetUnitList({}, {}),
-      ]);
+      const [goodsResponse, merchantsResponse, unitsResponse] =
+        await Promise.all([
+          adminGetGoodsPage(
+            { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
+            {
+              ...(statusFilter === "enabled" && { isEnabled: true }),
+              ...(statusFilter === "disabled" && { isEnabled: false }),
+            }
+          ),
+          adminGetMerchantList({}, {}),
+          adminGetUnitList({}, {}),
+        ]);
 
       if (goodsResponse.data) {
         const pageData = goodsResponse.data as API.PageBaseGoodsVO;
@@ -120,8 +127,10 @@ export default function AdminGoodsPage() {
     const searchLower = searchQuery.toLowerCase();
     return (
       (item.name && item.name.toLowerCase().includes(searchLower)) ||
-      (item.description && item.description.toLowerCase().includes(searchLower)) ||
-      (item.unitInfo?.name && item.unitInfo.name.toLowerCase().includes(searchLower))
+      (item.description &&
+        item.description.toLowerCase().includes(searchLower)) ||
+      (item.unitInfo?.name &&
+        item.unitInfo.name.toLowerCase().includes(searchLower))
     );
   });
 
@@ -180,7 +189,9 @@ export default function AdminGoodsPage() {
                 <TableRow key={item.id || `goods-${index}`}>
                   <TableCell>{item.id}</TableCell>
                   <TableCell className="font-medium">{item.name}</TableCell>
-                  <TableCell>¥{(item.price && typeof item.price === 'number') ? item.price.toFixed(2) : "0.00"}</TableCell>
+                  <TableCell>
+                    ¥{item.price && true ? item.price.toFixed(2) : "0.00"}
+                  </TableCell>
                   <TableCell>{item.unit || "-"}</TableCell>
                   <TableCell>{item.stock || 0}</TableCell>
                   <TableCell>{item.sales || 0}</TableCell>
@@ -191,7 +202,9 @@ export default function AdminGoodsPage() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {item.createdAt ? new Date(item.createdAt).toLocaleString() : "-"}
+                    {item.createdAt
+                      ? new Date(item.createdAt).toLocaleString()
+                      : "-"}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -201,7 +214,9 @@ export default function AdminGoodsPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleViewDetail(item)}>
+                        <DropdownMenuItem
+                          onClick={() => handleViewDetail(item)}
+                        >
                           <Eye className="mr-2 h-4 w-4" />
                           查看详情
                         </DropdownMenuItem>
@@ -241,33 +256,48 @@ export default function AdminGoodsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium">商品ID</label>
-                  <p className="text-sm text-muted-foreground">{selectedGoods.id}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedGoods.id}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">商品名称</label>
-                  <p className="text-sm text-muted-foreground">{selectedGoods.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedGoods.name}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">价格</label>
                   <p className="text-sm text-muted-foreground">
-                    ¥{(selectedGoods.price && typeof selectedGoods.price === 'number') ? selectedGoods.price.toFixed(2) : "0.00"}
+                    ¥
+                    {selectedGoods.price && true
+                      ? selectedGoods.price.toFixed(2)
+                      : "0.00"}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">单位</label>
-                  <p className="text-sm text-muted-foreground">{selectedGoods.unit || "-"}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedGoods.unit || "-"}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">库存</label>
-                  <p className="text-sm text-muted-foreground">{selectedGoods.stock || 0}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedGoods.stock || 0}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">销量</label>
-                  <p className="text-sm text-muted-foreground">{selectedGoods.sales || 0}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedGoods.sales || 0}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">商家ID</label>
-                  <p className="text-sm text-muted-foreground">{selectedGoods.merchantId || "-"}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedGoods.merchantId || "-"}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">关联单位</label>
@@ -278,7 +308,11 @@ export default function AdminGoodsPage() {
                 <div>
                   <label className="text-sm font-medium">状态</label>
                   <div className="mt-1">
-                    <Badge variant={selectedGoods.isEnabled ? "default" : "secondary"}>
+                    <Badge
+                      variant={
+                        selectedGoods.isEnabled ? "default" : "secondary"
+                      }
+                    >
                       {selectedGoods.isEnabled ? "启用" : "禁用"}
                     </Badge>
                   </div>
@@ -286,7 +320,9 @@ export default function AdminGoodsPage() {
                 <div>
                   <label className="text-sm font-medium">创建时间</label>
                   <p className="text-sm text-muted-foreground">
-                    {selectedGoods.createdAt ? new Date(selectedGoods.createdAt).toLocaleString() : "-"}
+                    {selectedGoods.createdAt
+                      ? new Date(selectedGoods.createdAt).toLocaleString()
+                      : "-"}
                   </p>
                 </div>
               </div>

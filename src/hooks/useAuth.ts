@@ -5,7 +5,7 @@ import {
 
 import { userGetCurrentUser } from "@/services/api/userInfo";
 import { useUserStore } from "@/stores/user";
-import { getRoleList, hasPermission } from "@/utils/role";
+import { getRoleList } from "@/utils/role";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
@@ -13,8 +13,15 @@ import { toast } from "sonner";
 
 export const useAuth = () => {
   const router = useRouter();
-  const { user, setUser, permissions, setPermissions, setToken, logout: clearUserData, token } =
-    useUserStore();
+  const {
+    user,
+    setUser,
+    permissions,
+    setPermissions,
+    setToken,
+    logout: clearUserData,
+    token,
+  } = useUserStore();
 
   const updateUser = useCallback(async () => {
     try {
@@ -39,7 +46,7 @@ export const useAuth = () => {
     async (credentials: API.AuthRequestDTO) => {
       try {
         const response = await loginWithPassword(credentials);
-        
+
         if (response.code === 200 && response.data?.token) {
           // 设置token
           setToken((response.data as API.TokenVO).token!);

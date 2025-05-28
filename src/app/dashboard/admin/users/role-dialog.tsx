@@ -1,4 +1,4 @@
-"use client";
+import React from "react";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -21,12 +21,12 @@ import {
   ROLE_MASKS,
 } from "@/lib/constants/role";
 import { cn } from "@/lib/utils";
-import { adminUpdateUser } from "@/services/api/adminUser";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+
+("use client");
 
 const RoleFormSchema = z.object({
   role: z.number(),

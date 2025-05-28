@@ -1,12 +1,14 @@
-"use client";
-
+import React, { useCallback, useEffect, useState } from "react";
 import { Package } from "lucide-react";
-import { 
+import {
+  createUserMerchantGoodsOrder,
   getUserMerchantGoodsPage,
-  createUserMerchantGoodsOrder 
 } from "@/services/api/userMerchant";
-import { DataManagementTable, type Column, type TableRow } from "@/components/data-management-table";
-import React, { useState, useCallback, useEffect } from "react";
+import {
+  type Column,
+  DataManagementTable,
+  type TableRow,
+} from "@/components/data-management-table";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
@@ -30,6 +32,8 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+("use client");
 
 const orderFormSchema = z.object({
   quantity: z.string().min(1, "请输入购买数量"),
@@ -68,8 +72,8 @@ function PurchaseDialog({
         { merchantId: parseInt(merchantId) },
         {
           orderInfo: {
-            [good.id!]: quantity
-          }
+            [good.id!]: quantity,
+          },
         }
       );
 
@@ -136,10 +140,12 @@ export default function MerchantGoodsPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedGood, setSelectedGood] = useState<API.BaseGoodsVO | null>(null);
+  const [selectedGood, setSelectedGood] = useState<API.BaseGoodsVO | null>(
+    null
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isMerchantOwner, setIsMerchantOwner] = useState(false);
-  
+
   // 检查当前用户是否是这个商家的所有者
   const checkMerchantOwnership = useCallback(async () => {
     if (!user || !merchantId) return;
@@ -157,7 +163,11 @@ export default function MerchantGoodsPage() {
     setIsLoading(true);
     try {
       const response = await getUserMerchantGoodsPage(
-        { merchantId: parseInt(merchantId), pageNum: currentPage, pageSize: 10 },
+        {
+          merchantId: parseInt(merchantId),
+          pageNum: currentPage,
+          pageSize: 10,
+        },
         { name: searchQuery }
       );
       console.log(response.data);
@@ -207,7 +217,7 @@ export default function MerchantGoodsPage() {
       render: (_, row?: TableRow<API.BaseGoodsVO>) => {
         if (!row) return null;
         const { stock } = row.data;
-        
+
         // 如果库存为0，显示已售罄
         if (stock === 0) {
           return (
@@ -216,13 +226,13 @@ export default function MerchantGoodsPage() {
             </Button>
           );
         }
-        
+
         // 如果用户是这个商家的所有者，显示提示信息
         if (isMerchantOwner) {
           return (
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               disabled
               title="商家不能购买商品"
             >
@@ -230,7 +240,7 @@ export default function MerchantGoodsPage() {
             </Button>
           );
         }
-        
+
         // 普通用户显示购买按钮
         return (
           <Button
@@ -277,4 +287,4 @@ export default function MerchantGoodsPage() {
       )}
     </>
   );
-} 
+}

@@ -1,17 +1,17 @@
-"use client";
-
 import React, { useState } from "react";
-import { UserCheck, Plus, Edit, Trash2, Settings } from "lucide-react";
+import { Edit, Plus, Settings, Trash2, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { DataManagementTable, type Column, type TableRow } from "@/components/data-management-table";
 import {
-  adminGetRolePage,
+  type Column,
+  DataManagementTable,
+  type TableRow,
+} from "@/components/data-management-table";
+import {
   adminCreateRole,
-  adminUpdateRole,
   adminDeleteRole,
-  adminAssignRole,
-  adminRevokeRole,
+  adminGetRolePage,
+  adminUpdateRole,
 } from "@/services/api/adminRole";
 import { adminGetPermissionList } from "@/services/api/adminPermission";
 import {
@@ -36,6 +36,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
+("use client");
+
 const roleSchema = z.object({
   name: z.string().min(1, "角色名称不能为空"),
   description: z.string().optional(),
@@ -59,7 +61,7 @@ const columns: Column<API.BaseRoleVO>[] = [
   {
     accessor: "createdAt",
     header: "创建时间",
-    render: (date) => date ? new Date(date).toLocaleString() : "-",
+    render: (date) => (date ? new Date(date).toLocaleString() : "-"),
   },
 ];
 
@@ -108,9 +110,7 @@ function RoleDialog({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>
-            {role?.id ? "编辑角色" : "创建角色"}
-          </DialogTitle>
+          <DialogTitle>{role?.id ? "编辑角色" : "创建角色"}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -192,9 +192,11 @@ function PermissionDialog({
 
   const handlePermissionChange = (permissionId: number, checked: boolean) => {
     if (checked) {
-      setSelectedPermissions(prev => [...prev, permissionId]);
+      setSelectedPermissions((prev) => [...prev, permissionId]);
     } else {
-      setSelectedPermissions(prev => prev.filter(id => id !== permissionId));
+      setSelectedPermissions((prev) =>
+        prev.filter((id) => id !== permissionId)
+      );
     }
   };
 
@@ -239,9 +241,7 @@ function PermissionDialog({
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex-1"
                 >
                   <div>{permission.name}</div>
-                  <div className="text-xs text-gray-500">
-                    {permission.code}
-                  </div>
+                  <div className="text-xs text-gray-500">{permission.code}</div>
                 </label>
               </div>
             ))}
@@ -271,18 +271,18 @@ export default function RolesPage() {
 
   const handleDelete = async (id: number) => {
     if (!confirm("确定要删除这个角色吗？")) return;
-    
+
     try {
       await adminDeleteRole({ id });
       toast.success("角色删除成功");
-      setRefreshKey(prev => prev + 1);
+      setRefreshKey((prev) => prev + 1);
     } catch (error) {
       toast.error("角色删除失败");
     }
   };
 
   const handleSuccess = () => {
-    setRefreshKey(prev => prev + 1);
+    setRefreshKey((prev) => prev + 1);
   };
 
   const actionColumn: Column<API.BaseRoleVO> = {
@@ -341,7 +341,7 @@ export default function RolesPage() {
           }
         />
       </div>
-      
+
       <DataManagementTable
         key={refreshKey}
         title=""
@@ -350,10 +350,7 @@ export default function RolesPage() {
         isLoading={isLoading}
         searchPlaceholder="搜索角色..."
         queryFn={async ({ pageNum, pageSize }) => {
-          const response = await adminGetRolePage(
-            { pageNum, pageSize },
-            {}
-          );
+          const response = await adminGetRolePage({ pageNum, pageSize }, {});
           const pageData = response.data as API.PageBaseRoleVO;
           return {
             list: pageData?.records || [],
@@ -370,4 +367,4 @@ export default function RolesPage() {
       />
     </div>
   );
-} 
+}

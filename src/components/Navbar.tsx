@@ -1,10 +1,10 @@
-"use client";
-
-import { useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Ship, User } from "lucide-react";
+import { Menu, Ship, User, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+
+("use client");
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,7 +17,9 @@ export function Navbar() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
               <Ship className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">智能船舶管理系统</span>
+              <span className="text-xl font-bold text-gray-900">
+                智能船舶管理系统
+              </span>
             </Link>
           </div>
 
@@ -25,18 +27,27 @@ export function Navbar() {
           <div className="hidden md:flex items-center space-x-8">
             {!isAuthenticated && (
               <>
-                <Link href="#features" className="text-gray-700 hover:text-blue-600 transition-colors">
+                <Link
+                  href="#features"
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                >
                   功能特色
                 </Link>
-                <Link href="#advantages" className="text-gray-700 hover:text-blue-600 transition-colors">
+                <Link
+                  href="#advantages"
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                >
                   优势
                 </Link>
-                <Link href="/contact" className="text-gray-700 hover:text-blue-600 transition-colors">
+                <Link
+                  href="/contact"
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                >
                   联系我们
                 </Link>
               </>
             )}
-            
+
             {isAuthenticated ? (
               <>
                 <Link
@@ -57,7 +68,10 @@ export function Navbar() {
               </>
             ) : (
               <>
-                <Link href="/login" className="text-gray-700 hover:text-blue-600 transition-colors">
+                <Link
+                  href="/login"
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                >
                   登录
                 </Link>
                 <Link href="/register">
@@ -73,7 +87,11 @@ export function Navbar() {
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-700 hover:text-blue-600"
             >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -107,7 +125,7 @@ export function Navbar() {
                   </Link>
                 </>
               )}
-              
+
               {isAuthenticated ? (
                 <>
                   <Link
@@ -147,4 +165,4 @@ export function Navbar() {
       </div>
     </nav>
   );
-} 
+}

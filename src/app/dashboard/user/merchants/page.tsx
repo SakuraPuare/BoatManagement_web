@@ -1,10 +1,14 @@
-"use client";
-
-import { Store, ShoppingCart } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import { ShoppingCart, Store } from "lucide-react";
 import { getUserMerchantPageQuery } from "@/services/api/userMerchant";
-import { DataManagementTable, type Column, type TableRow } from "@/components/data-management-table";
-import { useState, useCallback, useEffect } from "react";
+import {
+  type Column,
+  DataManagementTable,
+  type TableRow,
+} from "@/components/data-management-table";
 import { Button } from "@/components/ui/button";
+
+("use client");
 
 const ITEMS_PER_PAGE = 10;
 
@@ -59,7 +63,9 @@ export default function UserMerchantsPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => window.location.href = `/dashboard/user/merchants/${row.data.id}/goods`}
+              onClick={() =>
+                (window.location.href = `/dashboard/user/merchants/${row.data.id}/goods`)
+              }
             >
               <ShoppingCart className="h-4 w-4 mr-2" />
               查看商品
@@ -87,4 +93,4 @@ export default function UserMerchantsPage() {
       }}
     />
   );
-} 
+}

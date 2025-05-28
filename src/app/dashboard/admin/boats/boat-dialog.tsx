@@ -1,4 +1,4 @@
-"use client";
+import React from "react";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -26,10 +26,11 @@ import {
 } from "@/components/ui/select";
 import { adminUpdateBoat } from "@/services/api/adminBoat";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+
+("use client");
 
 export const boatFormSchema = z.object({
   name: z.string().min(1, "请输入船名"),

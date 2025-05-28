@@ -1,4 +1,4 @@
-"use client";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Action,
   Column,
@@ -24,10 +24,10 @@ import {
   Trash2,
   Users,
 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
 import { RoleDialog } from "./role-dialog";
-import { UserDialog } from "./user-dialog";
-import { userFormSchema } from "./user-dialog";
+import { UserDialog, userFormSchema } from "./user-dialog";
+
+("use client");
 const ITEMS_PER_PAGE = 10;
 const defaultUser: API.BaseAccountsVO = {
   id: 0,

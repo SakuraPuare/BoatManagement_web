@@ -1,4 +1,4 @@
-"use client";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,9 +19,10 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { adminCreateDock, adminUpdateDock } from "@/services/api/adminDock";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+
+("use client");
 
 export const dockFormSchema = z.object({
   name: z.string().min(1, "名称不能为空"),
@@ -72,12 +73,10 @@ export function DockDialog({ open, onOpenChange, dock }: DockDialogProps) {
           }
         );
       } else {
-        await adminCreateDock(
-          {
-            ...values,
-            isEnabled: values.isEnabled,
-          }
-        );
+        await adminCreateDock({
+          ...values,
+          isEnabled: values.isEnabled,
+        });
       }
       onOpenChange(false);
       form.reset();

@@ -1,4 +1,4 @@
-"use client";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DataPagination } from "@/components/ui/data-pagination";
 import {
@@ -23,11 +23,15 @@ import {
 import { userGetDockList } from "@/services/api/userDock";
 import { format } from "date-fns";
 import { Anchor, MoreVertical, Plus, Search, X } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { RequestDialog } from "./request-dialog";
-import { BOAT_ORDER_STATUS_MAP, BOAT_ORDER_TYPE_MAP } from "@/lib/constants/status";
+import {
+  BOAT_ORDER_STATUS_MAP,
+  BOAT_ORDER_TYPE_MAP,
+} from "@/lib/constants/status";
 import { clsx } from "clsx";
+
+("use client");
 
 const ITEMS_PER_PAGE = 10;
 
@@ -46,7 +50,7 @@ export default function BoatRequestsPage() {
       const [requestsResponse] = await Promise.all([
         userGetBoatRequestPage(
           { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-          {},
+          {}
         ),
       ]);
       await fetchDocks();
@@ -62,10 +66,7 @@ export default function BoatRequestsPage() {
   }, [currentPage]);
   const fetchDocks = useCallback(async () => {
     try {
-      const docksResponse = await userGetDockList(
-        {},
-        {},
-      );
+      const docksResponse = await userGetDockList({}, {});
       setDocks(docksResponse.data || []);
     } catch (error) {
       console.error(error);
@@ -155,7 +156,7 @@ export default function BoatRequestsPage() {
                     {request.startTime &&
                       format(
                         new Date(request.startTime),
-                        "yyyy-MM-dd HH:mm:ss",
+                        "yyyy-MM-dd HH:mm:ss"
                       )}
                   </TableCell>
                   <TableCell>
@@ -163,31 +164,36 @@ export default function BoatRequestsPage() {
                       format(new Date(request.endTime), "yyyy-MM-dd HH:mm:ss")}
                   </TableCell>
                   <TableCell>
-                    {BOAT_ORDER_TYPE_MAP[request.type as keyof typeof BOAT_ORDER_TYPE_MAP]?.label || "未知"}
+                    {BOAT_ORDER_TYPE_MAP[
+                      request.type as keyof typeof BOAT_ORDER_TYPE_MAP
+                    ]?.label || "未知"}
                   </TableCell>
                   <TableCell>
                     <span
                       className={clsx(
                         "px-2 py-1 rounded-full text-sm font-medium whitespace-nowrap",
-                        BOAT_ORDER_STATUS_MAP[request.status as keyof typeof BOAT_ORDER_STATUS_MAP]?.color || 
-                        "bg-gray-100 text-gray-800"
+                        BOAT_ORDER_STATUS_MAP[
+                          request.status as keyof typeof BOAT_ORDER_STATUS_MAP
+                        ]?.color || "bg-gray-100 text-gray-800"
                       )}
                     >
-                      {BOAT_ORDER_STATUS_MAP[request.status as keyof typeof BOAT_ORDER_STATUS_MAP]?.label || "未知"}
+                      {BOAT_ORDER_STATUS_MAP[
+                        request.status as keyof typeof BOAT_ORDER_STATUS_MAP
+                      ]?.label || "未知"}
                     </span>
                   </TableCell>
                   <TableCell>
                     {request.createdAt &&
                       format(
                         new Date(request.createdAt),
-                        "yyyy-MM-dd HH:mm:ss",
+                        "yyyy-MM-dd HH:mm:ss"
                       )}
                   </TableCell>
                   <TableCell>
                     {request.updatedAt &&
                       format(
                         new Date(request.updatedAt),
-                        "yyyy-MM-dd HH:mm:ss",
+                        "yyyy-MM-dd HH:mm:ss"
                       )}
                   </TableCell>
                   <TableCell>

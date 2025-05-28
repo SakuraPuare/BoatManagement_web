@@ -1,4 +1,3 @@
-"use client";
 import React, { useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,10 +22,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import {
-  createBoatType,
-  updateBoatType,
-} from "@/services/api/vendorBoatType";
+import { createBoatType, updateBoatType } from "@/services/api/vendorBoatType";
+
+("use client");
 
 const boatTypeFormSchema = z.object({
   typeName: z.string().min(1, "请输入类型名称"),

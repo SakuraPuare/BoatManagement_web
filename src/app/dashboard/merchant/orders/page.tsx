@@ -1,12 +1,20 @@
-"use client";
-
-import { useState, useEffect, useCallback } from "react";
-import { merchantGetOrdersPage, merchantCancelOrder, merchantCompleteOrder } from "@/services/api/merchantOrder";
-import { DataManagementTable, type Column, type Action } from "@/components/data-management-table";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  merchantCancelOrder,
+  merchantCompleteOrder,
+  merchantGetOrdersPage,
+} from "@/services/api/merchantOrder";
+import {
+  type Action,
+  type Column,
+  DataManagementTable,
+} from "@/components/data-management-table";
 import { toast } from "sonner";
-import { Trash2, CheckCircle, Package, Ship, ShoppingBag } from "lucide-react";
+import { CheckCircle, Ship, ShoppingBag, Trash2 } from "lucide-react";
 import { ORDER_STATUS } from "@/lib/constants/status";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+("use client");
 
 const ITEMS_PER_PAGE = 10;
 
@@ -38,14 +46,14 @@ export default function MerchantOrdersPage() {
   }, [currentPage, statusFilter]);
 
   useEffect(() => {
-    fetchOrders();  
+    fetchOrders();
   }, [fetchOrders]);
 
   const columns: Column<API.BaseBoatOrdersVO>[] = [
     { header: "订单ID", accessor: "orderId" },
     { header: "用户ID", accessor: "userId" },
-    { 
-      header: "状态", 
+    {
+      header: "状态",
       accessor: "status",
       render: (value) => {
         const status = value as OrderStatus;
@@ -59,27 +67,27 @@ export default function MerchantOrdersPage() {
             {statusConfig?.label || "未知状态"}
           </span>
         );
-      }
+      },
     },
-    { 
-      header: "价格", 
+    {
+      header: "价格",
       accessor: "price",
-      render: (price) => <span>¥{price}</span>,   
+      render: (price) => <span>¥{price}</span>,
     },
-    { 
-      header: "折扣", 
+    {
+      header: "折扣",
       accessor: "discount",
-      render: (discount) => <span>{discount}%</span>, 
+      render: (discount) => <span>{discount}%</span>,
     },
-    { 
-      header: "创建时间", 
+    {
+      header: "创建时间",
       accessor: "createdAt",
-      render: (value) => new Date(value as string).toLocaleString('zh-CN'),
+      render: (value) => new Date(value as string).toLocaleString("zh-CN"),
     },
-    { 
-      header: "更新时间", 
+    {
+      header: "更新时间",
       accessor: "updatedAt",
-      render: (value) => new Date(value as string).toLocaleString('zh-CN'),
+      render: (value) => new Date(value as string).toLocaleString("zh-CN"),
     },
   ];
 
@@ -89,7 +97,7 @@ export default function MerchantOrdersPage() {
       const res = await merchantCancelOrder({ id: order.orderId! });
       if (res.data) {
         toast.success("取消订单成功");
-        fetchOrders(); // 刷新订单列表
+        await fetchOrders(); // 刷新订单列表
       } else {
         toast.error("取消订单失败");
       }
@@ -104,7 +112,7 @@ export default function MerchantOrdersPage() {
       const res = await merchantCompleteOrder({ id: order.orderId! });
       if (res.data) {
         toast.success("完成订单成功");
-        fetchOrders(); // 刷新订单列表
+        await fetchOrders(); // 刷新订单列表
       } else {
         toast.error("完成订单失败");
       }
@@ -121,7 +129,8 @@ export default function MerchantOrdersPage() {
       onClick: handleCancelOrder,
       icon: <Trash2 className="h-4 w-4 mr-2" />,
       // 只有待处理和处理中的订单可以取消
-      show: (order) => ["PENDING", "PROCESSING"].includes(order.status as string),
+      show: (order) =>
+        ["PENDING", "PROCESSING"].includes(order.status as string),
     },
     {
       label: "完成订单",
@@ -179,7 +188,7 @@ export default function MerchantOrdersPage() {
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight">订单管理</h2>
       </div>
-      
+
       <Tabs
         defaultValue="boat"
         value={activeTab}
@@ -207,4 +216,3 @@ export default function MerchantOrdersPage() {
     </div>
   );
 }
-

@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 
 import {
@@ -30,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 import { userCreateBoatRequest } from "@/services/api/userBoatRequest";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
@@ -38,13 +37,17 @@ import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import { BOAT_ORDER_STATUS_MAP } from "@/lib/constants/status";   
+
+("use client");
+
 const requestFormSchema = z.object({
   startDockId: z.number().min(1, "请选择起始码头"),
   endDockId: z.number().min(1, "请选择目的码头"),
   startTime: z.date(),
   endTime: z.date(),
-  type: z.enum(["REAL_TIME", "RESERVATION"], { required_error: "请选择请求类型" }),
+  type: z.enum(["REAL_TIME", "RESERVATION"], {
+    required_error: "请选择请求类型",
+  }),
 });
 
 interface RequestDialogProps {
@@ -86,8 +89,7 @@ export function RequestDialog({
     } catch (error) {
       console.error("创建请求失败:", error);
       toast.error(
-        "创建请求失败: " +
-          (error instanceof Error ? error.message : "未知错误"),
+        "创建请求失败: " + (error instanceof Error ? error.message : "未知错误")
       );
     }
   };
@@ -169,7 +171,7 @@ export function RequestDialog({
                           variant={"outline"}
                           className={cn(
                             "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
+                            !field.value && "text-muted-foreground"
                           )}
                         >
                           {field.value ? (
@@ -211,7 +213,7 @@ export function RequestDialog({
                           variant={"outline"}
                           className={cn(
                             "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
+                            !field.value && "text-muted-foreground"
                           )}
                         >
                           {field.value ? (

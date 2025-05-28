@@ -1,3 +1,4 @@
+import React from "react";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import {
   Anchor,
@@ -5,19 +6,17 @@ import {
   Bell,
   Building2,
   CalendarRange,
-  FileCheck,
-  Settings,
-  Ship,
-  UserCheck,
-  Users,
-  Store,
   Package,
-  Truck,
-  TrendingUp,
+  Settings,
   Shield,
+  Ship,
+  Store,
+  TrendingUp,
+  Truck,
+  UserCheck,
   UserCog,
+  Users,
 } from "lucide-react";
-import React from "react";
 
 const sidebarItems = [
   {

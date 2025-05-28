@@ -1,4 +1,4 @@
-"use client";
+import React from "react";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -21,10 +21,11 @@ import {
   adminUpdateBoatType,
 } from "@/services/api/adminBoatType";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+
+("use client");
 
 const boatTypeFormSchema = z.object({
   typeName: z

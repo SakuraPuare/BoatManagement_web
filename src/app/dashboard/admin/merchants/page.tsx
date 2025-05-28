@@ -1,4 +1,4 @@
-"use client";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Column,
   DataManagementTable,
@@ -8,7 +8,8 @@ import { adminGetMerchantPage } from "@/services/api/adminMerchant";
 import { adminGetUnitList } from "@/services/api/adminUnit";
 import { adminGetUserList } from "@/services/api/adminUser";
 import { Store } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+
+("use client");
 
 type MerchantStatus = keyof typeof MERCHANT_CERTIFY_STATUS_MAP;
 type Merchant = API.BaseMerchantsVO & {
@@ -30,8 +31,10 @@ export default function MerchantsPage() {
   );
 
   const fetchData = useCallback(async () => {
-                const users = ((await adminGetUserList({}, {})).data as API.BaseAccountsVO[]) || [];
-      const units = ((await adminGetUnitList({}, {})).data as API.BaseUnitsVO[]) || [];
+    const users =
+      ((await adminGetUserList({}, {})).data as API.BaseAccountsVO[]) || [];
+    const units =
+      ((await adminGetUnitList({}, {})).data as API.BaseUnitsVO[]) || [];
     const response = await adminGetMerchantPage(
       {
         pageNum: currentPage,

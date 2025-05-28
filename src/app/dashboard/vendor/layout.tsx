@@ -1,16 +1,8 @@
-"use client";
-
-import { DashboardLayout } from "@/components/layouts/DashboardLayout";
-import {
-  Anchor,
-  Home,
-  Package,
-  ShoppingCart,
-  Settings,
-  Ship,
-  Sailboat,
-} from "lucide-react";
 import React from "react";
+import { DashboardLayout } from "@/components/layouts/DashboardLayout";
+import { Anchor, Home, Sailboat, Ship, ShoppingCart } from "lucide-react";
+
+("use client");
 
 const sidebarItems = [
   {

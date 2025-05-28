@@ -1,5 +1,4 @@
-"use client";
-
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,26 +7,27 @@ import { useAuth } from "@/hooks/useAuth";
 import { loginByCode, sendCode } from "@/services/api/authController";
 import { Lock, QrCode, Ship, Smartphone, User as UserIcon } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
 import { toast } from "sonner";
+
+("use client");
 
 export default function LoginPage() {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isCodeLoading, setIsCodeLoading] = useState(false);
   const [countdown, setCountdown] = useState(0);
-  
+
   // 账号密码登录
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  
+
   // 验证码登录
   const [phone, setPhone] = useState("");
   const [verifyCode, setVerifyCode] = useState("");
 
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!username.trim() || !password.trim()) {
       toast.error("请输入用户名和密码");
       return;
@@ -48,7 +48,7 @@ export default function LoginPage() {
 
   const handleCodeLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!phone.trim() || !verifyCode.trim()) {
       toast.error("请输入手机号和验证码");
       return;
@@ -60,7 +60,7 @@ export default function LoginPage() {
         username: phone.trim(),
         password: verifyCode.trim(),
       });
-      
+
       if (response.code === 200) {
         await login({
           username: phone.trim(),
@@ -82,7 +82,7 @@ export default function LoginPage() {
       toast.error("请输入手机号");
       return;
     }
-    
+
     if (!/^1[3-9]\d{9}$/.test(phone.trim())) {
       toast.error("请输入正确的手机号");
       return;
@@ -93,7 +93,7 @@ export default function LoginPage() {
       const response = await sendCode({
         username: phone.trim(),
       });
-      
+
       if (response.code === 200) {
         toast.success("验证码已发送");
         setCountdown(60);
@@ -220,14 +220,18 @@ export default function LoginPage() {
                     value={verifyCode}
                     onChange={(e) => setVerifyCode(e.target.value)}
                   />
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     className="w-32"
                     onClick={handleSendCode}
                     disabled={isCodeLoading || countdown > 0}
                   >
-                    {isCodeLoading ? "发送中..." : countdown > 0 ? `${countdown}s` : "获取验证码"}
+                    {isCodeLoading
+                      ? "发送中..."
+                      : countdown > 0
+                      ? `${countdown}s`
+                      : "获取验证码"}
                   </Button>
                 </div>
               </div>

@@ -1,4 +1,4 @@
-"use client";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Action,
   Column,
@@ -9,9 +9,9 @@ import { adminGetBoatPage } from "@/services/api/adminBoat";
 import { adminGetBoatTypeList } from "@/services/api/adminBoatType";
 import { adminGetDockList } from "@/services/api/adminDock";
 import { Pencil, Ship } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
-import { BoatDialog } from "./boat-dialog";
-import { boatFormSchema } from "./boat-dialog";
+import { BoatDialog, boatFormSchema } from "./boat-dialog";
+
+("use client");
 
 type BoatVO = {
   boat: API.BaseBoatsVO;

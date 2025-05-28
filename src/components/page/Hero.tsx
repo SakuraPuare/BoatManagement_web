@@ -1,8 +1,9 @@
+import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import React from "react";
 import { toast } from "sonner";
+
 export function Hero() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();

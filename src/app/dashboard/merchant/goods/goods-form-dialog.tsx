@@ -1,6 +1,4 @@
-"use client";
-
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,17 +16,29 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { merchantUpdateGoods, merchantCreateGoods } from "@/services/api/merchantGoods";
+import {
+  merchantCreateGoods,
+  merchantUpdateGoods,
+} from "@/services/api/merchantGoods";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
+("use client");
+
 const goodsFormSchema = z.object({
   name: z.string().min(1, "商品名称不能为空").max(50, "商品名称最多50个字符"),
-  description: z.string().min(1, "商品描述不能为空").max(200, "商品描述最多200个字符"),
-  price: z.string().min(1, "价格不能为空")
+  description: z
+    .string()
+    .min(1, "商品描述不能为空")
+    .max(200, "商品描述最多200个字符"),
+  price: z
+    .string()
+    .min(1, "价格不能为空")
     .refine((val) => !isNaN(Number(val)) && Number(val) > 0, "价格必须大于0"),
-  stock: z.string().min(1, "库存不能为空")
+  stock: z
+    .string()
+    .min(1, "库存不能为空")
     .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, "库存不能小于0"),
   unit: z.string().min(1, "单位不能为空").max(10, "单位最多10个字符"),
 });
@@ -88,14 +98,11 @@ export function GoodsFormDialog({
   const onSubmit = async (values: z.infer<typeof goodsFormSchema>) => {
     try {
       if (selectedGood?.id) {
-        const res = await merchantUpdateGoods(
-          { id: selectedGood.id },
-          {
-            ...values,
-            price: parseFloat(values.price),
-            stock: parseInt(values.stock, 10),
-          } as API.BaseGoodsDTO
-        );
+        const res = await merchantUpdateGoods({ id: selectedGood.id }, {
+          ...values,
+          price: parseFloat(values.price),
+          stock: parseInt(values.stock, 10),
+        } as API.BaseGoodsDTO);
         console.log(res);
         if (res.code === 200) {
           toast.success("更新成功");
@@ -215,4 +222,4 @@ export function GoodsFormDialog({
 }
 
 export type { GoodsFormDialogProps };
-export { goodsFormSchema }; 
+export { goodsFormSchema };

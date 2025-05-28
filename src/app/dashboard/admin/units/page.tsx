@@ -1,5 +1,4 @@
-"use client";
-
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Action,
   Column,
@@ -9,7 +8,8 @@ import { cn } from "@/lib/utils";
 import { auditAdminUnit } from "@/services/api/adminAudit";
 import { adminGetUnitPage } from "@/services/api/adminUnit";
 import { Building2, ShieldQuestion } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+
+("use client");
 
 export default function UnitsPage() {
   const [units, setUnits] = useState<API.BaseUnitsVO[]>([]);

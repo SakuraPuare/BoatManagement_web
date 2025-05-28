@@ -1,4 +1,4 @@
-"use client";
+import React, { useCallback, useEffect, useState } from "react";
 import { BoatTypeDialog } from "@/app/dashboard/admin/boat-types/boat-type-dialog";
 import { Button } from "@/components/ui/button";
 import { DataPagination } from "@/components/ui/data-pagination";
@@ -32,7 +32,8 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+
+("use client");
 
 const ITEMS_PER_PAGE = 10;
 

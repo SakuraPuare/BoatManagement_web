@@ -1,9 +1,9 @@
-"use client";
-
+import React from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Ship, User } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+
+("use client");
 
 export function Navbar() {
   const { logout, isAuthenticated } = useAuth();

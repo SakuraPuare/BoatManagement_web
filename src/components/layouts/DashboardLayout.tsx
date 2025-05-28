@@ -1,10 +1,10 @@
-"use client";
-
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, Menu, MonitorCheck, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+
+("use client");
 
 interface SidebarItem {
   title: string;

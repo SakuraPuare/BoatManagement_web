@@ -46,13 +46,13 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       // 服务器返回了错误状态码
       const { status, data } = error.response;
-      
+
       if (status === 401) {
         // 401 未授权，清除用户信息并跳转到登录页
         useUserStore.getState().logout();
         toast.error("登录已过期，请重新登录");
-        if (typeof window !== 'undefined') {
-          window.location.href = '/login';
+        if (typeof window !== "undefined") {
+          window.location.href = "/login";
         }
       } else if (status >= 500) {
         toast.error("服务器错误，请稍后重试");
@@ -66,7 +66,7 @@ axiosInstance.interceptors.response.use(
       // 其他错误
       toast.error("请求失败");
     }
-    
+
     return Promise.reject(error);
   }
 );

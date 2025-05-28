@@ -1,7 +1,8 @@
-"use client";
-
-import { useState, useCallback, useEffect } from "react";
-import { DataManagementTable, type Column } from "@/components/data-management-table";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  type Column,
+  DataManagementTable,
+} from "@/components/data-management-table";
 import { userGetDockPage } from "@/services/api/userDock";
 import { Badge } from "@/components/ui/badge";
 import { Anchor, MapPin, Phone } from "lucide-react";
@@ -14,6 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+("use client");
+
 const ITEMS_PER_PAGE = 10;
 
 export default function UserDocksPage() {
@@ -21,7 +24,9 @@ export default function UserDocksPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<"all" | "enabled" | "disabled">("all");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "enabled" | "disabled"
+  >("all");
 
   const fetchDocks = useCallback(async () => {
     setIsLoading(true);
@@ -119,7 +124,9 @@ export default function UserDocksPage() {
       <div className="flex items-center space-x-4">
         <Select
           value={statusFilter}
-          onValueChange={(value) => setStatusFilter(value as "all" | "enabled" | "disabled")}
+          onValueChange={(value) =>
+            setStatusFilter(value as "all" | "enabled" | "disabled")
+          }
         >
           <SelectTrigger className="w-[160px]">
             <SelectValue placeholder="状态" />
@@ -148,4 +155,4 @@ export default function UserDocksPage() {
       />
     </div>
   );
-} 
+}

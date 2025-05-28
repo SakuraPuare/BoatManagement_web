@@ -1,22 +1,25 @@
-"use client";
-
-import { Package, Pencil, Plus, Trash2 } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import { Package, Pencil, Trash2 } from "lucide-react";
 import {
-  merchantCreateGoods,
   merchantDeleteGoods,
   merchantGetGoodsPage,
-  merchantUpdateGoods,
 } from "@/services/api/merchantGoods";
-import { DataManagementTable, type Column, type Action } from "@/components/data-management-table";
+import {
+  type Action,
+  type Column,
+  DataManagementTable,
+} from "@/components/data-management-table";
 import { GoodsFormDialog, goodsFormSchema } from "./goods-form-dialog";
-import type { z } from "zod";
-import { useState, useCallback, useEffect } from "react";
+
+("use client");
 
 const ITEMS_PER_PAGE = 10;
 
 export default function MerchantGoodsPage() {
   const [goods, setGoods] = useState<API.BaseGoodsVO[]>([]);
-  const [selectedGood, setSelectedGood] = useState<API.BaseGoodsVO | null>(null);
+  const [selectedGood, setSelectedGood] = useState<API.BaseGoodsVO | null>(
+    null
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +37,7 @@ export default function MerchantGoodsPage() {
         const pageData = response.data as API.PageBaseGoodsVO;
         setGoods(pageData.records || []);
         setTotalPages(pageData.totalPage || 0);
-      } 
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -68,8 +71,8 @@ export default function MerchantGoodsPage() {
   const columns: Column<API.BaseGoodsVO>[] = [
     { header: "商品名称", accessor: "name" },
     { header: "描述", accessor: "description" },
-    { 
-      header: "价格", 
+    {
+      header: "价格",
       accessor: "price",
       render: (price) => <span>¥{price}</span>,
     },
@@ -104,10 +107,9 @@ export default function MerchantGoodsPage() {
         dialog={GoodsFormDialog}
         schema={goodsFormSchema}
         queryFn={async ({ pageNum, pageSize }, searchQuery) => {
-          const response = await merchantGetGoodsPage(
-            { pageNum, pageSize },
-            { name: searchQuery } as API.BaseGoodsDTO
-          );
+          const response = await merchantGetGoodsPage({ pageNum, pageSize }, {
+            name: searchQuery,
+          } as API.BaseGoodsDTO);
           const pageData = response.data as API.PageBaseGoodsVO;
           return {
             list: pageData?.records || [],
@@ -137,4 +139,4 @@ export default function MerchantGoodsPage() {
       />
     </>
   );
-} 
+}

@@ -1,13 +1,14 @@
- "use client";
-
-import { useState, useCallback, useEffect } from "react";
-import { DataManagementTable, type Column, type Action } from "@/components/data-management-table";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  type Action,
+  type Column,
+  DataManagementTable,
+} from "@/components/data-management-table";
 import { adminGetBoatOrdersPage } from "@/services/api/adminOrder";
 import { adminGetGoodsOrdersPage1 as adminGetGoodsOrdersPage } from "@/services/api/adminGoodsOrder";
 import { adminGetUserList } from "@/services/api/adminUser";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Ship, Package, Eye, ShoppingCart } from "lucide-react";
+import { Eye, Package, Ship } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -18,6 +19,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ORDER_STATUS } from "@/lib/constants/status";
+
+("use client");
 
 const ITEMS_PER_PAGE = 10;
 
@@ -34,12 +37,18 @@ type GoodsOrderWithUser = API.BaseGoodsOrdersVO & {
 export default function AdminOrdersPage() {
   const [boatOrders, setBoatOrders] = useState<API.BaseBoatOrdersVO[]>([]);
   const [goodsOrders, setGoodsOrders] = useState<API.BaseGoodsOrdersVO[]>([]);
-  const [boatOrdersWithUser, setBoatOrdersWithUser] = useState<BoatOrderWithUser[]>([]);
-  const [goodsOrdersWithUser, setGoodsOrdersWithUser] = useState<GoodsOrderWithUser[]>([]);
+  const [boatOrdersWithUser, setBoatOrdersWithUser] = useState<
+    BoatOrderWithUser[]
+  >([]);
+  const [goodsOrdersWithUser, setGoodsOrdersWithUser] = useState<
+    GoodsOrderWithUser[]
+  >([]);
   const [users, setUsers] = useState<API.BaseAccountsVO[]>([]);
-  const [selectedBoatOrder, setSelectedBoatOrder] = useState<BoatOrderWithUser | null>(null);
-  const [selectedGoodsOrder, setSelectedGoodsOrder] = useState<GoodsOrderWithUser | null>(null);
-  
+  const [selectedBoatOrder, setSelectedBoatOrder] =
+    useState<BoatOrderWithUser | null>(null);
+  const [selectedGoodsOrder, setSelectedGoodsOrder] =
+    useState<GoodsOrderWithUser | null>(null);
+
   const [boatCurrentPage, setBoatCurrentPage] = useState(1);
   const [goodsCurrentPage, setGoodsCurrentPage] = useState(1);
   const [boatTotalPages, setBoatTotalPages] = useState(0);
@@ -47,8 +56,12 @@ export default function AdminOrdersPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isBoatDetailDialogOpen, setIsBoatDetailDialogOpen] = useState(false);
   const [isGoodsDetailDialogOpen, setIsGoodsDetailDialogOpen] = useState(false);
-  const [boatStatusFilter, setBoatStatusFilter] = useState<"all" | OrderStatus>("all");
-  const [goodsStatusFilter, setGoodsStatusFilter] = useState<"all" | OrderStatus>("all");
+  const [boatStatusFilter, setBoatStatusFilter] = useState<"all" | OrderStatus>(
+    "all"
+  );
+  const [goodsStatusFilter, setGoodsStatusFilter] = useState<
+    "all" | OrderStatus
+  >("all");
   const [activeTab, setActiveTab] = useState("boat");
 
   const fetchUsers = useCallback(async () => {
@@ -160,7 +173,11 @@ export default function AdminOrdersPage() {
       width: "100px",
       render: (value: OrderStatus) => {
         const status = ORDER_STATUS[value];
-        return status ? <Badge className={status.color}>{status.label}</Badge> : "-";
+        return status ? (
+          <Badge className={status.color}>{status.label}</Badge>
+        ) : (
+          "-"
+        );
       },
     },
     {
@@ -203,7 +220,11 @@ export default function AdminOrdersPage() {
       width: "100px",
       render: (value: OrderStatus) => {
         const status = ORDER_STATUS[value];
-        return status ? <Badge className={status.color}>{status.label}</Badge> : "-";
+        return status ? (
+          <Badge className={status.color}>{status.label}</Badge>
+        ) : (
+          "-"
+        );
       },
     },
     {
@@ -249,7 +270,8 @@ export default function AdminOrdersPage() {
       key: "status",
       label: "状态",
       value: boatStatusFilter,
-      onChange: (value: string) => setBoatStatusFilter(value as "all" | OrderStatus),
+      onChange: (value: string) =>
+        setBoatStatusFilter(value as "all" | OrderStatus),
       options: [
         { label: "全部", value: "all" },
         ...Object.entries(ORDER_STATUS).map(([key, value]) => ({
@@ -265,7 +287,8 @@ export default function AdminOrdersPage() {
       key: "status",
       label: "状态",
       value: goodsStatusFilter,
-      onChange: (value: string) => setGoodsStatusFilter(value as "all" | OrderStatus),
+      onChange: (value: string) =>
+        setGoodsStatusFilter(value as "all" | OrderStatus),
       options: [
         { label: "全部", value: "all" },
         ...Object.entries(ORDER_STATUS).map(([key, value]) => ({
@@ -337,7 +360,10 @@ export default function AdminOrdersPage() {
       </Tabs>
 
       {/* 船舶订单详情对话框 */}
-      <Dialog open={isBoatDetailDialogOpen} onOpenChange={setIsBoatDetailDialogOpen}>
+      <Dialog
+        open={isBoatDetailDialogOpen}
+        onOpenChange={setIsBoatDetailDialogOpen}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>船舶订单详情</DialogTitle>
@@ -348,7 +374,9 @@ export default function AdminOrdersPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium">订单ID</label>
-                  <p className="text-sm text-muted-foreground">{selectedBoatOrder.id}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedBoatOrder.id}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">用户</label>
@@ -359,14 +387,22 @@ export default function AdminOrdersPage() {
                 <div>
                   <label className="text-sm font-medium">状态</label>
                   <div className="mt-1">
-                    <Badge className={ORDER_STATUS[selectedBoatOrder.status as OrderStatus]?.color || ""}>
-                      {ORDER_STATUS[selectedBoatOrder.status as OrderStatus]?.label || "未知"}
+                    <Badge
+                      className={
+                        ORDER_STATUS[selectedBoatOrder.status as OrderStatus]
+                          ?.color || ""
+                      }
+                    >
+                      {ORDER_STATUS[selectedBoatOrder.status as OrderStatus]
+                        ?.label || "未知"}
                     </Badge>
                   </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium">船只ID</label>
-                  <p className="text-sm text-muted-foreground">{selectedBoatOrder.boatId || "-"}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedBoatOrder.boatId || "-"}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">价格</label>
@@ -383,13 +419,17 @@ export default function AdminOrdersPage() {
                 <div>
                   <label className="text-sm font-medium">创建时间</label>
                   <p className="text-sm text-muted-foreground">
-                    {selectedBoatOrder.createdAt ? new Date(selectedBoatOrder.createdAt).toLocaleString() : "-"}
+                    {selectedBoatOrder.createdAt
+                      ? new Date(selectedBoatOrder.createdAt).toLocaleString()
+                      : "-"}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">更新时间</label>
                   <p className="text-sm text-muted-foreground">
-                    {selectedBoatOrder.updatedAt ? new Date(selectedBoatOrder.updatedAt).toLocaleString() : "-"}
+                    {selectedBoatOrder.updatedAt
+                      ? new Date(selectedBoatOrder.updatedAt).toLocaleString()
+                      : "-"}
                   </p>
                 </div>
               </div>
@@ -399,7 +439,10 @@ export default function AdminOrdersPage() {
       </Dialog>
 
       {/* 商品订单详情对话框 */}
-      <Dialog open={isGoodsDetailDialogOpen} onOpenChange={setIsGoodsDetailDialogOpen}>
+      <Dialog
+        open={isGoodsDetailDialogOpen}
+        onOpenChange={setIsGoodsDetailDialogOpen}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>商品订单详情</DialogTitle>
@@ -410,7 +453,9 @@ export default function AdminOrdersPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium">订单ID</label>
-                  <p className="text-sm text-muted-foreground">{selectedGoodsOrder.id}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedGoodsOrder.id}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">用户</label>
@@ -421,14 +466,22 @@ export default function AdminOrdersPage() {
                 <div>
                   <label className="text-sm font-medium">状态</label>
                   <div className="mt-1">
-                    <Badge className={ORDER_STATUS[selectedGoodsOrder.status as OrderStatus]?.color || ""}>
-                      {ORDER_STATUS[selectedGoodsOrder.status as OrderStatus]?.label || "未知"}
+                    <Badge
+                      className={
+                        ORDER_STATUS[selectedGoodsOrder.status as OrderStatus]
+                          ?.color || ""
+                      }
+                    >
+                      {ORDER_STATUS[selectedGoodsOrder.status as OrderStatus]
+                        ?.label || "未知"}
                     </Badge>
                   </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium">商家ID</label>
-                  <p className="text-sm text-muted-foreground">{selectedGoodsOrder.merchantId || "-"}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedGoodsOrder.merchantId || "-"}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">价格</label>
@@ -445,13 +498,17 @@ export default function AdminOrdersPage() {
                 <div>
                   <label className="text-sm font-medium">创建时间</label>
                   <p className="text-sm text-muted-foreground">
-                    {selectedGoodsOrder.createdAt ? new Date(selectedGoodsOrder.createdAt).toLocaleString() : "-"}
+                    {selectedGoodsOrder.createdAt
+                      ? new Date(selectedGoodsOrder.createdAt).toLocaleString()
+                      : "-"}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">更新时间</label>
                   <p className="text-sm text-muted-foreground">
-                    {selectedGoodsOrder.updatedAt ? new Date(selectedGoodsOrder.updatedAt).toLocaleString() : "-"}
+                    {selectedGoodsOrder.updatedAt
+                      ? new Date(selectedGoodsOrder.updatedAt).toLocaleString()
+                      : "-"}
                   </p>
                 </div>
               </div>

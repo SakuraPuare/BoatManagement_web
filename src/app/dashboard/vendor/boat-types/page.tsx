@@ -1,4 +1,4 @@
-"use client";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DataPagination } from "@/components/ui/data-pagination";
 import {
@@ -16,22 +16,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  deleteBoatType,
-  getBoatTypePage,
-} from "@/services/api/vendorBoatType";
+import { deleteBoatType, getBoatTypePage } from "@/services/api/vendorBoatType";
 import { format } from "date-fns";
 import {
-  Sailboat,
   MoreVertical,
   Pencil,
   Plus,
+  Sailboat,
   Search,
   Trash2,
 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { BoatTypeDialog } from "./boat-type-dialog";
+
+("use client");
 
 const ITEMS_PER_PAGE = 10;
 
@@ -50,7 +48,7 @@ export default function VendorBoatTypesPage() {
     try {
       const response = await getBoatTypePage(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-        {},
+        {}
       );
       setBoatTypes(response.data?.records || []);
       setTotalPages(response.data?.totalPage || 0);
@@ -171,14 +169,14 @@ export default function VendorBoatTypesPage() {
                     {boatType.createdAt &&
                       format(
                         new Date(boatType.createdAt),
-                        "yyyy-MM-dd HH:mm:ss",
+                        "yyyy-MM-dd HH:mm:ss"
                       )}
                   </TableCell>
                   <TableCell>
                     {boatType.updatedAt &&
                       format(
                         new Date(boatType.updatedAt),
-                        "yyyy-MM-dd HH:mm:ss",
+                        "yyyy-MM-dd HH:mm:ss"
                       )}
                   </TableCell>
                   <TableCell>

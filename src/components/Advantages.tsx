@@ -1,38 +1,40 @@
-"use client";
-
+import React from "react";
 import { CheckCircle, TrendingUp, Users, Zap } from "lucide-react";
+
+("use client");
 
 const advantages = [
   {
     icon: TrendingUp,
     title: "提升运营效率",
-    description: "通过智能调度和自动化管理，显著提升船舶运营效率，降低运营成本。",
-    stats: "效率提升 40%"
+    description:
+      "通过智能调度和自动化管理，显著提升船舶运营效率，降低运营成本。",
+    stats: "效率提升 40%",
   },
   {
     icon: Users,
     title: "优化用户体验",
     description: "简化预订流程，提供实时信息，为用户带来更便捷的出行体验。",
-    stats: "满意度 95%"
+    stats: "满意度 95%",
   },
   {
     icon: Zap,
     title: "快速部署",
     description: "模块化设计，支持快速部署和定制化配置，快速上线使用。",
-    stats: "部署时间 < 1周"
+    stats: "部署时间 < 1周",
   },
   {
     icon: CheckCircle,
     title: "稳定可靠",
     description: "经过大量实际应用验证，系统稳定可靠，支持高并发访问。",
-    stats: "可用性 99.9%"
-  }
+    stats: "可用性 99.9%",
+  },
 ];
 
 const statsData = [
   { value: "99.9%", label: "系统稳定性" },
   { value: "24/7", label: "全天候技术支持" },
-  { value: "500+", label: "服务用户数量" }
+  { value: "500+", label: "服务用户数量" },
 ];
 
 export function Advantages() {
@@ -51,8 +53,13 @@ export function Advantages() {
         {/* Stats Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           {statsData.map((stat, index) => (
-            <div key={index} className="text-center bg-white p-6 rounded-lg shadow-sm">
-              <div className="text-4xl font-bold text-blue-600 mb-2">{stat.value}</div>
+            <div
+              key={index}
+              className="text-center bg-white p-6 rounded-lg shadow-sm"
+            >
+              <div className="text-4xl font-bold text-blue-600 mb-2">
+                {stat.value}
+              </div>
               <p className="text-gray-600">{stat.label}</p>
             </div>
           ))}
@@ -74,9 +81,7 @@ export function Advantages() {
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   {advantage.title}
                 </h3>
-                <p className="text-gray-600 mb-3">
-                  {advantage.description}
-                </p>
+                <p className="text-gray-600 mb-3">{advantage.description}</p>
                 <div className="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 text-sm font-medium rounded-full">
                   {advantage.stats}
                 </div>
@@ -87,4 +92,4 @@ export function Advantages() {
       </div>
     </section>
   );
-} 
+}

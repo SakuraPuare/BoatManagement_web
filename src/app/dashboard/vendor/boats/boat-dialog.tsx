@@ -1,5 +1,4 @@
-"use client";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 import {
   AlertDialog,
@@ -28,10 +27,11 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { vendorCreateBoat, vendorUpdateBoat } from "@/services/api/vendorBoat";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+
+("use client");
 
 const boatFormSchema = z.object({
   name: z.string().min(1, "请输入船名"),
@@ -94,7 +94,7 @@ export function BoatDialog({
             ...values,
             typeId: parseInt(values.typeId),
             dockId: parseInt(values.dockId),
-          },
+          }
         );
         console.log(response);
         toast.success("更新成功");

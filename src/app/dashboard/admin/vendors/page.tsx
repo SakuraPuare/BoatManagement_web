@@ -1,6 +1,4 @@
-"use client";
-
-import { useState, useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { Input } from "@/components/ui/input";
@@ -19,10 +17,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { adminGetVendorPage, adminDeleteVendor } from "@/services/api/adminVendor";
+import {
+  adminDeleteVendor,
+  adminGetVendorPage,
+} from "@/services/api/adminVendor";
 import { adminGetUserList } from "@/services/api/adminUser";
 import { adminGetUnitList } from "@/services/api/adminUnit";
-import { Building2, MoreVertical, Search, Trash2, Eye } from "lucide-react";
+import { Eye, MoreVertical, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -32,6 +33,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { VENDOR_STATUS_MAP } from "@/lib/constants/status";
+
+("use client");
 
 const ITEMS_PER_PAGE = 10;
 
@@ -44,10 +47,13 @@ type VendorWithDetails = API.BaseVendorsVO & {
 
 export default function AdminVendorsPage() {
   const [vendors, setVendors] = useState<API.BaseVendorsVO[]>([]);
-  const [vendorsWithDetails, setVendorsWithDetails] = useState<VendorWithDetails[]>([]);
+  const [vendorsWithDetails, setVendorsWithDetails] = useState<
+    VendorWithDetails[]
+  >([]);
   const [users, setUsers] = useState<API.BaseAccountsVO[]>([]);
   const [units, setUnits] = useState<API.BaseUnitsVO[]>([]);
-  const [selectedVendor, setSelectedVendor] = useState<VendorWithDetails | null>(null);
+  const [selectedVendor, setSelectedVendor] =
+    useState<VendorWithDetails | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,16 +64,18 @@ export default function AdminVendorsPage() {
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [vendorsResponse, usersResponse, unitsResponse] = await Promise.all([
-        adminGetVendorPage(
-          { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-          {
-            ...(statusFilter !== "all" && { status: statusFilter }),
-          }
-        ),
-        adminGetUserList({}, {}),
-        adminGetUnitList({}, {}),
-      ]);
+      const [vendorsResponse, usersResponse, unitsResponse] = await Promise.all(
+        [
+          adminGetVendorPage(
+            { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
+            {
+              ...(statusFilter !== "all" && { status: statusFilter }),
+            }
+          ),
+          adminGetUserList({}, {}),
+          adminGetUnitList({}, {}),
+        ]
+      );
 
       if (vendorsResponse.data?.records) {
         setVendors(vendorsResponse.data.records);
@@ -176,17 +184,29 @@ export default function AdminVendorsPage() {
                 <TableRow key={vendor.id}>
                   <TableCell>{vendor.id}</TableCell>
                   <TableCell>{vendor.user?.username || "-"}</TableCell>
-                  <TableCell>{vendor.unit?.name || vendor.unit?.unitName || "-"}</TableCell>
                   <TableCell>
-                    <Badge variant={VENDOR_STATUS_MAP[vendor.status as VendorStatus]?.variant || "outline"}>
-                      {VENDOR_STATUS_MAP[vendor.status as VendorStatus]?.label || vendor.status}
+                    {vendor.unit?.name || vendor.unit?.unitName || "-"}
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={
+                        VENDOR_STATUS_MAP[vendor.status as VendorStatus]
+                          ?.variant || "outline"
+                      }
+                    >
+                      {VENDOR_STATUS_MAP[vendor.status as VendorStatus]
+                        ?.label || vendor.status}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {vendor.createdAt ? new Date(vendor.createdAt).toLocaleString() : "-"}
+                    {vendor.createdAt
+                      ? new Date(vendor.createdAt).toLocaleString()
+                      : "-"}
                   </TableCell>
                   <TableCell>
-                    {vendor.updatedAt ? new Date(vendor.updatedAt).toLocaleString() : "-"}
+                    {vendor.updatedAt
+                      ? new Date(vendor.updatedAt).toLocaleString()
+                      : "-"}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -196,7 +216,9 @@ export default function AdminVendorsPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleViewDetail(vendor)}>
+                        <DropdownMenuItem
+                          onClick={() => handleViewDetail(vendor)}
+                        >
                           <Eye className="mr-2 h-4 w-4" />
                           查看详情
                         </DropdownMenuItem>
@@ -234,7 +256,9 @@ export default function AdminVendorsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium">供应商ID</label>
-                  <p className="text-sm text-muted-foreground">{selectedVendor.id}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedVendor.id}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">用户</label>
@@ -257,7 +281,9 @@ export default function AdminVendorsPage() {
                 <div>
                   <label className="text-sm font-medium">关联单位</label>
                   <p className="text-sm text-muted-foreground">
-                    {selectedVendor.unit?.name || selectedVendor.unit?.unitName || "-"}
+                    {selectedVendor.unit?.name ||
+                      selectedVendor.unit?.unitName ||
+                      "-"}
                   </p>
                 </div>
                 <div>
@@ -275,21 +301,31 @@ export default function AdminVendorsPage() {
                 <div>
                   <label className="text-sm font-medium">状态</label>
                   <div className="mt-1">
-                    <Badge variant={VENDOR_STATUS_MAP[selectedVendor.status as VendorStatus]?.variant || "outline"}>
-                      {VENDOR_STATUS_MAP[selectedVendor.status as VendorStatus]?.label || selectedVendor.status}
+                    <Badge
+                      variant={
+                        VENDOR_STATUS_MAP[selectedVendor.status as VendorStatus]
+                          ?.variant || "outline"
+                      }
+                    >
+                      {VENDOR_STATUS_MAP[selectedVendor.status as VendorStatus]
+                        ?.label || selectedVendor.status}
                     </Badge>
                   </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium">创建时间</label>
                   <p className="text-sm text-muted-foreground">
-                    {selectedVendor.createdAt ? new Date(selectedVendor.createdAt).toLocaleString() : "-"}
+                    {selectedVendor.createdAt
+                      ? new Date(selectedVendor.createdAt).toLocaleString()
+                      : "-"}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">更新时间</label>
                   <p className="text-sm text-muted-foreground">
-                    {selectedVendor.updatedAt ? new Date(selectedVendor.updatedAt).toLocaleString() : "-"}
+                    {selectedVendor.updatedAt
+                      ? new Date(selectedVendor.updatedAt).toLocaleString()
+                      : "-"}
                   </p>
                 </div>
               </div>

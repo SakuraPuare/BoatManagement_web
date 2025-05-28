@@ -1,6 +1,14 @@
-"use client";
+import React from "react";
+import {
+  Anchor,
+  BarChart3,
+  Calendar,
+  Navigation,
+  Shield,
+  ShoppingCart,
+} from "lucide-react";
 
-import { Calendar, ShoppingCart, BarChart3, Shield, Clock, Smartphone, Navigation, Anchor } from "lucide-react";
+("use client");
 
 const features = [
   {
@@ -8,43 +16,43 @@ const features = [
     title: "实时定位追踪",
     description: "精确掌握船舶位置，实时监控航行状态",
     bgColor: "bg-blue-100",
-    iconColor: "text-blue-600"
+    iconColor: "text-blue-600",
   },
   {
     icon: Calendar,
     title: "智能预订",
     description: "支持实时预订和预约预订，智能匹配最优船舶资源",
     bgColor: "bg-green-100",
-    iconColor: "text-green-600"
+    iconColor: "text-green-600",
   },
   {
     icon: BarChart3,
     title: "数据分析",
     description: "智能分析航行数据，优化航线规划，全面的运营数据分析",
     bgColor: "bg-purple-100",
-    iconColor: "text-purple-600"
+    iconColor: "text-purple-600",
   },
   {
     icon: Shield,
     title: "安全监控",
     description: "全方位监控船舶状态，及时预警风险，多重安全保障",
     bgColor: "bg-orange-100",
-    iconColor: "text-orange-600"
+    iconColor: "text-orange-600",
   },
   {
     icon: Anchor,
     title: "智能调度",
     description: "优化港口调度，提高运营效率，智能匹配最优资源",
     bgColor: "bg-red-100",
-    iconColor: "text-red-600"
+    iconColor: "text-red-600",
   },
   {
     icon: ShoppingCart,
     title: "商品销售",
     description: "集成商品销售系统，为乘客提供便民服务",
     bgColor: "bg-indigo-100",
-    iconColor: "text-indigo-600"
-  }
+    iconColor: "text-indigo-600",
+  },
 ];
 
 export function Features() {
@@ -67,20 +75,20 @@ export function Features() {
               className="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition-shadow"
             >
               <div className="flex items-center mb-4">
-                <div className={`w-12 h-12 ${feature.bgColor} rounded-lg flex items-center justify-center`}>
+                <div
+                  className={`w-12 h-12 ${feature.bgColor} rounded-lg flex items-center justify-center`}
+                >
                   <feature.icon className={`h-6 w-6 ${feature.iconColor}`} />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 ml-3">
                   {feature.title}
                 </h3>
               </div>
-              <p className="text-gray-600">
-                {feature.description}
-              </p>
+              <p className="text-gray-600">{feature.description}</p>
             </div>
           ))}
         </div>
       </div>
     </section>
   );
-} 
+}

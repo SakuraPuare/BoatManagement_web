@@ -1,4 +1,4 @@
-"use client";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DataPagination } from "@/components/ui/data-pagination";
 import {
@@ -16,10 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  vendorDeleteBoat,
-  vendorGetBoatPage,
-} from "@/services/api/vendorBoat";
+import { vendorDeleteBoat, vendorGetBoatPage } from "@/services/api/vendorBoat";
 import { getBoatTypeList } from "@/services/api/vendorBoatType";
 import { getDockList } from "@/services/api/vendorDock";
 import { format } from "date-fns";
@@ -31,16 +28,17 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { BoatDialog } from "./boat-dialog";
+
+("use client");
 
 const ITEMS_PER_PAGE = 10;
 
 export default function VendorBoatsPage() {
   const [boats, setBoats] = useState<API.BaseBoatsVO[]>([]);
   const [selectedBoat, setSelectedBoat] = useState<API.BaseBoatsVO | null>(
-    null,
+    null
   );
   const [boatTypes, setBoatTypes] = useState<API.BaseBoatTypesVO[]>([]);
   const [docks, setDocks] = useState<API.BaseDocksVO[]>([]);
@@ -56,7 +54,7 @@ export default function VendorBoatsPage() {
     try {
       const response = await vendorGetBoatPage(
         { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-        {},
+        {}
       );
       console.log(response.data?.records);
       setBoats(response.data?.records || []);

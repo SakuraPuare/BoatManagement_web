@@ -1,13 +1,17 @@
- "use client";
-
-import { useState, useCallback, useEffect } from "react";
-import { DataManagementTable, type Column, type Action } from "@/components/data-management-table";
-import { adminGetBoatRequestPage, adminDeleteBoatRequest } from "@/services/api/adminBoatRequest";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  type Action,
+  type Column,
+  DataManagementTable,
+} from "@/components/data-management-table";
+import {
+  adminDeleteBoatRequest,
+  adminGetBoatRequestPage,
+} from "@/services/api/adminBoatRequest";
 import { adminGetDockList } from "@/services/api/adminDock";
 import { adminGetUserList } from "@/services/api/adminUser";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Ship, Eye, Trash2, Calendar } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -16,7 +20,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { BOAT_ORDER_STATUS_MAP, BOAT_ORDER_TYPE_MAP } from "@/lib/constants/status";
+import {
+  BOAT_ORDER_STATUS_MAP,
+  BOAT_ORDER_TYPE_MAP,
+} from "@/lib/constants/status";
+
+("use client");
 
 const ITEMS_PER_PAGE = 10;
 
@@ -31,31 +40,37 @@ type BoatRequestWithDetails = API.BaseBoatRequestsVO & {
 
 export default function AdminBoatRequestsPage() {
   const [requests, setRequests] = useState<API.BaseBoatRequestsVO[]>([]);
-  const [requestsWithDetails, setRequestsWithDetails] = useState<BoatRequestWithDetails[]>([]);
+  const [requestsWithDetails, setRequestsWithDetails] = useState<
+    BoatRequestWithDetails[]
+  >([]);
   const [users, setUsers] = useState<API.BaseAccountsVO[]>([]);
   const [docks, setDocks] = useState<API.BaseDocksVO[]>([]);
-  const [selectedRequest, setSelectedRequest] = useState<BoatRequestWithDetails | null>(null);
+  const [selectedRequest, setSelectedRequest] =
+    useState<BoatRequestWithDetails | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<"all" | RequestStatus>("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | RequestStatus>(
+    "all"
+  );
   const [typeFilter, setTypeFilter] = useState<"all" | RequestType>("all");
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [requestsResponse, usersResponse, docksResponse] = await Promise.all([
-        adminGetBoatRequestPage(
-          { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-          {
-            ...(statusFilter !== "all" && { status: statusFilter }),
-            ...(typeFilter !== "all" && { type: typeFilter }),
-          }
-        ),
-        adminGetUserList({}, {}),
-        adminGetDockList({}, {}),
-      ]);
+      const [requestsResponse, usersResponse, docksResponse] =
+        await Promise.all([
+          adminGetBoatRequestPage(
+            { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
+            {
+              ...(statusFilter !== "all" && { status: statusFilter }),
+              ...(typeFilter !== "all" && { type: typeFilter }),
+            }
+          ),
+          adminGetUserList({}, {}),
+          adminGetDockList({}, {}),
+        ]);
 
       if (requestsResponse.data?.records) {
         setRequests(requestsResponse.data.records);
@@ -142,7 +157,11 @@ export default function AdminBoatRequestsPage() {
       width: "100px",
       render: (value: RequestStatus) => {
         const status = BOAT_ORDER_STATUS_MAP[value];
-        return status ? <Badge variant={status.variant}>{status.label}</Badge> : "-";
+        return status ? (
+          <Badge variant={status.variant}>{status.label}</Badge>
+        ) : (
+          "-"
+        );
       },
     },
     {
@@ -190,7 +209,8 @@ export default function AdminBoatRequestsPage() {
       key: "status",
       label: "状态",
       value: statusFilter,
-      onChange: (value: string) => setStatusFilter(value as "all" | RequestStatus),
+      onChange: (value: string) =>
+        setStatusFilter(value as "all" | RequestStatus),
       options: [
         { label: "全部", value: "all" },
         ...Object.entries(BOAT_ORDER_STATUS_MAP).map(([key, value]) => ({
@@ -246,7 +266,9 @@ export default function AdminBoatRequestsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium">预订ID</label>
-                  <p className="text-sm text-muted-foreground">{selectedRequest.id}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedRequest.id}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">用户</label>
@@ -270,40 +292,57 @@ export default function AdminBoatRequestsPage() {
                   <label className="text-sm font-medium">预订类型</label>
                   <div className="mt-1">
                     <Badge variant="outline">
-                      {BOAT_ORDER_TYPE_MAP[selectedRequest.type as RequestType]?.label || "未知"}
+                      {BOAT_ORDER_TYPE_MAP[selectedRequest.type as RequestType]
+                        ?.label || "未知"}
                     </Badge>
                   </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium">状态</label>
                   <div className="mt-1">
-                    <Badge variant={BOAT_ORDER_STATUS_MAP[selectedRequest.status as RequestStatus]?.variant || "outline"}>
-                      {BOAT_ORDER_STATUS_MAP[selectedRequest.status as RequestStatus]?.label || "未知"}
+                    <Badge
+                      variant={
+                        BOAT_ORDER_STATUS_MAP[
+                          selectedRequest.status as RequestStatus
+                        ]?.variant || "outline"
+                      }
+                    >
+                      {BOAT_ORDER_STATUS_MAP[
+                        selectedRequest.status as RequestStatus
+                      ]?.label || "未知"}
                     </Badge>
                   </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium">开始时间</label>
                   <p className="text-sm text-muted-foreground">
-                    {selectedRequest.startTime ? new Date(selectedRequest.startTime).toLocaleString() : "-"}
+                    {selectedRequest.startTime
+                      ? new Date(selectedRequest.startTime).toLocaleString()
+                      : "-"}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">结束时间</label>
                   <p className="text-sm text-muted-foreground">
-                    {selectedRequest.endTime ? new Date(selectedRequest.endTime).toLocaleString() : "-"}
+                    {selectedRequest.endTime
+                      ? new Date(selectedRequest.endTime).toLocaleString()
+                      : "-"}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">创建时间</label>
                   <p className="text-sm text-muted-foreground">
-                    {selectedRequest.createdAt ? new Date(selectedRequest.createdAt).toLocaleString() : "-"}
+                    {selectedRequest.createdAt
+                      ? new Date(selectedRequest.createdAt).toLocaleString()
+                      : "-"}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">更新时间</label>
                   <p className="text-sm text-muted-foreground">
-                    {selectedRequest.updatedAt ? new Date(selectedRequest.updatedAt).toLocaleString() : "-"}
+                    {selectedRequest.updatedAt
+                      ? new Date(selectedRequest.updatedAt).toLocaleString()
+                      : "-"}
                   </p>
                 </div>
               </div>

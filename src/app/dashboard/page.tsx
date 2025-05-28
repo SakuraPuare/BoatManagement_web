@@ -1,14 +1,13 @@
-"use client";
-
+import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Building2, Home, ShieldCheck, Store, User } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { hasRole, getUserRoleNames } from "@/utils/role";
+import { getUserRoleNames, hasRole } from "@/utils/role";
 import { toast } from "sonner";
-import React from "react";
+
+("use client");
 
 interface RoleCard {
   title: string;
@@ -34,7 +33,7 @@ export default function DashboardPage() {
           router.push("/login");
           return;
         }
-        
+
         if (!user) {
           console.log("用户信息为空，尝试获取用户信息");
           await updateUser();
@@ -55,8 +54,10 @@ export default function DashboardPage() {
 
   const handleCardClick = (role: RoleCard) => {
     const userRole = user?.role || 0;
-    console.log(`检查权限: 用户角色=${userRole}, 需要角色=${role.requiredRoles}`);
-    
+    console.log(
+      `检查权限: 用户角色=${userRole}, 需要角色=${role.requiredRoles}`
+    );
+
     if (hasRole(userRole, role.requiredRoles)) {
       console.log(`权限检查通过，跳转到: ${role.path}`);
       router.push(role.path);
@@ -155,16 +156,18 @@ export default function DashboardPage() {
         <div className="flex flex-wrap justify-center gap-8 px-32">
           {roles.map((role) => {
             const hasAccess = hasRole(user?.role || 0, role.requiredRoles);
-            
+
             return (
               <div
                 key={role.title}
                 className={cn(
                   "relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700 w-[280px]",
-                  hasAccess 
-                    ? "hover:shadow-2xl cursor-pointer" 
+                  hasAccess
+                    ? "hover:shadow-2xl cursor-pointer"
                     : "opacity-50 cursor-not-allowed",
-                  hoveredCard === role.title && hasAccess ? "transform -translate-y-2" : ""
+                  hoveredCard === role.title && hasAccess
+                    ? "transform -translate-y-2"
+                    : ""
                 )}
                 onMouseEnter={() => hasAccess && setHoveredCard(role.title)}
                 onMouseLeave={() => setHoveredCard(null)}
@@ -187,24 +190,30 @@ export default function DashboardPage() {
                   >
                     <div className="text-white">{role.icon}</div>
                   </div>
-                  <h3 className={cn(
-                    "text-2xl font-semibold mb-3",
-                    hasAccess 
-                      ? "text-gray-900 dark:text-white" 
-                      : "text-gray-400 dark:text-gray-600"
-                  )}>
+                  <h3
+                    className={cn(
+                      "text-2xl font-semibold mb-3",
+                      hasAccess
+                        ? "text-gray-900 dark:text-white"
+                        : "text-gray-400 dark:text-gray-600"
+                    )}
+                  >
                     {role.title}
                   </h3>
-                  <p className={cn(
-                    hasAccess 
-                      ? "text-gray-600 dark:text-gray-400" 
-                      : "text-gray-400 dark:text-gray-600"
-                  )}>
+                  <p
+                    className={cn(
+                      hasAccess
+                        ? "text-gray-600 dark:text-gray-400"
+                        : "text-gray-400 dark:text-gray-600"
+                    )}
+                  >
                     {role.description}
                   </p>
                   {!hasAccess && (
                     <div className="mt-3 px-3 py-1 bg-red-100 dark:bg-red-900 rounded-full">
-                      <span className="text-xs text-red-600 dark:text-red-400">无权限</span>
+                      <span className="text-xs text-red-600 dark:text-red-400">
+                        无权限
+                      </span>
                     </div>
                   )}
                 </div>

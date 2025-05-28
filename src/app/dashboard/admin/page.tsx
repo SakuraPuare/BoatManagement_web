@@ -1,8 +1,9 @@
-"use client";
 import React from "react";
 
 import { Card } from "@/components/ui/card";
 import { Bell, Ship, ShoppingBag, Users } from "lucide-react";
+
+("use client");
 
 const stats = [
   {

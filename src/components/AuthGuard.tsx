@@ -1,9 +1,9 @@
-"use client";
-
+import React, { ReactNode, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { useEffect, ReactNode } from "react";
 import { toast } from "sonner";
+
+("use client");
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -11,10 +11,10 @@ interface AuthGuardProps {
   fallbackPath?: string;
 }
 
-export function AuthGuard({ 
-  children, 
-  requiredPermissions = [], 
-  fallbackPath = "/login" 
+export function AuthGuard({
+  children,
+  requiredPermissions = [],
+  fallbackPath = "/login",
 }: AuthGuardProps) {
   const { isAuthenticated, hasPermission, user } = useAuth();
   const router = useRouter();
@@ -31,7 +31,13 @@ export function AuthGuard({
       router.push("/");
       return;
     }
-  }, [isAuthenticated, hasPermission, requiredPermissions, router, fallbackPath]);
+  }, [
+    isAuthenticated,
+    hasPermission,
+    requiredPermissions,
+    router,
+    fallbackPath,
+  ]);
 
   // 如果未登录或权限不足，不渲染子组件
   if (!isAuthenticated) {
@@ -43,4 +49,4 @@ export function AuthGuard({
   }
 
   return <>{children}</>;
-} 
+}

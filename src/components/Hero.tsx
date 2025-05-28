@@ -1,11 +1,12 @@
-"use client";
-
+import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Ship, Users, MapPin } from "lucide-react";
+import { ArrowRight, MapPin, Ship, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+
+("use client");
 
 export function Hero() {
   const router = useRouter();
@@ -33,8 +34,8 @@ export function Hero() {
             实现船舶调度、订单管理、商品销售的智能化运营。
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="text-lg px-8 py-3"
               onClick={handleExperience}
             >
@@ -43,7 +44,11 @@ export function Hero() {
             </Button>
             {!isAuthenticated && (
               <Link href="/login">
-                <Button variant="outline" size="lg" className="text-lg px-8 py-3">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="text-lg px-8 py-3"
+                >
                   登录系统
                 </Button>
               </Link>
@@ -89,4 +94,4 @@ export function Hero() {
       </div>
     </section>
   );
-} 
+}

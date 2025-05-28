@@ -1,12 +1,14 @@
-"use client";
-
-import { useState, useCallback, useEffect } from "react";
-import { DataManagementTable, type Column, type Action } from "@/components/data-management-table";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  type Action,
+  type Column,
+  DataManagementTable,
+} from "@/components/data-management-table";
 import {
   getNotificationsPage,
+  getUnreadCount,
   markAsRead,
   markMultipleAsRead,
-  getUnreadCount,
 } from "@/services/api/userNotificationController";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,6 +29,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+("use client");
+
 const ITEMS_PER_PAGE = 10;
 
 // 模拟当前用户ID，实际应该从认证状态获取
@@ -34,7 +38,13 @@ const CURRENT_USER_ID = 1;
 
 type NotificationType = "SYSTEM" | "ORDER" | "BOAT" | "MERCHANT";
 
-const NOTIFICATION_TYPE_MAP: Record<NotificationType, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+const NOTIFICATION_TYPE_MAP: Record<
+  NotificationType,
+  {
+    label: string;
+    variant: "default" | "secondary" | "destructive" | "outline";
+  }
+> = {
   SYSTEM: { label: "系统通知", variant: "default" },
   ORDER: { label: "订单通知", variant: "secondary" },
   BOAT: { label: "船舶通知", variant: "outline" },
@@ -42,13 +52,18 @@ const NOTIFICATION_TYPE_MAP: Record<NotificationType, { label: string; variant: 
 };
 
 export default function UserNotificationsPage() {
-  const [notifications, setNotifications] = useState<API.BaseNotificationsVO[]>([]);
-  const [selectedNotification, setSelectedNotification] = useState<API.BaseNotificationsVO | null>(null);
+  const [notifications, setNotifications] = useState<API.BaseNotificationsVO[]>(
+    []
+  );
+  const [selectedNotification, setSelectedNotification] =
+    useState<API.BaseNotificationsVO | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
-  const [readFilter, setReadFilter] = useState<"all" | "read" | "unread">("all");
+  const [readFilter, setReadFilter] = useState<"all" | "read" | "unread">(
+    "all"
+  );
   const [typeFilter, setTypeFilter] = useState<"all" | NotificationType>("all");
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -109,7 +124,9 @@ export default function UserNotificationsPage() {
   const handleMarkAllAsRead = async () => {
     try {
       // 获取所有未读通知的ID
-      const unreadIds = notifications.filter(n => !n.isRead).map(n => n.id!);
+      const unreadIds = notifications
+        .filter((n) => !n.isRead)
+        .map((n) => n.id!);
       if (unreadIds.length > 0) {
         await markMultipleAsRead({ userId: CURRENT_USER_ID }, unreadIds);
       }
@@ -125,7 +142,7 @@ export default function UserNotificationsPage() {
   const handleViewDetail = (notification: API.BaseNotificationsVO) => {
     setSelectedNotification(notification);
     setIsDetailDialogOpen(true);
-    
+
     // 如果是未读通知，自动标记为已读
     if (!notification.isRead) {
       handleMarkAsRead(notification.id!);
@@ -150,7 +167,8 @@ export default function UserNotificationsPage() {
       accessor: "type",
       header: "类型",
       render: (value: NotificationType) => {
-        const type = NOTIFICATION_TYPE_MAP[value] || NOTIFICATION_TYPE_MAP.SYSTEM;
+        const type =
+          NOTIFICATION_TYPE_MAP[value] || NOTIFICATION_TYPE_MAP.SYSTEM;
         return <Badge variant={type.variant}>{type.label}</Badge>;
       },
     },
@@ -158,7 +176,9 @@ export default function UserNotificationsPage() {
       accessor: "title",
       header: "标题",
       render: (value: string, row?: any) => (
-        <div className={`${row?.data && !row.data.isRead ? "font-semibold" : ""}`}>
+        <div
+          className={`${row?.data && !row.data.isRead ? "font-semibold" : ""}`}
+        >
           {value || "-"}
         </div>
       ),
@@ -167,7 +187,11 @@ export default function UserNotificationsPage() {
       accessor: "content",
       header: "内容",
       render: (value: string, row?: any) => (
-        <div className={`truncate ${row?.data && !row.data.isRead ? "font-medium" : ""}`}>
+        <div
+          className={`truncate ${
+            row?.data && !row.data.isRead ? "font-medium" : ""
+          }`}
+        >
           {value || "-"}
         </div>
       ),
@@ -195,8 +219,6 @@ export default function UserNotificationsPage() {
     },
   ];
 
-
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -223,7 +245,9 @@ export default function UserNotificationsPage() {
       <div className="flex items-center space-x-4">
         <Select
           value={readFilter}
-          onValueChange={(value) => setReadFilter(value as "all" | "read" | "unread")}
+          onValueChange={(value) =>
+            setReadFilter(value as "all" | "read" | "unread")
+          }
         >
           <SelectTrigger className="w-[160px]">
             <SelectValue placeholder="阅读状态" />
@@ -236,7 +260,9 @@ export default function UserNotificationsPage() {
         </Select>
         <Select
           value={typeFilter}
-          onValueChange={(value) => setTypeFilter(value as "all" | NotificationType)}
+          onValueChange={(value) =>
+            setTypeFilter(value as "all" | NotificationType)
+          }
         >
           <SelectTrigger className="w-[160px]">
             <SelectValue placeholder="通知类型" />
@@ -279,8 +305,16 @@ export default function UserNotificationsPage() {
               <div>
                 <label className="text-sm font-medium">类型</label>
                 <div className="mt-1">
-                  <Badge variant={NOTIFICATION_TYPE_MAP[selectedNotification.type as NotificationType]?.variant || "outline"}>
-                    {NOTIFICATION_TYPE_MAP[selectedNotification.type as NotificationType]?.label || "未知"}
+                  <Badge
+                    variant={
+                      NOTIFICATION_TYPE_MAP[
+                        selectedNotification.type as NotificationType
+                      ]?.variant || "outline"
+                    }
+                  >
+                    {NOTIFICATION_TYPE_MAP[
+                      selectedNotification.type as NotificationType
+                    ]?.label || "未知"}
                   </Badge>
                 </div>
               </div>
@@ -312,13 +346,21 @@ export default function UserNotificationsPage() {
                 <div>
                   <label className="text-sm font-medium">创建时间</label>
                   <p className="text-sm text-muted-foreground">
-                    {selectedNotification.createdAt ? new Date(selectedNotification.createdAt).toLocaleString() : "-"}
+                    {selectedNotification.createdAt
+                      ? new Date(
+                          selectedNotification.createdAt
+                        ).toLocaleString()
+                      : "-"}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">阅读状态</label>
                   <div className="mt-1">
-                    <Badge variant={selectedNotification.isRead ? "default" : "destructive"}>
+                    <Badge
+                      variant={
+                        selectedNotification.isRead ? "default" : "destructive"
+                      }
+                    >
                       {selectedNotification.isRead ? "已读" : "未读"}
                     </Badge>
                   </div>
@@ -330,4 +372,4 @@ export default function UserNotificationsPage() {
       </Dialog>
     </div>
   );
-} 
+}

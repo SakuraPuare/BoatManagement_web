@@ -1,7 +1,8 @@
-"use client";
-
+import React from "react";
 import Link from "next/link";
-import { Ship, Mail, Phone, MapPin } from "lucide-react";
+import { Mail, MapPin, Phone, Ship } from "lucide-react";
+
+("use client");
 
 export function Footer() {
   return (
@@ -12,7 +13,9 @@ export function Footer() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
               <Ship className="h-8 w-8 text-blue-400" />
-              <span className="text-xl font-bold text-white">智能船舶管理系统</span>
+              <span className="text-xl font-bold text-white">
+                智能船舶管理系统
+              </span>
             </div>
             <p className="text-gray-300 mb-4 max-w-md">
               专业的船舶管理解决方案，为水上交通运输提供全方位的数字化服务，
@@ -39,22 +42,34 @@ export function Footer() {
             <h3 className="text-white font-bold mb-4">快速链接</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/about" className="text-gray-300 hover:text-white transition-colors">
+                <Link
+                  href="/about"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
                   关于我们
                 </Link>
               </li>
               <li>
-                <Link href="#features" className="text-gray-300 hover:text-white transition-colors">
+                <Link
+                  href="#features"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
                   功能特色
                 </Link>
               </li>
               <li>
-                <Link href="#advantages" className="text-gray-300 hover:text-white transition-colors">
+                <Link
+                  href="#advantages"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
                   产品优势
                 </Link>
               </li>
               <li>
-                <Link href="/service" className="text-gray-300 hover:text-white transition-colors">
+                <Link
+                  href="/service"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
                   服务内容
                 </Link>
               </li>
@@ -66,22 +81,34 @@ export function Footer() {
             <h3 className="text-white font-bold mb-4">支持服务</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/help" className="text-gray-300 hover:text-white transition-colors">
+                <Link
+                  href="/help"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
                   帮助中心
                 </Link>
               </li>
               <li>
-                <Link href="/docs" className="text-gray-300 hover:text-white transition-colors">
+                <Link
+                  href="/docs"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
                   技术文档
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-300 hover:text-white transition-colors">
+                <Link
+                  href="/contact"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
                   联系我们
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-gray-300 hover:text-white transition-colors">
+                <Link
+                  href="/privacy"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
                   隐私政策
                 </Link>
               </li>
@@ -97,4 +124,4 @@ export function Footer() {
       </div>
     </footer>
   );
-} 
+}

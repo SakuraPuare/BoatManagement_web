@@ -33,6 +33,7 @@ interface DataTableCoreProps<T> {
     icon: React.ReactNode;
     onClick: () => void;
   }[];
+  showCheckboxColumn?: boolean; // 控制是否显示多选框列
 }
 
 export function DataTableCore<T>({
@@ -41,6 +42,7 @@ export function DataTableCore<T>({
   processedColumns,
   actions,
   getActions,
+  showCheckboxColumn = true, // 默认为 true，保持向后兼容
 }: DataTableCoreProps<T>) {
   /**
    * 处理表头点击事件，用于切换排序状态
@@ -52,30 +54,35 @@ export function DataTableCore<T>({
   };
 
   const showActionsColumn = !!(actions || getActions);
-  const colSpan = processedColumns.length + 1 + (showActionsColumn ? 1 : 0); // +1 for select checkbox
+  const colSpan =
+    processedColumns.length +
+    (showCheckboxColumn ? 1 : 0) +
+    (showActionsColumn ? 1 : 0); // 根据 showCheckboxColumn 决定是否计算多选框列
 
   return (
-    <div className="rounded-md border bg-white">
+    <div className="rounded-md border bg-white dark:bg-gray-800 dark:border-gray-700">
       <Table>
         {/* 表头 */}
-        <TableHeader className="bg-gray-100 select-none">
+        <TableHeader className="bg-gray-100 dark:bg-gray-700 select-none">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {/* 全选 Checkbox 列 */}
-              <TableHead className="w-[50px]">
-                {" "}
-                {/* 固定宽度 */}
-                <Checkbox
-                  checked={
-                    table.getIsAllPageRowsSelected() || // 全选状态
-                    (table.getIsSomePageRowsSelected() && "indeterminate") // 部分选择状态
-                  }
-                  onCheckedChange={
-                    (value) => table.toggleAllPageRowsSelected(!!value) // 切换全选状态
-                  }
-                  aria-label="Select all"
-                />
-              </TableHead>
+              {/* 全选 Checkbox 列，根据 showCheckboxColumn 决定是否显示 */}
+              {showCheckboxColumn && (
+                <TableHead className="w-[50px]">
+                  {" "}
+                  {/* 固定宽度 */}
+                  <Checkbox
+                    checked={
+                      table.getIsAllPageRowsSelected() || // 全选状态
+                      (table.getIsSomePageRowsSelected() && "indeterminate") // 部分选择状态
+                    }
+                    onCheckedChange={
+                      (value) => table.toggleAllPageRowsSelected(!!value) // 切换全选状态
+                    }
+                    aria-label="Select all"
+                  />
+                </TableHead>
+              )}
               {/* 渲染数据列的表头 */}
               {headerGroup.headers.map((header) => (
                 <TableHead key={header.id} style={{ width: header.getSize() }}>
@@ -98,7 +105,7 @@ export function DataTableCore<T>({
                       {/* 渲染表头内容 */}
                       {flexRender(
                         header.column.columnDef.header,
-                        header.getContext()
+                        header.getContext(),
                       )}
 
                       {/* 如果列允许排序，则显示排序图标 */}
@@ -141,22 +148,24 @@ export function DataTableCore<T>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"} // 根据选择状态设置 data-state
-                className={index % 2 === 1 ? "bg-gray-50" : ""} // 斑马纹效果
+                className={index % 2 === 1 ? "bg-gray-50 dark:bg-gray-700/50" : ""} // 斑马纹效果
               >
                 {/* 行选择 Checkbox */}
-                <TableCell>
-                  <Checkbox
-                    checked={row.getIsSelected()} // 绑定行选择状态
-                    onCheckedChange={(value) => row.toggleSelected(!!value)} // 切换行选择状态
-                    aria-label="Select row"
-                  />
-                </TableCell>
+                {showCheckboxColumn && (
+                  <TableCell>
+                    <Checkbox
+                      checked={row.getIsSelected()} // 绑定行选择状态
+                      onCheckedChange={(value) => row.toggleSelected(!!value)} // 切换行选择状态
+                      aria-label="Select row"
+                    />
+                  </TableCell>
+                )}
                 {/* 渲染单元格数据 */}
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
                     {flexRender(
                       cell.column.columnDef.cell, // 使用列定义中的 cell 渲染函数
-                      cell.getContext() // 传递上下文
+                      cell.getContext(), // 传递上下文
                     )}
                   </TableCell>
                 ))}

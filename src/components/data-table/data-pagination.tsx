@@ -15,25 +15,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface DataPaginationProps {
-  selectedNumber?: number;
+// 定义 Page 接口
+interface Page {
   pageNumber?: number;
   pageSize?: number;
   totalPage?: number;
   totalRow?: number;
+}
+
+interface DataPaginationProps {
+  page: Page;
   onPageChange: (page: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
 }
 
 export default function DataPagination({
-  selectedNumber,
-  pageNumber = 1,
-  pageSize = 10,
-  totalPage = 1,
-  totalRow = 0,
+  page,
   onPageChange,
   onPageSizeChange,
 }: DataPaginationProps) {
+  const { pageNumber = 1, pageSize = 10, totalPage = 1, totalRow = 0 } = page;
   const pages = Array.from({ length: totalPage }, (_, i) => i + 1);
 
   const handlePageChange = (page: number) => {
@@ -60,7 +61,7 @@ export default function DataPagination({
           >
             1
           </PaginationLink>
-        </PaginationItem>
+        </PaginationItem>,
       );
 
       // Show ellipsis if not near start
@@ -68,7 +69,7 @@ export default function DataPagination({
         items.push(
           <PaginationItem key="ellipsis-1">
             <PaginationEllipsis />
-          </PaginationItem>
+          </PaginationItem>,
         );
       }
 
@@ -87,7 +88,7 @@ export default function DataPagination({
             >
               {i}
             </PaginationLink>
-          </PaginationItem>
+          </PaginationItem>,
         );
       }
 
@@ -96,7 +97,7 @@ export default function DataPagination({
         items.push(
           <PaginationItem key="ellipsis-2">
             <PaginationEllipsis />
-          </PaginationItem>
+          </PaginationItem>,
         );
       }
 
@@ -111,7 +112,7 @@ export default function DataPagination({
             >
               {totalPage}
             </PaginationLink>
-          </PaginationItem>
+          </PaginationItem>,
         );
       }
     } else {
@@ -126,7 +127,7 @@ export default function DataPagination({
             >
               {page}
             </PaginationLink>
-          </PaginationItem>
+          </PaginationItem>,
         );
       });
     }
@@ -139,11 +140,6 @@ export default function DataPagination({
       {/* 左侧信息 */}
       <div className="text-sm text-muted-foreground text-nowrap z-10">
         <span className="mr-2">共 {totalRow} 条记录</span>
-        <span className="ml-2">
-          {selectedNumber !== undefined && selectedNumber > 0
-            ? `已选 ${selectedNumber} 条`
-            : ""}
-        </span>
       </div>
 
       {/* 中间分页，绝对定位确保视觉居中 */}
@@ -175,10 +171,7 @@ export default function DataPagination({
 
       {/* 右侧下拉框，推到右边 */}
       <div className="ml-auto z-10">
-        <Select
-          defaultValue={String(pageSize)}
-          onValueChange={handlePageSizeChange}
-        >
+        <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
           <SelectTrigger className="w-[100px]">
             <SelectValue />
           </SelectTrigger>

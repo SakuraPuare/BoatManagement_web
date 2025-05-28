@@ -1,8 +1,6 @@
 "use client";
 
-import DataPagination from "./data-pagination";
 import {
-  Column,
   ColumnDef,
   getCoreRowModel,
   getSortedRowModel,
@@ -10,13 +8,15 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { format } from "date-fns/format";
-import { debounce } from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
-import { camelToSnakeCase } from "./utils";
+import DataPagination from "./data-pagination";
 // 导入新的子组件
 import { DataTableCore } from "./data-table-core";
-import { DataTableFilter } from "./data-table-filter";
+import DataTableFilter from "./data-table-filter";
 import { DataTableHeader } from "./data-table-header";
+import { camelToSnakeCase } from "./utils";
+// 导入类型定义
+import { Filter, Page, TimeRange } from "./types";
 
 /**
  * DataTable 组件的 Props
@@ -80,6 +80,18 @@ interface DataTableProps<T> {
     /** 点击按钮时的回调函数 */
     onClick: () => void;
   }[];
+  /**
+   * 批量操作按钮配置
+   * 用于控制是否显示多选框，显示在工具栏中
+   */
+  batchAction?: {
+    /** 按钮标签 */
+    label: string;
+    /** 按钮图标 */
+    icon: React.ReactNode;
+    /** 点击按钮时的回调函数 */
+    onClick: (selectedRows: T[]) => void;
+  }[];
 }
 
 /**
@@ -114,6 +126,7 @@ export function DataTable<T>({
   filter,
   onFilterChange,
   toolbars,
+  batchAction,
 }: DataTableProps<T>) {
   /** 行选择状态 */
   const [rowSelection, setRowSelection] = useState({});
@@ -168,7 +181,7 @@ export function DataTable<T>({
 
     for (const column of processedColumns) {
       // 跳过 'select' 和 'actions' 列
-      if (column.id === "select" || column.id === "actions") {
+      if (column.id === "select" || column.id?.startsWith("actions")) {
         columnsWithData.add(column.id);
         continue;
       }
@@ -207,7 +220,7 @@ export function DataTable<T>({
       // 仅处理可以被隐藏的列
       if (column.enableHiding !== false) {
         newColumnVisibility[column.id as string] = columnsWithData.has(
-          column.id as string
+          column.id as string,
         );
       } else {
         // 不能隐藏的列始终可见
@@ -231,7 +244,7 @@ export function DataTable<T>({
       .map(
         (sort) =>
           // 将驼峰式列名转换为下划线式，并附加排序方向
-          `${camelToSnakeCase(sort.id)}.${sort.desc ? "desc" : "asc"}`
+          `${camelToSnakeCase(sort.id)}.${sort.desc ? "desc" : "asc"}`,
       )
       .join(","); // 多个排序条件用逗号分隔
 
@@ -259,7 +272,7 @@ export function DataTable<T>({
     if (timeRange.startDateTime) {
       const formattedStart = format(
         timeRange.startDateTime,
-        "yyyy-MM-dd'T'HH:mm:ss"
+        "yyyy-MM-dd HH:mm:ss",
       );
       if (newFilter.startDateTime !== formattedStart) {
         newFilter.startDateTime = formattedStart;
@@ -273,7 +286,7 @@ export function DataTable<T>({
 
     // 处理结束时间
     if (timeRange.endDateTime) {
-      const formattedEnd = format(timeRange.endDateTime, "yyyy-MM-dd'T'HH:mm:ss");
+      const formattedEnd = format(timeRange.endDateTime, "yyyy-MM-dd HH:mm:ss");
       if (newFilter.endDateTime !== formattedEnd) {
         newFilter.endDateTime = formattedEnd;
         changed = true;
@@ -350,130 +363,59 @@ export function DataTable<T>({
     manualFiltering: true, // 手动筛选，因为筛选逻辑由外部处理
   });
 
-  /**
-   * 获取列标题的文本内容
-   * @param column @tanstack/react-table 的 Column 对象
-   * @returns 列标题字符串
-   */
-  const getColumnHeaderText = (column: Column<T, unknown>): string => {
-    const headerContent = column.columnDef.header;
-    // 如果 header 是字符串，直接返回；否则使用列 ID 作为备选
-    return typeof headerContent === "string"
-      ? headerContent
-      : (column.id as string);
+  // 添加获取选中行的辅助函数
+  const getSelectedRows = () => {
+    // 获取所有选中行的原始数据
+    return table.getFilteredSelectedRowModel().rows.map((row) => row.original);
   };
-
-  /**
-   * 处理搜索输入框变化的防抖函数
-   * 使用 lodash.debounce 延迟 300ms 触发，避免频繁请求。
-   * @param event 输入事件对象
-   */
-  const debouncedFilterChange = debounce((newFilter: Filter<T>) => {
-    if (onFilterChange) {
-      onFilterChange(newFilter);
-    }
-  }, 800);
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newSearchTerm = event.target.value;
-    setSearchTerm(newSearchTerm); // 更新内部 state
-    if (!filter) return;
-    const newFilter = { ...filter, search: newSearchTerm };
-    debouncedFilterChange(newFilter); // 使用防抖触发外部更新
-  };
-
-  /**
-   * 处理筛选下拉框选项变化
-   * @param optionId 筛选字段的 ID (对应数据类型 T 的 key)
-   * @param value 选中的值
-   */
-  const handleFilterOptionChange = (
-    optionId: keyof T | string, // 允许字符串类型的 key
-    value: string | T[keyof T] // 值可以是 'all' 或具体类型的值
-  ) => {
-    if (!filter || !onFilterChange) return;
-
-    const newFilter = { ...filter, filter: { ...filter.filter } }; // 深拷贝 filter
-
-    // 如果选择 "all"，则从 filter 中删除该字段
-    if (value === "all") {
-      delete newFilter.filter[optionId as keyof T];
-    } else {
-      // 否则更新 filter 中对应字段的值
-      newFilter.filter[optionId as keyof T] = value as T[keyof T];
-    }
-
-    onFilterChange(newFilter);
-  };
-
-  /**
-   * 处理表头点击事件，用于切换排序状态
-   * @param column 被点击的列对象
-   */
-  const handleSortClick = (column: Column<T, unknown>) => {
-    // 切换排序状态：未排序 -> 升序 -> 降序 -> 未排序
-    column.toggleSorting(column.getIsSorted() === "asc");
-  };
-
-  // 检查列定义中是否包含 'createdAt' 或 'updatedAt'，用于决定是否显示时间范围选择器
-  const hasTimeColumns = columns.some(
-    (column) => column.id === "createdAt" || column.id === "updatedAt"
-  );
 
   return (
-    <div className="w-full space-y-4">
-      {/* 使用 DataTableHeader 子组件 */}
-      <DataTableHeader title={title} toolbars={toolbars} table={table} />
-
-      {/* 渲染描述信息 (如果提供) */}
-      {description && (
-        <div className="w-full text-center text-sm text-muted-foreground py-2">
-          {description}
-        </div>
+    <div className="space-y-4">
+      <DataTableHeader
+        title={title}
+        description={description}
+        toolbars={toolbars}
+        batchAction={batchAction}
+        table={table}
+        selectedRows={getSelectedRows()}
+      />
+      {/* 如果存在筛选配置，则渲染筛选组件 */}
+      {filter && onFilterChange && (
+        <DataTableFilter
+          filter={filter}
+          onFilterChange={onFilterChange}
+          timeRange={timeRange}
+          setTimeRange={setTimeRange}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          table={table}
+        />
       )}
 
-      {/* 使用 DataTableFilter 子组件 */}
-      {onFilterChange &&
-        filter && ( // 只有在需要筛选时才渲染
-          <DataTableFilter
-            filter={filter}
-            onFilterChange={onFilterChange}
-            searchTerm={searchTerm}
-            onSearchChange={handleSearchChange}
-            timeRange={timeRange}
-            onTimeRangeChange={setTimeRange} // 直接传递 setTimeRange
-            hasTimeColumns={hasTimeColumns}
-          />
-        )}
-
-      {/* 使用 DataTableCore 子组件 */}
+      {/* 表格核心部分 */}
       <DataTableCore
         table={table}
         loading={loading}
-        processedColumns={processedColumns} // 传递处理后的列给 Core 计算 colspan
+        processedColumns={processedColumns} // 传递处理后的列
         actions={actions}
         getActions={getActions}
+        showCheckboxColumn={!!batchAction} // 只有当存在批量操作按钮时才显示多选框
       />
 
       {/* 分页组件 */}
-      {page &&
-        onPageChange && ( // 仅在提供了 page 和 onPageChange 时渲染
-          <DataPagination
-            selectedNumber={Object.keys(rowSelection).length} // 传递选中行数
-            pageNumber={page.pageNumber}
-            pageSize={page.pageSize}
-            totalPage={page.totalPage}
-            totalRow={page.totalRow}
-            onPageChange={onPageChange} // 直接传递外部的回调
-            onPageSizeChange={(pageSize) => {
-              // 处理 pageSize 变化，更新外部 filter 并触发回调
-              if (filter && onFilterChange) {
-                const newFilter = { ...filter, size: pageSize, page: 1 }; // 页码重置为 1
-                onFilterChange(newFilter);
-              }
-            }}
-          />
-        )}
+      {page && onPageChange && (
+        <DataPagination
+          page={page}
+          onPageChange={onPageChange}
+          onPageSizeChange={(pageSize) => {
+            // 处理 pageSize 变化，更新外部 filter 并触发回调
+            if (filter && onFilterChange) {
+              const newFilter = { ...filter, size: pageSize, page: 1 }; // 页码重置为 1
+              onFilterChange(newFilter);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

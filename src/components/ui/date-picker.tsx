@@ -1,12 +1,12 @@
-"use client";
+import React from "react";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 
-import * as React from "react";
-import {format} from "date-fns";
-import {Calendar as CalendarIcon} from "lucide-react";
-import {cn} from "@/lib/utils";
-import {Button} from "@/components/ui/button";
-import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover";
-import {Calendar} from "@/components/ui/calendar";
+"use client";
 
 interface DateRange {
     from?: Date;

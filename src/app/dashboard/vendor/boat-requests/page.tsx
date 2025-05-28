@@ -18,8 +18,6 @@ import { format } from "date-fns";
 import { Search, Ship } from "lucide-react";
 import { toast } from "sonner";
 
-
-
 const ITEMS_PER_PAGE = 10;
 
 export default function VendorBoatRequestsPage() {

@@ -1,8 +1,6 @@
 import React from "react";
 import { CheckCircle, TrendingUp, Users, Zap } from "lucide-react";
 
-
-
 const advantages = [
   {
     icon: TrendingUp,

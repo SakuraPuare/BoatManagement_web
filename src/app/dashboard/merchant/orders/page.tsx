@@ -1,175 +1,255 @@
+"use client";
+
 import React, { useCallback, useEffect, useState } from "react";
 import {
   merchantCancelOrder,
   merchantCompleteOrder,
   merchantGetOrdersPage,
 } from "@/services/api/merchantOrder";
-
+import { DataTable } from "@/components/data-table";
+import { ColumnDef } from "@tanstack/react-table";
+import { Filter, Page } from "@/components/data-table/types";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { CheckCircle, Ship, ShoppingBag, Trash2 } from "lucide-react";
 import { ORDER_STATUS } from "@/lib/constants/status";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-
-
-const ITEMS_PER_PAGE = 10;
-
 type OrderStatus = keyof typeof ORDER_STATUS;
 
 export default function MerchantOrdersPage() {
   const [activeTab, setActiveTab] = useState<"boat" | "goods">("boat");
-  const [orders, setOrders] = useState<API.BaseBoatOrdersVO[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+
+  // State for data table
   const [isLoading, setIsLoading] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<"all" | OrderStatus>("all");
+  const [page, setPage] = useState<Page>({
+    pageNumber: 1,
+    pageSize: 10,
+  });
+  const [filter, setFilter] = useState<Filter<API.BaseBoatOrdersVO>>({
+    filter: {},
+    filterOptions: [
+      {
+        id: "status",
+        label: "状态",
+        options: [
+          { value: "all", label: "全部状态" },
+          ...Object.entries(ORDER_STATUS).map(([value, config]) => ({
+            value: value,
+            label: config.label,
+          })),
+        ],
+      },
+    ],
+    search: null,
+    sort: null,
+    startDateTime: null,
+    endDateTime: null,
+  });
+  const [orders, setOrders] = useState<API.BaseBoatOrdersVO[]>([]);
+
+  // State for delete/cancel confirmation
+  const [isProcessing, setIsProcessing] = useState<number | null>(null);
 
   const fetchOrders = useCallback(async () => {
     setIsLoading(true);
     try {
+      const statusValue = filter.filter.status as string;
       const response = await merchantGetOrdersPage(
-        { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-        { status: statusFilter === "all" ? undefined : statusFilter }
+        {
+          pageNum: page.pageNumber || 1,
+          pageSize: page.pageSize || 10,
+          ...(filter.search && { search: filter.search }),
+          ...(filter.sort && { sort: filter.sort }),
+          ...(filter.startDateTime && { startDateTime: filter.startDateTime }),
+          ...(filter.endDateTime && { endDateTime: filter.endDateTime }),
+        },
+        { status: statusValue === "all" ? undefined : statusValue }
       );
-      setOrders(response.data?.records || []);
-      setTotalPages(response.data?.totalPage || 0);
+
+      if (response.data) {
+        const pageData = response.data as API.PageBaseBoatOrdersVO;
+        setPage({
+          pageNumber: pageData.pageNumber || 1,
+          pageSize: pageData.pageSize || 10,
+          totalPage: pageData.totalPage,
+          totalRow: pageData.totalRow,
+        });
+
+        setOrders(pageData.records || []);
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch orders:", error);
       toast.error("获取订单列表失败");
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, statusFilter]);
+  }, [filter, page.pageNumber, page.pageSize]);
 
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);
 
-  const columns: Column<API.BaseBoatOrdersVO>[] = [
-    { header: "订单ID", accessor: "orderId" },
-    { header: "用户ID", accessor: "userId" },
+  // 处理函数
+  const handleCancelOrder = useCallback(
+    async (order: API.BaseBoatOrdersVO) => {
+      if (!order.orderId) return;
+
+      setIsProcessing(order.orderId);
+      try {
+        const res = await merchantCancelOrder({ id: order.orderId });
+        if (res.data) {
+          toast.success("取消订单成功");
+          fetchOrders();
+        } else {
+          toast.error("取消订单失败");
+        }
+      } catch (error) {
+        console.error("Failed to cancel order:", error);
+        toast.error("取消订单失败");
+      } finally {
+        setIsProcessing(null);
+      }
+    },
+    [fetchOrders]
+  );
+
+  const handleCompleteOrder = useCallback(
+    async (order: API.BaseBoatOrdersVO) => {
+      if (!order.orderId) return;
+
+      setIsProcessing(order.orderId);
+      try {
+        const res = await merchantCompleteOrder({ id: order.orderId });
+        if (res.data) {
+          toast.success("完成订单成功");
+          fetchOrders();
+        } else {
+          toast.error("完成订单失败");
+        }
+      } catch (error) {
+        console.error("Failed to complete order:", error);
+        toast.error("完成订单失败");
+      } finally {
+        setIsProcessing(null);
+      }
+    },
+    [fetchOrders]
+  );
+
+  // Table columns definition
+  const columns: ColumnDef<API.BaseBoatOrdersVO>[] = [
     {
+      id: "orderId",
+      header: "订单ID",
+      accessorKey: "orderId",
+      enableSorting: true,
+    },
+    {
+      id: "userId",
+      header: "用户ID",
+      accessorKey: "userId",
+      enableSorting: true,
+    },
+    {
+      id: "status",
       header: "状态",
-      accessor: "status",
-      render: (value) => {
-        const status = value as OrderStatus;
+      accessorKey: "status",
+      cell: ({ row }) => {
+        const status = row.original.status as OrderStatus;
         const statusConfig = ORDER_STATUS[status];
-        return (
-          <span
-            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              statusConfig?.color || "bg-gray-100 text-gray-800"
-            }`}
-          >
-            {statusConfig?.label || "未知状态"}
-          </span>
+        return statusConfig ? (
+          <Badge className={statusConfig.color}>{statusConfig.label}</Badge>
+        ) : (
+          <span>未知状态</span>
         );
       },
+      enableSorting: true,
     },
     {
+      id: "price",
       header: "价格",
-      accessor: "price",
-      render: (price) => <span>¥{price}</span>,
+      accessorKey: "price",
+      cell: ({ row }) => `¥${row.original.price || 0}`,
+      enableSorting: true,
     },
     {
+      id: "discount",
       header: "折扣",
-      accessor: "discount",
-      render: (discount) => <span>{discount}%</span>,
+      accessorKey: "discount",
+      cell: ({ row }) => `${row.original.discount || 0}%`,
+      enableSorting: true,
     },
     {
+      id: "createdAt",
       header: "创建时间",
-      accessor: "createdAt",
-      render: (value) => new Date(value as string).toLocaleString("zh-CN"),
+      accessorKey: "createdAt",
+      cell: ({ row }) =>
+        row.original.createdAt
+          ? new Date(row.original.createdAt).toLocaleString("zh-CN")
+          : "-",
+      enableSorting: true,
     },
     {
+      id: "updatedAt",
       header: "更新时间",
-      accessor: "updatedAt",
-      render: (value) => new Date(value as string).toLocaleString("zh-CN"),
+      accessorKey: "updatedAt",
+      cell: ({ row }) =>
+        row.original.updatedAt
+          ? new Date(row.original.updatedAt).toLocaleString("zh-CN")
+          : "-",
+      enableSorting: true,
     },
   ];
 
-  // 先定义处理函数
-  const handleCancelOrder = async (order: API.BaseBoatOrdersVO) => {
-    try {
-      const res = await merchantCancelOrder({ id: order.orderId! });
-      if (res.data) {
-        toast.success("取消订单成功");
-        await fetchOrders(); // 刷新订单列表
-      } else {
-        toast.error("取消订单失败");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("取消订单失败");
+  // Table row actions with conditional display
+  const getActions = (row: API.BaseBoatOrdersVO) => {
+    const actions = [];
+
+    // 只有待处理和处理中的订单可以取消
+    if (["PENDING", "PROCESSING"].includes(row.status as string)) {
+      actions.push({
+        label: "取消订单",
+        icon: <Trash2 className="h-4 w-4 mr-2" />,
+        onClick: () => handleCancelOrder(row),
+      });
     }
+
+    // 只有处理中的订单可以完成
+    if (row.status === "PROCESSING") {
+      actions.push({
+        label: "完成订单",
+        icon: <CheckCircle className="h-4 w-4 mr-2" />,
+        onClick: () => handleCompleteOrder(row),
+      });
+    }
+
+    return actions;
   };
 
-  const handleCompleteOrder = async (order: API.BaseBoatOrdersVO) => {
-    try {
-      const res = await merchantCompleteOrder({ id: order.orderId! });
-      if (res.data) {
-        toast.success("完成订单成功");
-        await fetchOrders(); // 刷新订单列表
-      } else {
-        toast.error("完成订单失败");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("完成订单失败");
-    }
-  };
-
-  // 然后再定义 actions
-  const actions: Action<API.BaseBoatOrdersVO>[] = [
-    {
-      label: "取消订单",
-      onClick: handleCancelOrder,
-      icon: <Trash2 className="h-4 w-4 mr-2" />,
-      // 只有待处理和处理中的订单可以取消
-      show: (order) =>
-        ["PENDING", "PROCESSING"].includes(order.status as string),
-    },
-    {
-      label: "完成订单",
-      onClick: handleCompleteOrder,
-      icon: <CheckCircle className="h-4 w-4 mr-2" />,
-      // 只有处理中的订单可以完成
-      show: (order) => order.status === "PROCESSING",
-    },
-  ];
-
-  // 船舶订单相关代码
+  // 船舶订单组件
   const BoatOrdersTab = () => {
     return (
-      <DataManagementTable
+      <DataTable<API.BaseBoatOrdersVO>
         title="船舶订单"
-        icon={<Ship className="h-6 w-6" />}
-        data={orders}
+        loading={isLoading}
         columns={columns}
-        actions={actions}
-        isLoading={isLoading}
-        searchPlaceholder="搜索订单ID..."
-        statusFilter={{
-          value: statusFilter,
-          onChange: (value) => setStatusFilter(value as "all" | OrderStatus),
-          options: [
-            { value: "all", label: "全部状态" },
-            ...Object.entries(ORDER_STATUS).map(([value, config]) => ({
-              value: value,
-              label: config.label,
-            })),
-          ],
+        getActions={getActions}
+        data={orders}
+        page={page}
+        onPageChange={(pageNumber) => {
+          setPage({ ...page, pageNumber });
         }}
-        pagination={{
-          currentPage,
-          totalPages,
-          totalItems: orders.length,
-          onPageChange: setCurrentPage,
+        filter={filter}
+        onFilterChange={(newFilter) => {
+          setFilter(newFilter);
+          setPage({ ...page, pageNumber: 1 });
         }}
       />
     );
   };
 
-  // 商品订单相关代码
+  // 商品订单组件
   const GoodsOrdersTab = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-gray-500">

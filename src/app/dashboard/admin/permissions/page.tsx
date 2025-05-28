@@ -178,7 +178,8 @@ export default function PermissionsPage() {
 
   // State for add/edit permission dialog
   const [isAddEditDialogOpen, setIsAddEditDialogOpen] = useState(false);
-  const [editingPermission, setEditingPermission] = useState<API.BasePermissionVO | null>(null);
+  const [editingPermission, setEditingPermission] =
+    useState<API.BasePermissionVO | null>(null);
 
   // State for delete confirmation dialog
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
@@ -196,7 +197,7 @@ export default function PermissionsPage() {
           ...(filter.startDateTime && { startDateTime: filter.startDateTime }),
           ...(filter.endDateTime && { endDateTime: filter.endDateTime }),
         },
-        filter.filter,
+        filter.filter
       );
 
       const pageData = res.data?.data; // First data is response wrapper, second data is actual PageBasePermissionVO
@@ -222,10 +223,13 @@ export default function PermissionsPage() {
   }, [fetchPermissions]);
 
   // Function to handle opening the add/edit dialog
-  const handleOpenAddEditDialog = useCallback((permission?: API.BasePermissionVO) => {
-    setEditingPermission(permission || null);
-    setIsAddEditDialogOpen(true);
-  }, []);
+  const handleOpenAddEditDialog = useCallback(
+    (permission?: API.BasePermissionVO) => {
+      setEditingPermission(permission || null);
+      setIsAddEditDialogOpen(true);
+    },
+    []
+  );
 
   // Function to handle permission deletion
   const handleDeletePermission = useCallback(
@@ -244,7 +248,7 @@ export default function PermissionsPage() {
         setIsDeleting(null);
       }
     },
-    [fetchPermissions],
+    [fetchPermissions]
   );
 
   // Table columns definition

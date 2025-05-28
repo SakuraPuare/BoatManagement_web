@@ -3,8 +3,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-
-
 interface AuthGuardProps {
   children: ReactNode;
   requiredPermissions?: string[];

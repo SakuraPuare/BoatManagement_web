@@ -2,8 +2,6 @@ import React from "react";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { Home, Package, ShoppingCart } from "lucide-react";
 
-
-
 const sidebarItems = [
   {
     title: "主页",

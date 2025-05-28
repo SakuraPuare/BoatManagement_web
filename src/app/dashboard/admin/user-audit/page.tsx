@@ -1,16 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
+"use client";
 
+import React, { useCallback, useEffect, useState } from "react";
+import { DataTable } from "@/components/data-table";
+import { Filter, Page } from "@/components/data-table/types";
 import { adminGetUserCertifyPage } from "@/services/api/adminUser";
 import { auditAdminUser } from "@/services/api/adminAudit";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Eye, UserCheck, UserX } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -20,10 +16,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
-
-
-const ITEMS_PER_PAGE = 10;
+import { ColumnDef } from "@tanstack/react-table";
+import { formatDate } from "date-fns";
 
 type CertifyStatus = "PENDING" | "APPROVED" | "REJECTED";
 
@@ -40,162 +34,212 @@ const STATUS_MAP: Record<
 };
 
 export default function UserAuditPage() {
+  // State for data table
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState<Page>({
+    pageNumber: 1,
+    pageSize: 10,
+  });
+  const [filter, setFilter] = useState<Filter<API.BaseUserCertifyVO>>({
+    filter: {},
+    filterOptions: [
+      { label: "全部", value: "" },
+      { label: "待审核", value: "PENDING" },
+      { label: "已通过", value: "APPROVED" },
+      { label: "已拒绝", value: "REJECTED" },
+    ],
+    search: null,
+    sort: null,
+    startDateTime: null,
+    endDateTime: null,
+  });
   const [certifications, setCertifications] = useState<API.BaseUserCertifyVO[]>(
     []
   );
+
+  // State for detail dialog
   const [selectedCertification, setSelectedCertification] =
     useState<API.BaseUserCertifyVO | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<"all" | CertifyStatus>(
-    "all"
-  );
 
+  // State for audit operations
+  const [isAuditing, setIsAuditing] = useState<number | null>(null);
+
+  // Fetch certifications data
   const fetchCertifications = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await adminGetUserCertifyPage(
-        { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
+      const res = await adminGetUserCertifyPage(
         {
-          ...(statusFilter !== "all" && { status: statusFilter }),
+          pageNum: page.pageNumber || 1,
+          pageSize: page.pageSize || 10,
+          ...(filter.search && { search: filter.search }),
+          ...(filter.sort && { sort: filter.sort }),
+          ...(filter.startDateTime && { startDateTime: filter.startDateTime }),
+          ...(filter.endDateTime && { endDateTime: filter.endDateTime }),
+        },
+        {
+          ...(filter.filter.status && { status: filter.filter.status }),
         }
       );
-      if (response.data?.records) {
-        setCertifications(response.data.records);
-        setTotalPages(response.data.totalPage || 0);
-      }
+
+      setPage({
+        pageNumber: res.data?.pageNum || 1,
+        pageSize: res.data?.pageSize || 10,
+        totalPage: res.data?.totalPage,
+        totalRow: res.data?.totalRow,
+      });
+
+      setCertifications(res.data?.records || []);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch certifications:", error);
       toast.error("获取认证列表失败");
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, statusFilter]);
+  }, [filter, page.pageNumber, page.pageSize]);
 
+  // Load data on component mount and when dependencies change
   useEffect(() => {
     fetchCertifications();
   }, [fetchCertifications]);
 
-  const handleAudit = async (id: number, status: "APPROVED" | "REJECTED") => {
-    try {
-      await auditAdminUser({ id, types: status });
-      toast.success(`审核${status === "APPROVED" ? "通过" : "拒绝"}成功`);
-      await fetchCertifications();
-    } catch (error) {
-      console.error(error);
-      toast.error("审核操作失败");
-    }
-  };
+  // Handle audit operations
+  const handleAudit = useCallback(
+    async (
+      certification: API.BaseUserCertifyVO,
+      status: "APPROVED" | "REJECTED"
+    ) => {
+      if (!certification?.id) return;
 
-  const handleViewDetail = (certification: API.BaseUserCertifyVO) => {
-    setSelectedCertification(certification);
-    setIsDetailDialogOpen(true);
-  };
+      setIsAuditing(certification.id);
+      try {
+        await auditAdminUser({ id: certification.id, types: status });
+        toast.success(`审核${status === "APPROVED" ? "通过" : "拒绝"}成功`);
+        fetchCertifications(); // Refresh the list
+      } catch (error) {
+        console.error("Failed to audit:", error);
+        toast.error("审核操作失败");
+      } finally {
+        setIsAuditing(null);
+      }
+    },
+    [fetchCertifications]
+  );
 
-  const columns: Column<API.BaseUserCertifyVO>[] = [
+  // Handle view detail
+  const handleViewDetail = useCallback(
+    (certification: API.BaseUserCertifyVO) => {
+      setSelectedCertification(certification);
+      setIsDetailDialogOpen(true);
+    },
+    []
+  );
+
+  // Table columns definition
+  const columns: ColumnDef<API.BaseUserCertifyVO>[] = [
     {
-      accessor: "id",
+      id: "id",
       header: "ID",
+      accessorKey: "id",
+      enableSorting: true,
     },
     {
-      accessor: "realName",
+      id: "realName",
       header: "真实姓名",
+      accessorKey: "realName",
+      enableSorting: true,
     },
     {
-      accessor: "idCard",
+      id: "idCard",
       header: "身份证号",
-      render: (value: string) => {
+      accessorKey: "idCard",
+      cell: ({ row }) => {
+        const value = row.original.idCard;
         if (!value) return "-";
         return value.replace(/(\d{6})\d{8}(\d{4})/, "$1********$2");
       },
+      enableSorting: false,
     },
     {
-      accessor: "status",
+      id: "status",
       header: "审核状态",
-      render: (value: CertifyStatus) => {
-        const status = STATUS_MAP[value] || STATUS_MAP.PENDING;
+      accessorKey: "status",
+      cell: ({ row }) => {
+        const status =
+          STATUS_MAP[row.original.status as CertifyStatus] ||
+          STATUS_MAP.PENDING;
         return <Badge variant={status.variant}>{status.label}</Badge>;
       },
+      enableSorting: true,
     },
     {
-      accessor: "createdAt",
+      id: "createdAt",
       header: "申请时间",
-      render: (value: string) => {
-        return value ? new Date(value).toLocaleString() : "-";
-      },
+      cell: ({ row }) =>
+        row.original.createdAt
+          ? formatDate(row.original.createdAt, "yyyy-MM-dd HH:mm:ss")
+          : "-",
+      enableSorting: true,
     },
     {
-      accessor: "updatedAt",
+      id: "updatedAt",
       header: "更新时间",
-      render: (value: string) => {
-        return value ? new Date(value).toLocaleString() : "-";
-      },
+      cell: ({ row }) =>
+        row.original.updatedAt
+          ? formatDate(row.original.updatedAt, "yyyy-MM-dd HH:mm:ss")
+          : "-",
+      enableSorting: true,
     },
   ];
 
-  const actions: Action<API.BaseUserCertifyVO>[] = [
+  // Table row actions
+  const actions = [
     {
       label: "查看详情",
-      icon: <Eye className="w-4 h-4" />,
+      icon: <Eye className="mr-2 h-4 w-4" />,
       onClick: handleViewDetail,
+      disabled: (row: API.BaseUserCertifyVO) => isAuditing === row.id,
     },
     {
       label: "审核通过",
-      icon: <UserCheck className="w-4 h-4" />,
-      onClick: (item) => handleAudit(item.id!, "APPROVED"),
-      show: (item) => item.status === "PENDING",
+      icon: <UserCheck className="mr-2 h-4 w-4 text-green-500" />,
+      onClick: (row: API.BaseUserCertifyVO) => handleAudit(row, "APPROVED"),
+      className: "text-green-500",
+      disabled: (row: API.BaseUserCertifyVO) =>
+        row.status !== "PENDING" || !!isAuditing,
+      loading: (row: API.BaseUserCertifyVO) => isAuditing === row.id,
+      loadingText: "审核中...",
     },
     {
       label: "审核拒绝",
-      icon: <UserX className="w-4 h-4" />,
-      onClick: (item) => handleAudit(item.id!, "REJECTED"),
-      show: (item) => item.status === "PENDING",
+      icon: <UserX className="mr-2 h-4 w-4 text-red-500" />,
+      onClick: (row: API.BaseUserCertifyVO) => handleAudit(row, "REJECTED"),
+      className: "text-red-500",
+      disabled: (row: API.BaseUserCertifyVO) =>
+        row.status !== "PENDING" || !!isAuditing,
+      loading: (row: API.BaseUserCertifyVO) => isAuditing === row.id,
+      loadingText: "审核中...",
     },
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">用户认证审核</h1>
-          <p className="text-muted-foreground">管理用户实名认证申请</p>
-        </div>
-      </div>
-
-      <div className="flex items-center space-x-4 mb-4">
-        <Select
-          value={statusFilter}
-          onValueChange={(value) =>
-            setStatusFilter(value as "all" | CertifyStatus)
-          }
-        >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="选择状态" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">全部</SelectItem>
-            <SelectItem value="PENDING">待审核</SelectItem>
-            <SelectItem value="APPROVED">已通过</SelectItem>
-            <SelectItem value="REJECTED">已拒绝</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <DataManagementTable<API.BaseUserCertifyVO>
+    <>
+      <DataTable<API.BaseUserCertifyVO>
         title="用户认证审核"
-        icon={<UserCheck className="h-5 w-5" />}
-        data={certifications}
+        description="管理用户实名认证申请"
+        loading={isLoading}
         columns={columns}
         actions={actions}
-        isLoading={isLoading}
-        searchPlaceholder="搜索用户姓名或身份证号..."
-        pagination={{
-          currentPage,
-          totalPages,
-          totalItems: totalPages * ITEMS_PER_PAGE,
-          onPageChange: setCurrentPage,
+        data={certifications}
+        page={page}
+        onPageChange={(pageNumber) => {
+          setPage({ ...page, pageNumber });
+        }}
+        filter={filter}
+        onFilterChange={(newFilter) => {
+          setFilter(newFilter);
+          setPage({ ...page, pageNumber: 1 }); // 筛选变化时重置页码
         }}
       />
 
@@ -246,9 +290,10 @@ export default function UserAuditPage() {
                   <Button
                     size="sm"
                     onClick={() => {
-                      handleAudit(selectedCertification.id!, "APPROVED");
+                      handleAudit(selectedCertification, "APPROVED");
                       setIsDetailDialogOpen(false);
                     }}
+                    disabled={!!isAuditing}
                   >
                     <UserCheck className="w-4 h-4 mr-2" />
                     通过
@@ -257,9 +302,10 @@ export default function UserAuditPage() {
                     size="sm"
                     variant="destructive"
                     onClick={() => {
-                      handleAudit(selectedCertification.id!, "REJECTED");
+                      handleAudit(selectedCertification, "REJECTED");
                       setIsDetailDialogOpen(false);
                     }}
+                    disabled={!!isAuditing}
                   >
                     <UserX className="w-4 h-4 mr-2" />
                     拒绝
@@ -270,6 +316,6 @@ export default function UserAuditPage() {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }

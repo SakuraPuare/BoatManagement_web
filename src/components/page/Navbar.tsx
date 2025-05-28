@@ -3,8 +3,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { Ship, User } from "lucide-react";
 import Link from "next/link";
 
-
-
 export function Navbar() {
   const { logout, isAuthenticated } = useAuth();
 

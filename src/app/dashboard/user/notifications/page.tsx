@@ -1,11 +1,15 @@
-import React, { useCallback, useEffect, useState } from "react";
+"use client";
 
+import React, { useCallback, useEffect, useState } from "react";
 import {
   getNotificationsPage,
   getUnreadCount,
   markAsRead,
   markMultipleAsRead,
 } from "@/services/api/userNotificationController";
+import { DataTable } from "@/components/data-table";
+import { ColumnDef } from "@tanstack/react-table";
+import { Filter, Page } from "@/components/data-table/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bell, BellOff, Check, CheckCheck, Eye } from "lucide-react";
@@ -17,17 +21,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-
-
-const ITEMS_PER_PAGE = 10;
 
 // 模拟当前用户ID，实际应该从认证状态获取
 const CURRENT_USER_ID = 1;
@@ -48,53 +41,97 @@ const NOTIFICATION_TYPE_MAP: Record<
 };
 
 export default function UserNotificationsPage() {
+  // State for data table
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState<Page>({
+    pageNumber: 1,
+    pageSize: 10,
+  });
+  const [filter, setFilter] = useState<Filter<API.BaseNotificationsVO>>({
+    filter: {},
+    filterOptions: [
+      {
+        id: "isRead",
+        label: "阅读状态",
+        options: [
+          { value: "all", label: "全部" },
+          { value: "true", label: "已读" },
+          { value: "false", label: "未读" },
+        ],
+      },
+      {
+        id: "type",
+        label: "通知类型",
+        options: [
+          { value: "all", label: "全部" },
+          ...Object.entries(NOTIFICATION_TYPE_MAP).map(([key, value]) => ({
+            value: key,
+            label: value.label,
+          })),
+        ],
+      },
+    ],
+    search: null,
+    sort: null,
+    startDateTime: null,
+    endDateTime: null,
+  });
   const [notifications, setNotifications] = useState<API.BaseNotificationsVO[]>(
     []
   );
+
   const [selectedNotification, setSelectedNotification] =
     useState<API.BaseNotificationsVO | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
-  const [readFilter, setReadFilter] = useState<"all" | "read" | "unread">(
-    "all"
-  );
-  const [typeFilter, setTypeFilter] = useState<"all" | NotificationType>("all");
   const [unreadCount, setUnreadCount] = useState(0);
 
   const fetchNotifications = useCallback(async () => {
     setIsLoading(true);
     try {
+      const readValue = String(filter.filter.isRead || "");
+      const typeValue = String(filter.filter.type || "");
+
       const response = await getNotificationsPage(
         {
           userId: CURRENT_USER_ID,
-          pageNum: currentPage,
-          pageSize: ITEMS_PER_PAGE,
+          pageNum: page.pageNumber || 1,
+          pageSize: page.pageSize || 10,
+          ...(filter.search && { search: filter.search }),
+          ...(filter.sort && { sort: filter.sort }),
+          ...(filter.startDateTime && { startDateTime: filter.startDateTime }),
+          ...(filter.endDateTime && { endDateTime: filter.endDateTime }),
         },
         {
           userId: CURRENT_USER_ID,
-          ...(readFilter === "read" && { isRead: true }),
-          ...(readFilter === "unread" && { isRead: false }),
-          ...(typeFilter !== "all" && { type: typeFilter }),
+          ...(readValue === "true" && { isRead: true }),
+          ...(readValue === "false" && { isRead: false }),
+          ...(typeValue && typeValue !== "all" && { type: typeValue }),
         }
       );
-      if (response.data?.records) {
-        setNotifications(response.data.records);
-        setTotalPages(response.data.totalPage || 0);
+
+      if (response.data) {
+        const pageData = response.data as API.PageBaseNotificationsVO;
+        setPage({
+          pageNumber: pageData.pageNumber || 1,
+          pageSize: pageData.pageSize || 10,
+          totalPage: pageData.totalPage,
+          totalRow: pageData.totalRow,
+        });
+
+        setNotifications(pageData.records || []);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch notifications:", error);
       toast.error("获取通知列表失败");
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, readFilter, typeFilter]);
+  }, [filter, page.pageNumber, page.pageSize]);
 
   const fetchUnreadCount = useCallback(async () => {
     try {
       const response = await getUnreadCount({ userId: CURRENT_USER_ID });
-      setUnreadCount(response.data || 0);
+      setUnreadCount(Number(response.data) || 0);
     } catch (error) {
       console.error(error);
     }
@@ -145,63 +182,73 @@ export default function UserNotificationsPage() {
     }
   };
 
-  const columns: Column<API.BaseNotificationsVO>[] = [
+  // Table columns definition
+  const columns: ColumnDef<API.BaseNotificationsVO>[] = [
     {
-      accessor: "isRead",
+      id: "isRead",
       header: "状态",
-      render: (value: boolean) => (
+      accessorKey: "isRead",
+      cell: ({ row }) => (
         <div className="flex items-center justify-center">
-          {value ? (
+          {row.original.isRead ? (
             <BellOff className="w-4 h-4 text-muted-foreground" />
           ) : (
             <Bell className="w-4 h-4 text-blue-500" />
           )}
         </div>
       ),
+      enableSorting: true,
     },
     {
-      accessor: "type",
+      id: "type",
       header: "类型",
-      render: (value: NotificationType) => {
+      accessorKey: "type",
+      cell: ({ row }) => {
         const type =
-          NOTIFICATION_TYPE_MAP[value] || NOTIFICATION_TYPE_MAP.SYSTEM;
+          NOTIFICATION_TYPE_MAP[row.original.type as NotificationType] ||
+          NOTIFICATION_TYPE_MAP.SYSTEM;
         return <Badge variant={type.variant}>{type.label}</Badge>;
       },
+      enableSorting: true,
     },
     {
-      accessor: "title",
+      id: "title",
       header: "标题",
-      render: (value: string, row?: any) => (
-        <div
-          className={`${row?.data && !row.data.isRead ? "font-semibold" : ""}`}
-        >
-          {value || "-"}
+      accessorKey: "title",
+      cell: ({ row }) => (
+        <div className={`${!row.original.isRead ? "font-semibold" : ""}`}>
+          {row.original.title || "-"}
         </div>
       ),
+      enableSorting: true,
     },
     {
-      accessor: "content",
+      id: "content",
       header: "内容",
-      render: (value: string, row?: any) => (
+      accessorKey: "content",
+      cell: ({ row }) => (
         <div
-          className={`truncate ${
-            row?.data && !row.data.isRead ? "font-medium" : ""
-          }`}
+          className={`truncate ${!row.original.isRead ? "font-medium" : ""}`}
         >
-          {value || "-"}
+          {row.original.content || "-"}
         </div>
       ),
+      enableSorting: false,
     },
     {
-      accessor: "createdAt",
+      id: "createdAt",
       header: "时间",
-      render: (value: string) => {
-        return value ? new Date(value).toLocaleString() : "-";
-      },
+      accessorKey: "createdAt",
+      cell: ({ row }) =>
+        row.original.createdAt
+          ? new Date(row.original.createdAt).toLocaleString()
+          : "-",
+      enableSorting: true,
     },
   ];
 
-  const actions: Action<API.BaseNotificationsVO>[] = [
+  // Table row actions
+  const actions = [
     {
       label: "查看详情",
       icon: <Eye className="w-4 h-4" />,
@@ -210,8 +257,9 @@ export default function UserNotificationsPage() {
     {
       label: "标记已读",
       icon: <Check className="w-4 h-4" />,
-      onClick: (item) => handleMarkAsRead(item.id!),
-      show: (item) => !item.isRead,
+      onClick: (item: API.BaseNotificationsVO) => handleMarkAsRead(item.id!),
+      // 只为未读通知显示此操作
+      disabled: (row: API.BaseNotificationsVO) => row.isRead,
     },
   ];
 
@@ -237,56 +285,26 @@ export default function UserNotificationsPage() {
         )}
       </div>
 
-      {/* 筛选器 */}
-      <div className="flex items-center space-x-4">
-        <Select
-          value={readFilter}
-          onValueChange={(value) =>
-            setReadFilter(value as "all" | "read" | "unread")
-          }
-        >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="阅读状态" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">全部</SelectItem>
-            <SelectItem value="read">已读</SelectItem>
-            <SelectItem value="unread">未读</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select
-          value={typeFilter}
-          onValueChange={(value) =>
-            setTypeFilter(value as "all" | NotificationType)
-          }
-        >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="通知类型" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">全部</SelectItem>
-            {Object.entries(NOTIFICATION_TYPE_MAP).map(([key, value]) => (
-              <SelectItem key={key} value={key}>
-                {value.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <DataManagementTable<API.BaseNotificationsVO>
+      <DataTable<API.BaseNotificationsVO>
         title="通知列表"
-        icon={<Bell className="w-5 h-5" />}
-        data={notifications}
+        description={
+          <div className="flex items-center gap-2">
+            <Bell className="w-5 h-5" />
+            <span>查看和管理您的通知消息</span>
+          </div>
+        }
+        loading={isLoading}
         columns={columns}
         actions={actions}
-        isLoading={isLoading}
-        searchPlaceholder="搜索通知标题或内容..."
-        pagination={{
-          currentPage,
-          totalPages,
-          totalItems: totalPages * ITEMS_PER_PAGE,
-          onPageChange: setCurrentPage,
+        data={notifications}
+        page={page}
+        onPageChange={(pageNumber) => {
+          setPage({ ...page, pageNumber });
+        }}
+        filter={filter}
+        onFilterChange={(newFilter) => {
+          setFilter(newFilter);
+          setPage({ ...page, pageNumber: 1 });
         }}
       />
 

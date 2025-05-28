@@ -186,7 +186,7 @@ export default function RolesPage() {
           ...(filter.startDateTime && { startDateTime: filter.startDateTime }),
           ...(filter.endDateTime && { endDateTime: filter.endDateTime }),
         },
-        filter.filter,
+        filter.filter
       );
 
       // 处理响应数据的结构
@@ -235,7 +235,7 @@ export default function RolesPage() {
         setIsDeleting(null);
       }
     },
-    [fetchRoles],
+    [fetchRoles]
   );
 
   // Table columns definition

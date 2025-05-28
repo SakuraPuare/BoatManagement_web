@@ -9,8 +9,6 @@ import { Lock, QrCode, Ship, Smartphone, User as UserIcon } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-
-
 export default function LoginPage() {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);

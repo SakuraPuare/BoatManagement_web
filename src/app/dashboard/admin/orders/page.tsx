@@ -1,5 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+"use client";
 
+import React, { useCallback, useEffect, useState } from "react";
+import { DataTable } from "@/components/data-table";
+import { Filter, Page } from "@/components/data-table/types";
 import { adminGetBoatOrdersPage } from "@/services/api/adminOrder";
 import { adminGetGoodsOrdersPage1 as adminGetGoodsOrdersPage } from "@/services/api/adminGoodsOrder";
 import { adminGetUserList } from "@/services/api/adminUser";
@@ -15,10 +18,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ORDER_STATUS } from "@/lib/constants/status";
-
-
-
-const ITEMS_PER_PAGE = 10;
+import { ColumnDef } from "@tanstack/react-table";
+import { formatDate } from "date-fns";
 
 type OrderStatus = keyof typeof ORDER_STATUS;
 
@@ -31,329 +32,408 @@ type GoodsOrderWithUser = API.BaseGoodsOrdersVO & {
 };
 
 export default function AdminOrdersPage() {
-  const [boatOrders, setBoatOrders] = useState<API.BaseBoatOrdersVO[]>([]);
-  const [goodsOrders, setGoodsOrders] = useState<API.BaseGoodsOrdersVO[]>([]);
+  // Common state
+  const [users, setUsers] = useState<API.BaseAccountsVO[]>([]);
+  const [activeTab, setActiveTab] = useState("boat");
+
+  // Boat orders state
+  const [isBoatLoading, setIsBoatLoading] = useState(false);
+  const [boatPage, setBoatPage] = useState<Page>({
+    pageNumber: 1,
+    pageSize: 10,
+  });
+  const [boatFilter, setBoatFilter] = useState<Filter<BoatOrderWithUser>>({
+    filter: {},
+    filterOptions: [
+      {
+        id: "status",
+        label: "订单状态",
+        options: [
+          { label: "全部", value: "" },
+          ...Object.entries(ORDER_STATUS).map(([key, value]) => ({
+            label: value.label,
+            value: key,
+          })),
+        ],
+      },
+    ],
+    search: null,
+    sort: null,
+    startDateTime: null,
+    endDateTime: null,
+  });
   const [boatOrdersWithUser, setBoatOrdersWithUser] = useState<
     BoatOrderWithUser[]
   >([]);
+  const [selectedBoatOrder, setSelectedBoatOrder] =
+    useState<BoatOrderWithUser | null>(null);
+  const [isBoatDetailDialogOpen, setIsBoatDetailDialogOpen] = useState(false);
+
+  // Goods orders state
+  const [isGoodsLoading, setIsGoodsLoading] = useState(false);
+  const [goodsPage, setGoodsPage] = useState<Page>({
+    pageNumber: 1,
+    pageSize: 10,
+  });
+  const [goodsFilter, setGoodsFilter] = useState<Filter<GoodsOrderWithUser>>({
+    filter: {},
+    filterOptions: [
+      {
+        id: "status",
+        label: "订单状态",
+        options: [
+          { label: "全部", value: "" },
+          ...Object.entries(ORDER_STATUS).map(([key, value]) => ({
+            label: value.label,
+            value: key,
+          })),
+        ],
+      },
+    ],
+    search: null,
+    sort: null,
+    startDateTime: null,
+    endDateTime: null,
+  });
   const [goodsOrdersWithUser, setGoodsOrdersWithUser] = useState<
     GoodsOrderWithUser[]
   >([]);
-  const [users, setUsers] = useState<API.BaseAccountsVO[]>([]);
-  const [selectedBoatOrder, setSelectedBoatOrder] =
-    useState<BoatOrderWithUser | null>(null);
   const [selectedGoodsOrder, setSelectedGoodsOrder] =
     useState<GoodsOrderWithUser | null>(null);
-
-  const [boatCurrentPage, setBoatCurrentPage] = useState(1);
-  const [goodsCurrentPage, setGoodsCurrentPage] = useState(1);
-  const [boatTotalPages, setBoatTotalPages] = useState(0);
-  const [goodsTotalPages, setGoodsTotalPages] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isBoatDetailDialogOpen, setIsBoatDetailDialogOpen] = useState(false);
   const [isGoodsDetailDialogOpen, setIsGoodsDetailDialogOpen] = useState(false);
-  const [boatStatusFilter, setBoatStatusFilter] = useState<"all" | OrderStatus>(
-    "all"
-  );
-  const [goodsStatusFilter, setGoodsStatusFilter] = useState<
-    "all" | OrderStatus
-  >("all");
-  const [activeTab, setActiveTab] = useState("boat");
 
+  // Fetch users data
   const fetchUsers = useCallback(async () => {
     try {
       const response = await adminGetUserList({}, {});
       setUsers((response.data as API.BaseAccountsVO[]) || []);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch users:", error);
     }
   }, []);
 
+  // Fetch boat orders data
   const fetchBoatOrders = useCallback(async () => {
-    setIsLoading(true);
+    setIsBoatLoading(true);
     try {
-      const response = await adminGetBoatOrdersPage(
-        { pageNum: boatCurrentPage, pageSize: ITEMS_PER_PAGE },
+      const res = await adminGetBoatOrdersPage(
         {
-          ...(boatStatusFilter !== "all" && { status: boatStatusFilter }),
+          pageNum: boatPage.pageNumber || 1,
+          pageSize: boatPage.pageSize || 10,
+          ...(boatFilter.search && { search: boatFilter.search }),
+          ...(boatFilter.sort && { sort: boatFilter.sort }),
+          ...(boatFilter.startDateTime && {
+            startDateTime: boatFilter.startDateTime,
+          }),
+          ...(boatFilter.endDateTime && {
+            endDateTime: boatFilter.endDateTime,
+          }),
+        },
+        {
+          ...(boatFilter.filter.status && { status: boatFilter.filter.status }),
         }
       );
-      if (response.data) {
-        const pageData = response.data as API.PageBaseBoatOrdersVO;
-        setBoatOrders(pageData.records || []);
-        setBoatTotalPages(pageData.totalPage || 0);
+
+      if (res.data) {
+        const pageData = res.data as API.PageBaseBoatOrdersVO;
+        setBoatPage({
+          pageNumber: pageData.pageNumber || 1,
+          pageSize: pageData.pageSize || 10,
+          totalPage: pageData.totalPage,
+          totalRow: pageData.totalRow,
+        });
+
+        // Map orders with users
+        const ordersWithUser = (pageData.records || []).map((order) => {
+          const user = users.find((u) => u.id === order.userId);
+          return { ...order, user };
+        });
+        setBoatOrdersWithUser(ordersWithUser);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch boat orders:", error);
       toast.error("获取船舶订单失败");
     } finally {
-      setIsLoading(false);
+      setIsBoatLoading(false);
     }
-  }, [boatCurrentPage, boatStatusFilter]);
+  }, [boatFilter, boatPage.pageNumber, boatPage.pageSize, users]);
 
+  // Fetch goods orders data
   const fetchGoodsOrders = useCallback(async () => {
-    setIsLoading(true);
+    setIsGoodsLoading(true);
     try {
-      const response = await adminGetGoodsOrdersPage(
-        { pageNum: goodsCurrentPage, pageSize: ITEMS_PER_PAGE },
+      const res = await adminGetGoodsOrdersPage(
         {
-          ...(goodsStatusFilter !== "all" && { status: goodsStatusFilter }),
+          pageNum: goodsPage.pageNumber || 1,
+          pageSize: goodsPage.pageSize || 10,
+          ...(goodsFilter.search && { search: goodsFilter.search }),
+          ...(goodsFilter.sort && { sort: goodsFilter.sort }),
+          ...(goodsFilter.startDateTime && {
+            startDateTime: goodsFilter.startDateTime,
+          }),
+          ...(goodsFilter.endDateTime && {
+            endDateTime: goodsFilter.endDateTime,
+          }),
+        },
+        {
+          ...(goodsFilter.filter.status && {
+            status: goodsFilter.filter.status,
+          }),
         }
       );
-      if (response.data) {
-        const pageData = response.data as API.PageBaseGoodsOrdersVO;
-        setGoodsOrders(pageData.records || []);
-        setGoodsTotalPages(pageData.totalPage || 0);
+
+      if (res.data) {
+        const pageData = res.data as API.PageBaseGoodsOrdersVO;
+        setGoodsPage({
+          pageNumber: pageData.pageNumber || 1,
+          pageSize: pageData.pageSize || 10,
+          totalPage: pageData.totalPage,
+          totalRow: pageData.totalRow,
+        });
+
+        // Map orders with users
+        const ordersWithUser = (pageData.records || []).map((order) => {
+          const user = users.find((u) => u.id === order.userId);
+          return { ...order, user };
+        });
+        setGoodsOrdersWithUser(ordersWithUser);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch goods orders:", error);
       toast.error("获取商品订单失败");
     } finally {
-      setIsLoading(false);
+      setIsGoodsLoading(false);
     }
-  }, [goodsCurrentPage, goodsStatusFilter]);
+  }, [goodsFilter, goodsPage.pageNumber, goodsPage.pageSize, users]);
 
+  // Load users on component mount
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
 
+  // Load orders when tab changes or dependencies change
   useEffect(() => {
-    if (activeTab === "boat") {
+    if (activeTab === "boat" && users.length > 0) {
       fetchBoatOrders();
-    } else {
+    } else if (activeTab === "goods" && users.length > 0) {
       fetchGoodsOrders();
     }
-  }, [activeTab, fetchBoatOrders, fetchGoodsOrders]);
+  }, [activeTab, fetchBoatOrders, fetchGoodsOrders, users.length]);
 
-  useEffect(() => {
-    if (users.length > 0) {
-      const boatOrdersWithUser = boatOrders.map((order) => {
-        const user = users.find((u) => u.id === order.userId);
-        return { ...order, user };
-      });
-      setBoatOrdersWithUser(boatOrdersWithUser);
-
-      const goodsOrdersWithUser = goodsOrders.map((order) => {
-        const user = users.find((u) => u.id === order.userId);
-        return { ...order, user };
-      });
-      setGoodsOrdersWithUser(goodsOrdersWithUser);
-    }
-  }, [boatOrders, goodsOrders, users]);
-
-  const handleViewBoatOrderDetail = (order: BoatOrderWithUser) => {
+  // Handle view detail
+  const handleViewBoatOrderDetail = useCallback((order: BoatOrderWithUser) => {
     setSelectedBoatOrder(order);
     setIsBoatDetailDialogOpen(true);
-  };
+  }, []);
 
-  const handleViewGoodsOrderDetail = (order: GoodsOrderWithUser) => {
-    setSelectedGoodsOrder(order);
-    setIsGoodsDetailDialogOpen(true);
-  };
+  const handleViewGoodsOrderDetail = useCallback(
+    (order: GoodsOrderWithUser) => {
+      setSelectedGoodsOrder(order);
+      setIsGoodsDetailDialogOpen(true);
+    },
+    []
+  );
 
-  const boatOrderColumns: Column<BoatOrderWithUser>[] = [
+  // Boat orders table columns definition
+  const boatOrderColumns: ColumnDef<BoatOrderWithUser>[] = [
     {
-      key: "id",
-      title: "订单ID",
-      width: "100px",
+      id: "id",
+      header: "订单ID",
+      accessorKey: "id",
+      enableSorting: true,
     },
     {
-      key: "user",
-      title: "用户",
-      width: "120px",
-      render: (user: API.BaseAccountsVO) => user?.username || "-",
+      id: "user",
+      header: "用户",
+      accessorFn: (row) => row.user?.username,
+      cell: ({ row }) => row.original.user?.username || "-",
+      enableSorting: true,
     },
     {
-      key: "status",
-      title: "状态",
-      width: "100px",
-      render: (value: OrderStatus) => {
-        const status = ORDER_STATUS[value];
+      id: "status",
+      header: "状态",
+      accessorKey: "status",
+      cell: ({ row }) => {
+        const status = ORDER_STATUS[row.original.status as OrderStatus];
         return status ? (
           <Badge className={status.color}>{status.label}</Badge>
         ) : (
           "-"
         );
       },
+      enableSorting: true,
     },
     {
-      key: "price",
-      title: "价格",
-      width: "100px",
-      render: (value: number) => `¥${value?.toFixed(2) || "0.00"}`,
+      id: "boatId",
+      header: "船只ID",
+      accessorKey: "boatId",
+      enableSorting: true,
     },
     {
-      key: "discount",
-      title: "折扣",
-      width: "100px",
-      render: (value: number) => `¥${value?.toFixed(2) || "0.00"}`,
+      id: "price",
+      header: "价格",
+      accessorKey: "price",
+      cell: ({ row }) => `¥${row.original.price?.toFixed(2) || "0.00"}`,
+      enableSorting: true,
     },
     {
-      key: "createdAt",
-      title: "创建时间",
-      width: "160px",
-      render: (value: string) => {
-        return value ? new Date(value).toLocaleString() : "-";
-      },
+      id: "discount",
+      header: "折扣",
+      accessorKey: "discount",
+      cell: ({ row }) => `¥${row.original.discount?.toFixed(2) || "0.00"}`,
+      enableSorting: true,
+    },
+    {
+      id: "createdAt",
+      header: "创建时间",
+      cell: ({ row }) =>
+        row.original.createdAt
+          ? formatDate(row.original.createdAt, "yyyy-MM-dd HH:mm:ss")
+          : "-",
+      enableSorting: true,
     },
   ];
 
-  const goodsOrderColumns: Column<GoodsOrderWithUser>[] = [
+  // Goods orders table columns definition
+  const goodsOrderColumns: ColumnDef<GoodsOrderWithUser>[] = [
     {
-      key: "id",
-      title: "订单ID",
-      width: "100px",
+      id: "id",
+      header: "订单ID",
+      accessorKey: "id",
+      enableSorting: true,
     },
     {
-      key: "user",
-      title: "用户",
-      width: "120px",
-      render: (user: API.BaseAccountsVO) => user?.username || "-",
+      id: "user",
+      header: "用户",
+      accessorFn: (row) => row.user?.username,
+      cell: ({ row }) => row.original.user?.username || "-",
+      enableSorting: true,
     },
     {
-      key: "status",
-      title: "状态",
-      width: "100px",
-      render: (value: OrderStatus) => {
-        const status = ORDER_STATUS[value];
+      id: "status",
+      header: "状态",
+      accessorKey: "status",
+      cell: ({ row }) => {
+        const status = ORDER_STATUS[row.original.status as OrderStatus];
         return status ? (
           <Badge className={status.color}>{status.label}</Badge>
         ) : (
           "-"
         );
       },
+      enableSorting: true,
     },
     {
-      key: "price",
-      title: "价格",
-      width: "100px",
-      render: (value: number) => `¥${value?.toFixed(2) || "0.00"}`,
+      id: "merchantId",
+      header: "商家ID",
+      accessorKey: "merchantId",
+      enableSorting: true,
     },
     {
-      key: "discount",
-      title: "折扣",
-      width: "100px",
-      render: (value: number) => `¥${value?.toFixed(2) || "0.00"}`,
+      id: "price",
+      header: "价格",
+      accessorKey: "price",
+      cell: ({ row }) => `¥${row.original.price?.toFixed(2) || "0.00"}`,
+      enableSorting: true,
     },
     {
-      key: "createdAt",
-      title: "创建时间",
-      width: "160px",
-      render: (value: string) => {
-        return value ? new Date(value).toLocaleString() : "-";
-      },
+      id: "discount",
+      header: "折扣",
+      accessorKey: "discount",
+      cell: ({ row }) => `¥${row.original.discount?.toFixed(2) || "0.00"}`,
+      enableSorting: true,
+    },
+    {
+      id: "createdAt",
+      header: "创建时间",
+      cell: ({ row }) =>
+        row.original.createdAt
+          ? formatDate(row.original.createdAt, "yyyy-MM-dd HH:mm:ss")
+          : "-",
+      enableSorting: true,
     },
   ];
 
-  const boatOrderActions: Action<BoatOrderWithUser>[] = [
+  // Table row actions
+  const boatOrderActions = [
     {
       label: "查看详情",
-      icon: <Eye className="w-4 h-4" />,
+      icon: <Eye className="mr-2 h-4 w-4" />,
       onClick: handleViewBoatOrderDetail,
     },
   ];
 
-  const goodsOrderActions: Action<GoodsOrderWithUser>[] = [
+  const goodsOrderActions = [
     {
       label: "查看详情",
-      icon: <Eye className="w-4 h-4" />,
+      icon: <Eye className="mr-2 h-4 w-4" />,
       onClick: handleViewGoodsOrderDetail,
     },
   ];
 
-  const boatOrderFilters = [
-    {
-      key: "status",
-      label: "状态",
-      value: boatStatusFilter,
-      onChange: (value: string) =>
-        setBoatStatusFilter(value as "all" | OrderStatus),
-      options: [
-        { label: "全部", value: "all" },
-        ...Object.entries(ORDER_STATUS).map(([key, value]) => ({
-          label: value.label,
-          value: key,
-        })),
-      ],
-    },
-  ];
-
-  const goodsOrderFilters = [
-    {
-      key: "status",
-      label: "状态",
-      value: goodsStatusFilter,
-      onChange: (value: string) =>
-        setGoodsStatusFilter(value as "all" | OrderStatus),
-      options: [
-        { label: "全部", value: "all" },
-        ...Object.entries(ORDER_STATUS).map(([key, value]) => ({
-          label: value.label,
-          value: key,
-        })),
-      ],
-    },
-  ];
-
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">订单管理</h1>
-          <p className="text-muted-foreground">管理所有船舶订单和商品订单</p>
+    <>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold">订单管理</h1>
+            <p className="text-muted-foreground">管理所有船舶订单和商品订单</p>
+          </div>
         </div>
+
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList>
+            <TabsTrigger value="boat" className="flex items-center gap-2">
+              <Ship className="w-4 h-4" />
+              船舶订单
+            </TabsTrigger>
+            <TabsTrigger value="goods" className="flex items-center gap-2">
+              <Package className="w-4 h-4" />
+              商品订单
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="boat">
+            <DataTable<BoatOrderWithUser>
+              title="船舶订单"
+              description="管理船舶租赁订单"
+              loading={isBoatLoading}
+              columns={boatOrderColumns}
+              actions={boatOrderActions}
+              data={boatOrdersWithUser}
+              page={boatPage}
+              onPageChange={(pageNumber) => {
+                setBoatPage({ ...boatPage, pageNumber });
+              }}
+              filter={boatFilter}
+              onFilterChange={(newFilter) => {
+                setBoatFilter(newFilter);
+                setBoatPage({ ...boatPage, pageNumber: 1 });
+              }}
+            />
+          </TabsContent>
+
+          <TabsContent value="goods">
+            <DataTable<GoodsOrderWithUser>
+              title="商品订单"
+              description="管理商品购买订单"
+              loading={isGoodsLoading}
+              columns={goodsOrderColumns}
+              actions={goodsOrderActions}
+              data={goodsOrdersWithUser}
+              page={goodsPage}
+              onPageChange={(pageNumber) => {
+                setGoodsPage({ ...goodsPage, pageNumber });
+              }}
+              filter={goodsFilter}
+              onFilterChange={(newFilter) => {
+                setGoodsFilter(newFilter);
+                setGoodsPage({ ...goodsPage, pageNumber: 1 });
+              }}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="boat" className="flex items-center gap-2">
-            <Ship className="w-4 h-4" />
-            船舶订单
-          </TabsTrigger>
-          <TabsTrigger value="goods" className="flex items-center gap-2">
-            <Package className="w-4 h-4" />
-            商品订单
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="boat">
-          <DataManagementTable
-            title="船舶订单"
-            icon={<Ship className="w-5 h-5" />}
-            data={boatOrdersWithUser}
-            columns={boatOrderColumns as any}
-            actions={boatOrderActions as any}
-            statusFilter={boatOrderFilters[0]}
-            pagination={{
-              currentPage: boatCurrentPage,
-              totalPages: boatTotalPages,
-              totalItems: boatTotalPages * ITEMS_PER_PAGE,
-              onPageChange: setBoatCurrentPage,
-            }}
-            isLoading={isLoading}
-            searchPlaceholder="搜索订单ID或用户名..."
-          />
-        </TabsContent>
-
-        <TabsContent value="goods">
-          <DataManagementTable
-            title="商品订单"
-            icon={<Package className="w-5 h-5" />}
-            data={goodsOrdersWithUser}
-            columns={goodsOrderColumns as any}
-            actions={goodsOrderActions as any}
-            statusFilter={goodsOrderFilters[0]}
-            pagination={{
-              currentPage: goodsCurrentPage,
-              totalPages: goodsTotalPages,
-              totalItems: goodsTotalPages * ITEMS_PER_PAGE,
-              onPageChange: setGoodsCurrentPage,
-            }}
-            isLoading={isLoading}
-            searchPlaceholder="搜索订单ID或用户名..."
-          />
-        </TabsContent>
-      </Tabs>
 
       {/* 船舶订单详情对话框 */}
       <Dialog
@@ -508,18 +588,10 @@ export default function AdminOrdersPage() {
                   </p>
                 </div>
               </div>
-              {selectedGoodsOrder.orderInfo && (
-                <div>
-                  <label className="text-sm font-medium">订单信息</label>
-                  <pre className="text-sm text-muted-foreground bg-muted p-2 rounded mt-1 overflow-auto">
-                    {JSON.stringify(selectedGoodsOrder.orderInfo, null, 2)}
-                  </pre>
-                </div>
-              )}
             </div>
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }

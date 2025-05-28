@@ -1,9 +1,8 @@
+"use client";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Ship } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-
 
 export default function NotFound() {
   const router = useRouter();

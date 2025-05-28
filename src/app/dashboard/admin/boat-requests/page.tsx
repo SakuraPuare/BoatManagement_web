@@ -1,5 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+"use client";
 
+import React, { useCallback, useEffect, useState } from "react";
+import { DataTable } from "@/components/data-table";
+import { Filter, Page } from "@/components/data-table/types";
 import {
   adminDeleteBoatRequest,
   adminGetBoatRequestPage,
@@ -20,10 +23,8 @@ import {
   BOAT_ORDER_STATUS_MAP,
   BOAT_ORDER_TYPE_MAP,
 } from "@/lib/constants/status";
-
-
-
-const ITEMS_PER_PAGE = 10;
+import { ColumnDef } from "@tanstack/react-table";
+import { formatDate } from "date-fns";
 
 type RequestStatus = keyof typeof BOAT_ORDER_STATUS_MAP;
 type RequestType = keyof typeof BOAT_ORDER_TYPE_MAP;
@@ -35,220 +36,282 @@ type BoatRequestWithDetails = API.BaseBoatRequestsVO & {
 };
 
 export default function AdminBoatRequestsPage() {
-  const [requests, setRequests] = useState<API.BaseBoatRequestsVO[]>([]);
+  // State for data table
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState<Page>({
+    pageNumber: 1,
+    pageSize: 10,
+  });
+  const [filter, setFilter] = useState<Filter<BoatRequestWithDetails>>({
+    filter: {},
+    filterOptions: [
+      {
+        id: "status",
+        label: "预订状态",
+        options: [
+          { label: "全部", value: "" },
+          ...Object.entries(BOAT_ORDER_STATUS_MAP).map(([key, value]) => ({
+            label: value.label,
+            value: key,
+          })),
+        ],
+      },
+      {
+        id: "type",
+        label: "预订类型",
+        options: [
+          { label: "全部", value: "" },
+          ...Object.entries(BOAT_ORDER_TYPE_MAP).map(([key, value]) => ({
+            label: value.label,
+            value: key,
+          })),
+        ],
+      },
+    ],
+    search: null,
+    sort: null,
+    startDateTime: null,
+    endDateTime: null,
+  });
   const [requestsWithDetails, setRequestsWithDetails] = useState<
     BoatRequestWithDetails[]
   >([]);
+
+  // State for related data
   const [users, setUsers] = useState<API.BaseAccountsVO[]>([]);
   const [docks, setDocks] = useState<API.BaseDocksVO[]>([]);
+
+  // State for detail dialog
   const [selectedRequest, setSelectedRequest] =
     useState<BoatRequestWithDetails | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<"all" | RequestStatus>(
-    "all"
-  );
-  const [typeFilter, setTypeFilter] = useState<"all" | RequestType>("all");
 
-  const fetchData = useCallback(async () => {
+  // State for delete operations
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
+
+  // Fetch related data (users and docks)
+  const fetchRelatedData = useCallback(async () => {
+    try {
+      const [usersResponse, docksResponse] = await Promise.all([
+        adminGetUserList({}, {}),
+        adminGetDockList({}, {}),
+      ]);
+
+      setUsers((usersResponse.data as API.BaseAccountsVO[]) || []);
+      setDocks((docksResponse.data as API.BaseDocksVO[]) || []);
+    } catch (error) {
+      console.error("Failed to fetch related data:", error);
+    }
+  }, []);
+
+  // Fetch boat requests data
+  const fetchRequests = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [requestsResponse, usersResponse, docksResponse] =
-        await Promise.all([
-          adminGetBoatRequestPage(
-            { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-            {
-              ...(statusFilter !== "all" && { status: statusFilter }),
-              ...(typeFilter !== "all" && { type: typeFilter }),
-            }
-          ),
-          adminGetUserList({}, {}),
-          adminGetDockList({}, {}),
-        ]);
+      const res = await adminGetBoatRequestPage(
+        {
+          pageNum: page.pageNumber || 1,
+          pageSize: page.pageSize || 10,
+          ...(filter.search && { search: filter.search }),
+          ...(filter.sort && { sort: filter.sort }),
+          ...(filter.startDateTime && { startDateTime: filter.startDateTime }),
+          ...(filter.endDateTime && { endDateTime: filter.endDateTime }),
+        },
+        {
+          ...(filter.filter.status && { status: filter.filter.status }),
+          ...(filter.filter.type && { type: filter.filter.type }),
+        }
+      );
 
-      if (requestsResponse.data?.records) {
-        setRequests(requestsResponse.data.records);
-        setTotalPages(requestsResponse.data.totalPage || 0);
-      }
-      setUsers(usersResponse.data || []);
-      setDocks(docksResponse.data || []);
+      const pageData = res.data as any;
+      setPage({
+        pageNumber: pageData?.pageNum || pageData?.pageNumber || 1,
+        pageSize: pageData?.pageSize || 10,
+        totalPage: pageData?.totalPage,
+        totalRow: pageData?.totalRow,
+      });
+
+      // Map requests with user and dock details
+      const requestsWithDetails = (pageData?.records || []).map(
+        (request: API.BaseBoatRequestsVO) => {
+          const user = users.find((u) => u.id === request.userId);
+          const startDock = docks.find((d) => d.id === request.startDockId);
+          const endDock = docks.find((d) => d.id === request.endDockId);
+          return { ...request, user, startDock, endDock };
+        }
+      );
+
+      setRequestsWithDetails(requestsWithDetails);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch boat requests:", error);
       toast.error("获取船舶预订列表失败");
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, statusFilter, typeFilter]);
+  }, [filter, page.pageNumber, page.pageSize, users, docks]);
 
+  // Load related data on component mount
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchRelatedData();
+  }, [fetchRelatedData]);
 
+  // Load requests when dependencies change
   useEffect(() => {
     if (users.length > 0 && docks.length > 0) {
-      const requestsWithDetails = requests.map((request) => {
-        const user = users.find((u) => u.id === request.userId);
-        const startDock = docks.find((d) => d.id === request.startDockId);
-        const endDock = docks.find((d) => d.id === request.endDockId);
-        return { ...request, user, startDock, endDock };
-      });
-      setRequestsWithDetails(requestsWithDetails);
+      fetchRequests();
     }
-  }, [requests, users, docks]);
+  }, [fetchRequests, users.length, docks.length]);
 
-  const handleDelete = async (id: number) => {
-    try {
-      await adminDeleteBoatRequest({ id });
-      toast.success("删除成功");
-      await fetchData();
-    } catch (error) {
-      console.error(error);
-      toast.error("删除失败");
-    }
-  };
+  // Handle delete request
+  const handleDelete = useCallback(
+    async (request: BoatRequestWithDetails) => {
+      if (!request?.id) return;
 
-  const handleViewDetail = (request: BoatRequestWithDetails) => {
+      if (!confirm("确定要删除这个预订申请吗？")) return;
+
+      setIsDeleting(request.id);
+      try {
+        await adminDeleteBoatRequest({ id: request.id });
+        toast.success("删除成功");
+        fetchRequests(); // Refresh the list
+      } catch (error) {
+        console.error("Failed to delete request:", error);
+        toast.error("删除失败");
+      } finally {
+        setIsDeleting(null);
+      }
+    },
+    [fetchRequests]
+  );
+
+  // Handle view detail
+  const handleViewDetail = useCallback((request: BoatRequestWithDetails) => {
     setSelectedRequest(request);
     setIsDetailDialogOpen(true);
-  };
+  }, []);
 
-  const columns: Column<BoatRequestWithDetails>[] = [
+  // Table columns definition
+  const columns: ColumnDef<BoatRequestWithDetails>[] = [
     {
-      key: "id",
-      title: "ID",
-      width: "80px",
+      id: "id",
+      header: "ID",
+      accessorKey: "id",
+      enableSorting: true,
     },
     {
-      key: "user",
-      title: "用户",
-      width: "120px",
-      render: (user: API.BaseAccountsVO) => user?.username || "-",
+      id: "user",
+      header: "用户",
+      accessorFn: (row) => row.user?.username,
+      cell: ({ row }) => row.original.user?.username || "-",
+      enableSorting: true,
     },
     {
-      key: "startDock",
-      title: "起始码头",
-      width: "120px",
-      render: (dock: API.BaseDocksVO) => dock?.name || "-",
+      id: "startDock",
+      header: "起始码头",
+      accessorFn: (row) => row.startDock?.name,
+      cell: ({ row }) => row.original.startDock?.name || "-",
+      enableSorting: true,
     },
     {
-      key: "endDock",
-      title: "目标码头",
-      width: "120px",
-      render: (dock: API.BaseDocksVO) => dock?.name || "-",
+      id: "endDock",
+      header: "目标码头",
+      accessorFn: (row) => row.endDock?.name,
+      cell: ({ row }) => row.original.endDock?.name || "-",
+      enableSorting: true,
     },
     {
-      key: "type",
-      title: "预订类型",
-      width: "100px",
-      render: (value: RequestType) => {
-        const type = BOAT_ORDER_TYPE_MAP[value];
+      id: "type",
+      header: "预订类型",
+      accessorKey: "type",
+      cell: ({ row }) => {
+        const type = BOAT_ORDER_TYPE_MAP[row.original.type as RequestType];
         return type ? <Badge variant="outline">{type.label}</Badge> : "-";
       },
+      enableSorting: true,
     },
     {
-      key: "status",
-      title: "状态",
-      width: "100px",
-      render: (value: RequestStatus) => {
-        const status = BOAT_ORDER_STATUS_MAP[value];
+      id: "status",
+      header: "状态",
+      accessorKey: "status",
+      cell: ({ row }) => {
+        const status =
+          BOAT_ORDER_STATUS_MAP[row.original.status as RequestStatus];
         return status ? (
-          <Badge variant={status.variant}>{status.label}</Badge>
+          <Badge variant="outline" className={status.color}>
+            {status.label}
+          </Badge>
         ) : (
           "-"
         );
       },
+      enableSorting: true,
     },
     {
-      key: "startTime",
-      title: "开始时间",
-      width: "160px",
-      render: (value: string) => {
-        return value ? new Date(value).toLocaleString() : "-";
-      },
+      id: "startTime",
+      header: "开始时间",
+      cell: ({ row }) =>
+        row.original.startTime
+          ? formatDate(row.original.startTime, "yyyy-MM-dd HH:mm:ss")
+          : "-",
+      enableSorting: true,
     },
     {
-      key: "endTime",
-      title: "结束时间",
-      width: "160px",
-      render: (value: string) => {
-        return value ? new Date(value).toLocaleString() : "-";
-      },
+      id: "endTime",
+      header: "结束时间",
+      cell: ({ row }) =>
+        row.original.endTime
+          ? formatDate(row.original.endTime, "yyyy-MM-dd HH:mm:ss")
+          : "-",
+      enableSorting: true,
     },
     {
-      key: "createdAt",
-      title: "创建时间",
-      width: "160px",
-      render: (value: string) => {
-        return value ? new Date(value).toLocaleString() : "-";
-      },
+      id: "createdAt",
+      header: "创建时间",
+      cell: ({ row }) =>
+        row.original.createdAt
+          ? formatDate(row.original.createdAt, "yyyy-MM-dd HH:mm:ss")
+          : "-",
+      enableSorting: true,
     },
   ];
 
-  const actions: Action<BoatRequestWithDetails>[] = [
+  // Table row actions
+  const actions = [
     {
       label: "查看详情",
-      icon: <Eye className="w-4 h-4" />,
+      icon: <Eye className="mr-2 h-4 w-4" />,
       onClick: handleViewDetail,
+      disabled: (row: BoatRequestWithDetails) => isDeleting === row.id,
     },
     {
       label: "删除",
-      icon: <Trash2 className="w-4 h-4" />,
-      onClick: (item) => handleDelete(item.id!),
-      variant: "destructive",
-    },
-  ];
-
-  const filters = [
-    {
-      key: "status",
-      label: "状态",
-      value: statusFilter,
-      onChange: (value: string) =>
-        setStatusFilter(value as "all" | RequestStatus),
-      options: [
-        { label: "全部", value: "all" },
-        ...Object.entries(BOAT_ORDER_STATUS_MAP).map(([key, value]) => ({
-          label: value.label,
-          value: key,
-        })),
-      ],
-    },
-    {
-      key: "type",
-      label: "类型",
-      value: typeFilter,
-      onChange: (value: string) => setTypeFilter(value as "all" | RequestType),
-      options: [
-        { label: "全部", value: "all" },
-        ...Object.entries(BOAT_ORDER_TYPE_MAP).map(([key, value]) => ({
-          label: value.label,
-          value: key,
-        })),
-      ],
+      icon: <Trash2 className="mr-2 h-4 w-4 text-red-500" />,
+      onClick: handleDelete,
+      className: "text-red-500",
+      disabled: (row: BoatRequestWithDetails) => !!isDeleting,
+      loading: (row: BoatRequestWithDetails) => isDeleting === row.id,
+      loadingText: "删除中...",
     },
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">船舶预订管理</h1>
-          <p className="text-muted-foreground">管理所有船舶预订申请</p>
-        </div>
-      </div>
-
-      <DataManagementTable
-        data={requestsWithDetails}
+    <>
+      <DataTable<BoatRequestWithDetails>
+        title="船舶预订管理"
+        description="管理所有船舶预订申请"
+        loading={isLoading}
         columns={columns}
         actions={actions}
-        filters={filters}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        isLoading={isLoading}
-        onPageChange={setCurrentPage}
-        searchPlaceholder="搜索用户名或码头名称..."
+        data={requestsWithDetails}
+        page={page}
+        onPageChange={(pageNumber) => {
+          setPage({ ...page, pageNumber });
+        }}
+        filter={filter}
+        onFilterChange={(newFilter) => {
+          setFilter(newFilter);
+          setPage({ ...page, pageNumber: 1 }); // 筛选变化时重置页码
+        }}
       />
 
       <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
@@ -297,10 +360,11 @@ export default function AdminBoatRequestsPage() {
                   <label className="text-sm font-medium">状态</label>
                   <div className="mt-1">
                     <Badge
-                      variant={
+                      variant="outline"
+                      className={
                         BOAT_ORDER_STATUS_MAP[
                           selectedRequest.status as RequestStatus
-                        ]?.variant || "outline"
+                        ]?.color || ""
                       }
                     >
                       {BOAT_ORDER_STATUS_MAP[
@@ -346,6 +410,6 @@ export default function AdminBoatRequestsPage() {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }

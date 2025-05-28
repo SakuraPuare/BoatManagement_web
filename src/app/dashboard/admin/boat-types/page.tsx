@@ -33,8 +33,6 @@ import {
   Trash2,
 } from "lucide-react";
 
-
-
 const ITEMS_PER_PAGE = 10;
 
 export default function BoatTypesPage() {
@@ -252,6 +250,9 @@ export default function BoatTypesPage() {
             handleDialogClose(true);
           }
           setIsDialogOpen(open);
+        }}
+        onSuccess={() => {
+          fetchBoatTypes();
         }}
         boatType={selectedBoatType}
       />

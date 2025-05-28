@@ -2,8 +2,6 @@ import React from "react";
 import Link from "next/link";
 import { Mail, MapPin, Phone, Ship } from "lucide-react";
 
-
-
 export function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300">

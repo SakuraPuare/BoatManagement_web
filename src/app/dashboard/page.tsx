@@ -7,8 +7,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { getUserRoleNames, hasRole } from "@/utils/role";
 import { toast } from "sonner";
 
-
-
 interface RoleCard {
   title: string;
   description: string;

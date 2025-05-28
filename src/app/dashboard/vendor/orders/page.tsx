@@ -21,8 +21,6 @@ import {
 import { toast } from "sonner";
 import { ORDER_STATUS } from "@/lib/constants/status";
 
-
-
 const ITEMS_PER_PAGE = 10;
 
 export default function VendorOrdersPage() {

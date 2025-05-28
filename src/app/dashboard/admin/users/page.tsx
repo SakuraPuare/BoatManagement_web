@@ -267,7 +267,9 @@ export default function UsersPage() {
 
   // State for add/edit user dialog
   const [isAddEditDialogOpen, setIsAddEditDialogOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<API.BaseAccountsVO | null>(null);
+  const [editingUser, setEditingUser] = useState<API.BaseAccountsVO | null>(
+    null
+  );
 
   // State for delete confirmation
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
@@ -285,7 +287,7 @@ export default function UsersPage() {
           ...(filter.startDateTime && { startDateTime: filter.startDateTime }),
           ...(filter.endDateTime && { endDateTime: filter.endDateTime }),
         },
-        filter.filter,
+        filter.filter
       );
 
       // 处理响应数据的结构
@@ -313,7 +315,19 @@ export default function UsersPage() {
 
   // Function to handle opening the add/edit dialog
   const handleOpenAddEditDialog = useCallback((user?: API.BaseAccountsVO) => {
-    setEditingUser(user || { id: 0, username: "", email: "", phone: "", role: ROLE_MASKS.USER, isActive: true, isBlocked: false, createdAt: "", updatedAt: "" });
+    setEditingUser(
+      user || {
+        id: 0,
+        username: "",
+        email: "",
+        phone: "",
+        role: ROLE_MASKS.USER,
+        isActive: true,
+        isBlocked: false,
+        createdAt: "",
+        updatedAt: "",
+      }
+    );
     setIsAddEditDialogOpen(true);
   }, []);
 
@@ -334,7 +348,7 @@ export default function UsersPage() {
         setIsDeleting(null);
       }
     },
-    [fetchUsers],
+    [fetchUsers]
   );
 
   // Function to handle user blocking/unblocking
@@ -348,7 +362,9 @@ export default function UsersPage() {
           { isBlocked: !userToToggle.isBlocked }
         );
         toast.success(
-          `用户 "${userToToggle.username}" ${userToToggle.isBlocked ? "解除封禁" : "封禁"} 成功`
+          `用户 "${userToToggle.username}" ${
+            userToToggle.isBlocked ? "解除封禁" : "封禁"
+          } 成功`
         );
         fetchUsers();
       } catch (error) {
@@ -356,7 +372,7 @@ export default function UsersPage() {
         toast.error(`操作失败`);
       }
     },
-    [fetchUsers],
+    [fetchUsers]
   );
 
   // Table columns definition

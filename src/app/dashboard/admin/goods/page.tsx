@@ -30,8 +30,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-
-
 const ITEMS_PER_PAGE = 10;
 
 type GoodsWithDetails = API.BaseGoodsVO & {

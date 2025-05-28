@@ -72,7 +72,7 @@ axiosInstance.interceptors.response.use(
 );
 
 // 创建自定义请求函数
-const request = async <T = any>(
+const request = async <T = unknown>(
   url: string,
   options?: AxiosRequestConfig
 ): Promise<ApiResponse<T>> => {

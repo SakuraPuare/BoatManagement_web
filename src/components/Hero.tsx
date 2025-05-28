@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -5,8 +6,6 @@ import { ArrowRight, MapPin, Ship, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-
-
 
 export function Hero() {
   const router = useRouter();

@@ -31,8 +31,6 @@ import {
 import { toast } from "sonner";
 import { BoatDialog } from "./boat-dialog";
 
-
-
 const ITEMS_PER_PAGE = 10;
 
 export default function VendorBoatsPage() {

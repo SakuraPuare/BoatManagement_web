@@ -1,110 +1,155 @@
-import React, { useCallback, useEffect, useState } from "react";
+"use client";
 
+import React, { useCallback, useEffect, useState } from "react";
 import { userGetDockPage } from "@/services/api/userDock";
+import { DataTable } from "@/components/data-table";
+import { ColumnDef } from "@tanstack/react-table";
+import { Filter, Page } from "@/components/data-table/types";
 import { Badge } from "@/components/ui/badge";
 import { Anchor, MapPin, Phone } from "lucide-react";
 import { toast } from "sonner";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-
-
-const ITEMS_PER_PAGE = 10;
 
 export default function UserDocksPage() {
-  const [docks, setDocks] = useState<API.BaseDocksVO[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  // State for data table
   const [isLoading, setIsLoading] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<
-    "all" | "enabled" | "disabled"
-  >("all");
+  const [page, setPage] = useState<Page>({
+    pageNumber: 1,
+    pageSize: 10,
+  });
+  const [filter, setFilter] = useState<Filter<API.BaseDocksVO>>({
+    filter: {},
+    filterOptions: [
+      {
+        id: "isEnabled",
+        label: "状态",
+        options: [
+          { value: "all", label: "全部" },
+          { value: "true", label: "启用" },
+          { value: "false", label: "禁用" },
+        ],
+      },
+    ],
+    search: null,
+    sort: null,
+    startDateTime: null,
+    endDateTime: null,
+  });
+  const [docks, setDocks] = useState<API.BaseDocksVO[]>([]);
 
   const fetchDocks = useCallback(async () => {
     setIsLoading(true);
     try {
+      const enabledValue = String(filter.filter.isEnabled || "");
       const response = await userGetDockPage(
-        { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
         {
-          ...(statusFilter === "enabled" && { isEnabled: true }),
-          ...(statusFilter === "disabled" && { isEnabled: false }),
+          pageNum: page.pageNumber || 1,
+          pageSize: page.pageSize || 10,
+          ...(filter.search && { search: filter.search }),
+          ...(filter.sort && { sort: filter.sort }),
+          ...(filter.startDateTime && { startDateTime: filter.startDateTime }),
+          ...(filter.endDateTime && { endDateTime: filter.endDateTime }),
+        },
+        {
+          ...(enabledValue === "true" && { isEnabled: true }),
+          ...(enabledValue === "false" && { isEnabled: false }),
         }
       );
-      if (response.data?.records) {
-        setDocks(response.data.records);
-        setTotalPages(response.data.totalPage || 0);
+
+      if (response.data) {
+        const pageData = response.data as API.PageBaseDocksVO;
+        setPage({
+          pageNumber: pageData.pageNumber || 1,
+          pageSize: pageData.pageSize || 10,
+          totalPage: pageData.totalPage,
+          totalRow: pageData.totalRow,
+        });
+
+        setDocks(pageData.records || []);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch docks:", error);
       toast.error("获取码头列表失败");
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, statusFilter]);
+  }, [filter, page.pageNumber, page.pageSize]);
 
   useEffect(() => {
     fetchDocks();
   }, [fetchDocks]);
 
-  const columns: Column<API.BaseDocksVO>[] = [
+  // Table columns definition
+  const columns: ColumnDef<API.BaseDocksVO>[] = [
     {
-      accessor: "id",
+      id: "id",
       header: "ID",
+      accessorKey: "id",
+      enableSorting: true,
     },
     {
-      accessor: "name",
+      id: "name",
       header: "码头名称",
+      accessorKey: "name",
+      enableSorting: true,
     },
     {
-      accessor: "address",
+      id: "address",
       header: "地址",
-      render: (value: string) => (
+      accessorKey: "address",
+      cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-muted-foreground" />
-          <span>{value || "-"}</span>
+          <span>{row.original.address || "-"}</span>
         </div>
       ),
+      enableSorting: false,
     },
     {
-      accessor: "contactPhone",
+      id: "contactPhone",
       header: "联系电话",
-      render: (value: string) => (
+      accessorKey: "contactPhone",
+      cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <Phone className="w-4 h-4 text-muted-foreground" />
-          <span>{value || "-"}</span>
+          <span>{row.original.contactPhone || "-"}</span>
         </div>
       ),
+      enableSorting: false,
     },
     {
-      accessor: "longitude",
+      id: "longitude",
       header: "经度",
-      render: (value: number) => value?.toFixed(6) || "-",
+      accessorKey: "longitude",
+      cell: ({ row }) => row.original.longitude?.toFixed(6) || "-",
+      enableSorting: true,
     },
     {
-      accessor: "latitude",
+      id: "latitude",
       header: "纬度",
-      render: (value: number) => value?.toFixed(6) || "-",
+      accessorKey: "latitude",
+      cell: ({ row }) => row.original.latitude?.toFixed(6) || "-",
+      enableSorting: true,
     },
     {
-      accessor: "isEnabled",
+      id: "isEnabled",
       header: "状态",
-      render: (value: boolean) => (
-        <Badge variant={value ? "default" : "secondary"}>
-          {value ? "启用" : "禁用"}
+      accessorKey: "isEnabled",
+      cell: ({ row }) => (
+        <Badge variant={row.original.isEnabled ? "default" : "secondary"}>
+          {row.original.isEnabled ? "启用" : "禁用"}
         </Badge>
       ),
+      enableSorting: true,
     },
     {
-      accessor: "createdAt",
+      id: "createdAt",
       header: "创建时间",
-      render: (value: string) => {
-        return value ? new Date(value).toLocaleString() : "-";
-      },
+      accessorKey: "createdAt",
+      cell: ({ row }) =>
+        row.original.createdAt
+          ? new Date(row.original.createdAt).toLocaleString()
+          : "-",
+      enableSorting: true,
     },
   ];
 
@@ -117,37 +162,25 @@ export default function UserDocksPage() {
         </div>
       </div>
 
-      {/* 筛选器 */}
-      <div className="flex items-center space-x-4">
-        <Select
-          value={statusFilter}
-          onValueChange={(value) =>
-            setStatusFilter(value as "all" | "enabled" | "disabled")
-          }
-        >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="状态" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">全部</SelectItem>
-            <SelectItem value="enabled">启用</SelectItem>
-            <SelectItem value="disabled">禁用</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <DataManagementTable<API.BaseDocksVO>
+      <DataTable<API.BaseDocksVO>
         title="码头列表"
-        icon={<Anchor className="w-5 h-5" />}
-        data={docks}
+        description={
+          <div className="flex items-center gap-2">
+            <Anchor className="w-5 h-5" />
+            <span>查看可用的码头信息和位置</span>
+          </div>
+        }
+        loading={isLoading}
         columns={columns}
-        isLoading={isLoading}
-        searchPlaceholder="搜索码头名称或地址..."
-        pagination={{
-          currentPage,
-          totalPages,
-          totalItems: totalPages * ITEMS_PER_PAGE,
-          onPageChange: setCurrentPage,
+        data={docks}
+        page={page}
+        onPageChange={(pageNumber) => {
+          setPage({ ...page, pageNumber });
+        }}
+        filter={filter}
+        onFilterChange={(newFilter) => {
+          setFilter(newFilter);
+          setPage({ ...page, pageNumber: 1 });
         }}
       />
     </div>

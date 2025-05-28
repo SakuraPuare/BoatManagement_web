@@ -1,137 +1,210 @@
+"use client";
+
 import React, { useCallback, useEffect, useState } from "react";
-import { Package, Pencil, Trash2 } from "lucide-react";
+import { Pencil, PlusCircle, Trash2 } from "lucide-react";
 import {
   merchantDeleteGoods,
   merchantGetGoodsPage,
 } from "@/services/api/merchantGoods";
+import { DataTable } from "@/components/data-table";
+import { ColumnDef } from "@tanstack/react-table";
+import { Filter, Page } from "@/components/data-table/types";
+import { toast } from "sonner";
 
-import { GoodsFormDialog, goodsFormSchema } from "./goods-form-dialog";
-
-
-
-const ITEMS_PER_PAGE = 10;
+import { GoodsFormDialog } from "./goods-form-dialog";
 
 export default function MerchantGoodsPage() {
-  const [goods, setGoods] = useState<API.BaseGoodsVO[]>([]);
-  const [selectedGood, setSelectedGood] = useState<API.BaseGoodsVO | null>(
-    null
-  );
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  // State for data table
   const [isLoading, setIsLoading] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [page, setPage] = useState<Page>({
+    pageNumber: 1,
+    pageSize: 10,
+  });
+  const [filter, setFilter] = useState<Filter<API.BaseGoodsVO>>({
+    filter: {},
+    filterOptions: [],
+    search: null,
+    sort: null,
+    startDateTime: null,
+    endDateTime: null,
+  });
+  const [goods, setGoods] = useState<API.BaseGoodsVO[]>([]);
 
+  // State for add/edit goods dialog
+  const [isAddEditDialogOpen, setIsAddEditDialogOpen] = useState(false);
+  const [editingGood, setEditingGood] = useState<API.BaseGoodsVO | null>(null);
+
+  // State for delete confirmation
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
+
+  // Fetch goods data
   const fetchGoods = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await merchantGetGoodsPage(
-        { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-        {}
+      const res = await merchantGetGoodsPage(
+        {
+          pageNum: page.pageNumber || 1,
+          pageSize: page.pageSize || 10,
+          ...(filter.search && { search: filter.search }),
+          ...(filter.sort && { sort: filter.sort }),
+          ...(filter.startDateTime && { startDateTime: filter.startDateTime }),
+          ...(filter.endDateTime && { endDateTime: filter.endDateTime }),
+        },
+        filter.filter
       );
 
-      if (response.data) {
-        const pageData = response.data as API.PageBaseGoodsVO;
+      if (res.data) {
+        const pageData = res.data as API.PageBaseGoodsVO;
+        setPage({
+          pageNumber: pageData.pageNumber || 1,
+          pageSize: pageData.pageSize || 10,
+          totalPage: pageData.totalPage,
+          totalRow: pageData.totalRow,
+        });
+
         setGoods(pageData.records || []);
-        setTotalPages(pageData.totalPage || 0);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch goods:", error);
+      toast.error("获取商品列表失败");
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage]);
+  }, [filter, page.pageNumber, page.pageSize]);
 
+  // Load data on component mount and when dependencies change
   useEffect(() => {
     fetchGoods();
   }, [fetchGoods]);
 
-  const handleAdd = () => {
-    setSelectedGood(null);
-    setIsDialogOpen(true);
-  };
+  // Function to handle opening the add/edit dialog
+  const handleOpenAddEditDialog = useCallback((good?: API.BaseGoodsVO) => {
+    setEditingGood(good || null);
+    setIsAddEditDialogOpen(true);
+  }, []);
 
-  const handleEdit = (good: API.BaseGoodsVO) => {
-    setSelectedGood(good);
-    setIsDialogOpen(true);
-  };
+  // Function to handle goods deletion
+  const handleDeleteGood = useCallback(
+    async (goodToDelete: API.BaseGoodsVO) => {
+      if (!goodToDelete?.id) return;
 
-  const handleDelete = async (id: number) => {
-    try {
-      await merchantDeleteGoods({ id });
-      await fetchGoods();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const columns: Column<API.BaseGoodsVO>[] = [
-    { header: "商品名称", accessor: "name" },
-    { header: "描述", accessor: "description" },
-    {
-      header: "价格",
-      accessor: "price",
-      render: (price) => <span>¥{price}</span>,
+      setIsDeleting(goodToDelete.id);
+      try {
+        await merchantDeleteGoods({ id: goodToDelete.id });
+        toast.success(`商品 "${goodToDelete.name}" 删除成功`);
+        fetchGoods();
+      } catch (error) {
+        console.error("Failed to delete good:", error);
+        toast.error(`删除商品 "${goodToDelete.name}" 失败`);
+      } finally {
+        setIsDeleting(null);
+      }
     },
-    { header: "单位", accessor: "unit" },
-    { header: "库存", accessor: "stock" },
-    { header: "销量", accessor: "sales" },
+    [fetchGoods]
+  );
+
+  // Table columns definition
+  const columns: ColumnDef<API.BaseGoodsVO>[] = [
+    {
+      id: "id",
+      header: "ID",
+      accessorKey: "id",
+      enableSorting: true,
+    },
+    {
+      id: "name",
+      header: "商品名称",
+      accessorKey: "name",
+      enableSorting: true,
+    },
+    {
+      id: "description",
+      header: "描述",
+      accessorKey: "description",
+      enableSorting: false,
+    },
+    {
+      id: "price",
+      header: "价格",
+      accessorKey: "price",
+      cell: ({ row }) => `¥${row.original.price || 0}`,
+      enableSorting: true,
+    },
+    {
+      id: "unit",
+      header: "单位",
+      accessorKey: "unit",
+      enableSorting: false,
+    },
+    {
+      id: "stock",
+      header: "库存",
+      accessorKey: "stock",
+      enableSorting: true,
+    },
+    {
+      id: "sales",
+      header: "销量",
+      accessorKey: "sales",
+      enableSorting: true,
+    },
   ];
 
-  const actions: Action<API.BaseGoodsVO>[] = [
+  // Table row actions
+  const actions = [
     {
-      icon: <Pencil className="h-4 w-4 mr-2" />,
       label: "编辑",
-      onClick: handleEdit,
+      icon: <Pencil className="mr-2 h-4 w-4" />,
+      onClick: handleOpenAddEditDialog,
+      disabled: (row: API.BaseGoodsVO) => isDeleting === row.id,
     },
     {
-      icon: <Trash2 className="h-4 w-4 mr-2" />,
       label: "删除",
-      onClick: (good: API.BaseGoodsVO) => handleDelete(good.id!),
+      icon: <Trash2 className="mr-2 h-4 w-4 text-red-500" />,
+      onClick: handleDeleteGood,
+      className: "text-red-500",
+      disabled: (row: API.BaseGoodsVO) => !!isDeleting,
+      loading: (row: API.BaseGoodsVO) => isDeleting === row.id,
+      loadingText: "删除中...",
+    },
+  ];
+
+  // Table toolbar actions
+  const toolbars = [
+    {
+      label: "添加商品",
+      icon: <PlusCircle />,
+      onClick: () => handleOpenAddEditDialog(),
     },
   ];
 
   return (
     <>
-      <DataManagementTable
-        title="商品管理"
-        icon={<Package className="h-6 w-6" />}
-        data={goods}
-        isLoading={isLoading}
-        columns={columns}
-        actions={actions}
-        searchPlaceholder="搜索商品..."
-        dialog={GoodsFormDialog}
-        schema={goodsFormSchema}
-        queryFn={async ({ pageNum, pageSize }, searchQuery) => {
-          const response = await merchantGetGoodsPage({ pageNum, pageSize }, {
-            name: searchQuery,
-          } as API.BaseGoodsDTO);
-          const pageData = response.data as API.PageBaseGoodsVO;
-          return {
-            list: pageData?.records || [],
-            totalItems: pageData?.records?.length || 0,
-            totalPages: pageData?.totalPage || 0,
-          };
+      <GoodsFormDialog
+        open={isAddEditDialogOpen}
+        onOpenChange={setIsAddEditDialogOpen}
+        onSuccess={() => {
+          fetchGoods();
         }}
-        pagination={{
-          currentPage,
-          totalPages,
-          totalItems: goods.length,
-          onPageChange: setCurrentPage,
-        }}
-        onAdd={handleAdd}
+        selectedGood={editingGood}
       />
 
-      <GoodsFormDialog
-        open={isDialogOpen}
-        onOpenChange={(open) => {
-          if (!open) {
-            fetchGoods();
-          }
-          setIsDialogOpen(open);
+      <DataTable<API.BaseGoodsVO>
+        title="商品管理"
+        loading={isLoading}
+        columns={columns}
+        actions={actions}
+        data={goods}
+        toolbars={toolbars}
+        page={page}
+        onPageChange={(pageNumber) => {
+          setPage({ ...page, pageNumber });
         }}
-        selectedGood={selectedGood}
-        onSuccess={fetchGoods}
+        filter={filter}
+        onFilterChange={(newFilter) => {
+          setFilter(newFilter);
+          setPage({ ...page, pageNumber: 1 });
+        }}
       />
     </>
   );

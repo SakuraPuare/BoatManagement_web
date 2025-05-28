@@ -31,8 +31,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
-
-
 const boatFormSchema = z.object({
   name: z.string().min(1, "请输入船名"),
   typeId: z.string().min(1, "请选择船型"),

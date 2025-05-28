@@ -34,8 +34,6 @@ import {
 } from "@/components/ui/dialog";
 import { VENDOR_STATUS_MAP } from "@/lib/constants/status";
 
-
-
 const ITEMS_PER_PAGE = 10;
 
 type VendorStatus = keyof typeof VENDOR_STATUS_MAP;

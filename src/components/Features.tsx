@@ -8,8 +8,6 @@ import {
   ShoppingCart,
 } from "lucide-react";
 
-
-
 const features = [
   {
     icon: Navigation,

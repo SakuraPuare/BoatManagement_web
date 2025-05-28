@@ -2,8 +2,6 @@ import React from "react";
 
 import { Home, Settings, User } from "lucide-react";
 
-
-
 const sidebarItems = [
   {
     title: "主页",

@@ -1,8 +1,11 @@
-import React, { useState } from "react";
-import { Bell, Edit, Plus, Send, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+"use client";
 
+import React, { useCallback, useEffect, useState } from "react";
+import { DataTable } from "@/components/data-table";
+import { DialogForm, FieldConfig } from "@/components/data-form";
+import { Filter, Page } from "@/components/data-table/types";
+import { Edit, Plus, Send, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   createNotification,
   deleteNotification,
@@ -10,35 +13,11 @@ import {
   sendNotification,
   updateNotification,
 } from "@/services/api/adminNotificationController";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-
-
+import { ColumnDef } from "@tanstack/react-table";
+import { formatDate } from "date-fns";
 
 const notificationSchema = z.object({
   userId: z.number().min(1, "用户ID不能为空"),
@@ -49,480 +28,529 @@ const notificationSchema = z.object({
   businessId: z.number().optional(),
 });
 
-type NotificationFormData = z.infer<typeof notificationSchema>;
+const sendNotificationSchema = z.object({
+  userId: z.number().min(1, "用户ID不能为空"),
+  title: z.string().min(1, "标题不能为空"),
+  content: z.string().min(1, "内容不能为空"),
+  type: z.string().min(1, "类型不能为空"),
+  businessType: z.string().optional(),
+  businessId: z.number().optional(),
+});
 
-const columns: Column<API.BaseNotificationsVO>[] = [
-  {
-    accessor: "id",
-    header: "ID",
+type NotificationFormData = z.infer<typeof notificationSchema>;
+type SendNotificationFormData = z.infer<typeof sendNotificationSchema>;
+
+// 默认表单值
+const defaultNotificationValues: Partial<NotificationFormData> = {
+  userId: 0,
+  title: "",
+  content: "",
+  type: "SYSTEM",
+  businessType: "",
+  businessId: 0,
+};
+
+// 表单字段配置
+const notificationFieldConfigs: Record<
+  keyof NotificationFormData,
+  FieldConfig
+> = {
+  userId: {
+    type: "number",
+    label: "用户ID",
+    placeholder: "请输入用户ID",
   },
-  {
-    accessor: "userId",
-    header: "用户ID",
+  title: {
+    type: "input",
+    label: "标题",
+    placeholder: "请输入通知标题",
   },
-  {
-    accessor: "title",
-    header: "标题",
+  content: {
+    type: "textarea",
+    label: "内容",
+    placeholder: "请输入通知内容",
   },
-  {
-    accessor: "content",
-    header: "内容",
-    render: (content) => (
-      <div className="max-w-xs truncate" title={content}>
-        {content}
-      </div>
-    ),
+  type: {
+    type: "select",
+    label: "类型",
+    placeholder: "选择通知类型",
+    options: [
+      { value: "SYSTEM", label: "系统通知" },
+      { value: "ORDER", label: "订单通知" },
+      { value: "PAYMENT", label: "支付通知" },
+      { value: "AUDIT", label: "审核通知" },
+    ],
   },
-  {
-    accessor: "type",
-    header: "类型",
+  businessType: {
+    type: "input",
+    label: "业务类型",
+    placeholder: "请输入业务类型(可选)",
   },
-  {
-    accessor: "isRead",
-    header: "已读状态",
-    render: (isRead) => (
-      <span
-        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          isRead
-            ? "bg-green-100 text-green-800"
-            : "bg-yellow-100 text-yellow-800"
-        }`}
-      >
-        {isRead ? "已读" : "未读"}
-      </span>
-    ),
+  businessId: {
+    type: "number",
+    label: "业务ID",
+    placeholder: "请输入业务ID(可选)",
   },
-  {
-    accessor: "createdAt",
-    header: "创建时间",
-    render: (date) => (date ? new Date(date).toLocaleString() : "-"),
-  },
-];
+};
+
+const sendNotificationFieldConfigs: Record<
+  keyof SendNotificationFormData,
+  FieldConfig
+> = {
+  ...notificationFieldConfigs,
+};
+
+interface NotificationDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSuccess: () => void;
+  notification?: API.BaseNotificationsVO | null;
+}
 
 function NotificationDialog({
-  notification,
+  open,
+  onOpenChange,
   onSuccess,
-  trigger,
-}: {
-  notification?: API.BaseNotificationsVO;
-  onSuccess: () => void;
-  trigger: React.ReactNode;
-}) {
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  notification,
+}: NotificationDialogProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const isEditing = !!notification;
 
-  const form = useForm<NotificationFormData>({
+  // 创建表单方法
+  const formMethods = useForm<NotificationFormData>({
     resolver: zodResolver(notificationSchema),
-    defaultValues: {
-      userId: notification?.userId || 0,
-      title: notification?.title || "",
-      content: notification?.content || "",
-      type: notification?.type || "",
-      businessType: notification?.businessType || "",
-      businessId: notification?.businessId || 0,
-    },
+    defaultValues: isEditing
+      ? {
+          userId: notification?.userId || 0,
+          title: notification?.title || "",
+          content: notification?.content || "",
+          type: notification?.type || "SYSTEM",
+          businessType: notification?.businessType || "",
+          businessId: notification?.businessId || 0,
+        }
+      : defaultNotificationValues,
   });
 
-  const onSubmit = async (data: NotificationFormData) => {
-    setLoading(true);
+  // 监听 notification 变化，更新表单默认值
+  useEffect(() => {
+    if (open) {
+      if (isEditing && notification) {
+        formMethods.reset({
+          userId: notification.userId || 0,
+          title: notification.title || "",
+          content: notification.content || "",
+          type: notification.type || "SYSTEM",
+          businessType: notification.businessType || "",
+          businessId: notification.businessId || 0,
+        });
+      } else {
+        formMethods.reset(defaultNotificationValues);
+      }
+    }
+  }, [notification, open, isEditing, formMethods]);
+
+  // 处理表单提交
+  const handleSubmit = async (data: NotificationFormData) => {
+    setIsLoading(true);
     try {
-      if (notification?.id) {
+      if (isEditing && notification?.id) {
         await updateNotification({ id: notification.id }, data);
         toast.success("通知更新成功");
       } else {
         await createNotification(data);
         toast.success("通知创建成功");
       }
-      setOpen(false);
+
+      formMethods.reset(defaultNotificationValues);
+      onOpenChange(false);
       onSuccess();
-      form.reset();
     } catch (error) {
-      toast.error(notification?.id ? "通知更新失败" : "通知创建失败");
+      console.error("Failed to save notification:", error);
+      toast.error(isEditing ? "更新通知失败" : "创建通知失败");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle>
-            {notification?.id ? "编辑通知" : "创建通知"}
-          </DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="userId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>用户ID</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="请输入用户ID"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>标题</FormLabel>
-                  <FormControl>
-                    <Input placeholder="请输入通知标题" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>内容</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="请输入通知内容" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>类型</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="选择通知类型" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="SYSTEM">系统通知</SelectItem>
-                      <SelectItem value="ORDER">订单通知</SelectItem>
-                      <SelectItem value="PAYMENT">支付通知</SelectItem>
-                      <SelectItem value="AUDIT">审核通知</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="businessType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>业务类型（可选）</FormLabel>
-                  <FormControl>
-                    <Input placeholder="如: ORDER, USER" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="businessId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>业务ID（可选）</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="相关业务的ID"
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(Number(e.target.value) || undefined)
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex justify-end space-x-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setOpen(false)}
-              >
-                取消
-              </Button>
-              <Button type="submit" disabled={loading}>
-                {loading ? "保存中..." : "保存"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <DialogForm
+      title={isEditing ? "编辑通知" : "创建通知"}
+      description={isEditing ? "修改通知信息" : "请填写通知信息"}
+      open={open}
+      onOpenChange={(open) => {
+        onOpenChange(open);
+        if (!open) {
+          formMethods.reset(defaultNotificationValues);
+        }
+      }}
+      onSubmit={handleSubmit}
+      formSchema={notificationSchema}
+      defaultValues={
+        isEditing
+          ? {
+              userId: notification?.userId || 0,
+              title: notification?.title || "",
+              content: notification?.content || "",
+              type: notification?.type || "SYSTEM",
+              businessType: notification?.businessType || "",
+              businessId: notification?.businessId || 0,
+            }
+          : defaultNotificationValues
+      }
+      fieldConfigs={notificationFieldConfigs}
+      formMethods={formMethods}
+      submitButtonText={isLoading ? "保存中..." : isEditing ? "更新" : "创建"}
+      cancelButtonText="取消"
+      showCancelButton={true}
+      fieldOrder={[
+        "userId",
+        "title",
+        "content",
+        "type",
+        "businessType",
+        "businessId",
+      ]}
+      key={notification?.id ?? "new"}
+    />
   );
 }
 
-function SendNotificationDialog({
-  onSuccess,
-  trigger,
-}: {
+interface SendNotificationDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
-  trigger: React.ReactNode;
-}) {
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+}
 
-  const form = useForm<{
-    userId: number;
-    title: string;
-    content: string;
-    type: string;
-    businessType?: string;
-    businessId?: number;
-  }>({
+function SendNotificationDialog({
+  open,
+  onOpenChange,
+  onSuccess,
+}: SendNotificationDialogProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  // 创建表单方法
+  const formMethods = useForm<SendNotificationFormData>({
+    resolver: zodResolver(sendNotificationSchema),
     defaultValues: {
       userId: 0,
       title: "",
       content: "",
-      type: "",
+      type: "SYSTEM",
       businessType: "",
       businessId: 0,
     },
   });
 
-  const onSubmit = async (data: any) => {
-    setLoading(true);
+  // 处理表单提交
+  const handleSubmit = async (data: SendNotificationFormData) => {
+    setIsLoading(true);
     try {
-      await sendNotification(data);
+      await sendNotification({
+        userId: data.userId,
+        title: data.title,
+        content: data.content,
+        type: data.type,
+        businessType: data.businessType,
+        businessId: data.businessId,
+      });
       toast.success("通知发送成功");
-      setOpen(false);
+      formMethods.reset();
+      onOpenChange(false);
       onSuccess();
-      form.reset();
     } catch (error) {
-      toast.error("通知发送失败");
+      console.error("Failed to send notification:", error);
+      toast.error("发送通知失败");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle>发送通知</DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="userId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>用户ID</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="请输入用户ID"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>标题</FormLabel>
-                  <FormControl>
-                    <Input placeholder="请输入通知标题" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>内容</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="请输入通知内容" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>类型</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="选择通知类型" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="SYSTEM">系统通知</SelectItem>
-                      <SelectItem value="ORDER">订单通知</SelectItem>
-                      <SelectItem value="PAYMENT">支付通知</SelectItem>
-                      <SelectItem value="AUDIT">审核通知</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex justify-end space-x-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setOpen(false)}
-              >
-                取消
-              </Button>
-              <Button type="submit" disabled={loading}>
-                {loading ? "发送中..." : "发送"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <DialogForm
+      title="发送通知"
+      description="发送实时通知给指定用户"
+      open={open}
+      onOpenChange={(open) => {
+        onOpenChange(open);
+        if (!open) {
+          formMethods.reset();
+        }
+      }}
+      onSubmit={handleSubmit}
+      formSchema={sendNotificationSchema}
+      defaultValues={{
+        userId: 0,
+        title: "",
+        content: "",
+        type: "SYSTEM",
+        businessType: "",
+        businessId: 0,
+      }}
+      fieldConfigs={sendNotificationFieldConfigs}
+      formMethods={formMethods}
+      submitButtonText={isLoading ? "发送中..." : "发送"}
+      cancelButtonText="取消"
+      showCancelButton={true}
+      fieldOrder={[
+        "userId",
+        "title",
+        "content",
+        "type",
+        "businessType",
+        "businessId",
+      ]}
+    />
   );
 }
 
 export default function NotificationsPage() {
-  const [currentPage, setCurrentPage] = useState(1);
+  // State for data table
   const [isLoading, setIsLoading] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [page, setPage] = useState<Page>({
+    pageNumber: 1,
+    pageSize: 10,
+  });
+  const [filter, setFilter] = useState<Filter<API.BaseNotificationsVO>>({
+    filter: {},
+    filterOptions: [],
+    search: null,
+    sort: null,
+    startDateTime: null,
+    endDateTime: null,
+  });
+  const [notifications, setNotifications] = useState<API.BaseNotificationsVO[]>(
+    []
+  );
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("确定要删除这个通知吗？")) return;
+  // State for dialogs
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isSendDialogOpen, setIsSendDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingNotification, setEditingNotification] =
+    useState<API.BaseNotificationsVO | null>(null);
 
+  // State for delete confirmation
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
+
+  // Fetch notifications data
+  const fetchNotifications = useCallback(async () => {
+    setIsLoading(true);
     try {
-      await deleteNotification({ id });
-      toast.success("通知删除成功");
-      setRefreshKey((prev) => prev + 1);
+      const res = await getNotificationsPage1(
+        {
+          pageNum: page.pageNumber || 1,
+          pageSize: page.pageSize || 10,
+          ...(filter.search && { search: filter.search }),
+          ...(filter.sort && { sort: filter.sort }),
+          ...(filter.startDateTime && { startDateTime: filter.startDateTime }),
+          ...(filter.endDateTime && { endDateTime: filter.endDateTime }),
+        },
+        filter.filter
+      );
+
+      const pageData = res.data as any;
+      setPage({
+        pageNumber: pageData?.pageNumber || 1,
+        pageSize: pageData?.pageSize || 10,
+        totalPage: pageData?.totalPage,
+        totalRow: pageData?.totalRow,
+      });
+
+      setNotifications(pageData?.records || []);
     } catch (error) {
-      toast.error("通知删除失败");
+      console.error("Failed to fetch notifications:", error);
+      toast.error("获取通知列表失败");
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [filter, page.pageNumber, page.pageSize]);
+
+  // Load data on component mount and when dependencies change
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
 
   const handleSuccess = () => {
-    setRefreshKey((prev) => prev + 1);
+    fetchNotifications();
   };
 
-  const actionColumn: Column<API.BaseNotificationsVO> = {
-    accessor: "id.",
-    header: "操作",
-    render: (_: any, row?: TableRow<API.BaseNotificationsVO>) => {
-      if (!row) return null;
-      const notification = row.data;
+  const handleDelete = useCallback(
+    async (notification: API.BaseNotificationsVO) => {
+      if (!notification?.id) return;
 
-      return (
-        <div className="flex justify-end space-x-2">
-          <NotificationDialog
-            notification={notification}
-            onSuccess={handleSuccess}
-            trigger={
-              <Button variant="outline" size="sm">
-                <Edit className="h-4 w-4" />
-              </Button>
-            }
-          />
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => handleDelete(notification.id!)}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      );
+      setIsDeleting(notification.id);
+      try {
+        await deleteNotification({ id: notification.id });
+        toast.success(`通知删除成功`);
+        fetchNotifications();
+      } catch (error) {
+        console.error("Failed to delete notification:", error);
+        toast.error(`删除通知失败`);
+      } finally {
+        setIsDeleting(null);
+      }
     },
-  };
+    [fetchNotifications]
+  );
+
+  const handleOpenEditDialog = useCallback(
+    (notification: API.BaseNotificationsVO) => {
+      setEditingNotification(notification);
+      setIsEditDialogOpen(true);
+    },
+    []
+  );
+
+  // Table columns definition
+  const columns: ColumnDef<API.BaseNotificationsVO>[] = [
+    {
+      id: "id",
+      header: "ID",
+      accessorKey: "id",
+      enableSorting: true,
+    },
+    {
+      id: "userId",
+      header: "用户ID",
+      accessorKey: "userId",
+      enableSorting: true,
+    },
+    {
+      id: "title",
+      header: "标题",
+      accessorKey: "title",
+      cell: ({ row }) => (
+        <div className="max-w-xs truncate" title={row.original.title}>
+          {row.original.title}
+        </div>
+      ),
+      enableSorting: true,
+    },
+    {
+      id: "content",
+      header: "内容",
+      accessorKey: "content",
+      cell: ({ row }) => (
+        <div className="max-w-xs truncate" title={row.original.content}>
+          {row.original.content}
+        </div>
+      ),
+      enableSorting: false,
+    },
+    {
+      id: "type",
+      header: "类型",
+      accessorKey: "type",
+      enableSorting: true,
+    },
+    {
+      id: "isRead",
+      header: "已读状态",
+      accessorKey: "isRead",
+      cell: ({ row }) => (
+        <span
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            row.original.isRead
+              ? "bg-green-100 text-green-800"
+              : "bg-yellow-100 text-yellow-800"
+          }`}
+        >
+          {row.original.isRead ? "已读" : "未读"}
+        </span>
+      ),
+      enableSorting: true,
+    },
+    {
+      id: "createdAt",
+      header: "创建时间",
+      cell: ({ row }) =>
+        row.original.createdAt
+          ? formatDate(row.original.createdAt, "yyyy-MM-dd HH:mm:ss")
+          : "-",
+      enableSorting: true,
+    },
+  ];
+
+  // Table row actions
+  const actions = [
+    {
+      label: "编辑",
+      icon: <Edit className="mr-2 h-4 w-4" />,
+      onClick: handleOpenEditDialog,
+      disabled: (row: API.BaseNotificationsVO) => isDeleting === row.id,
+    },
+    {
+      label: "删除",
+      icon: <Trash2 className="mr-2 h-4 w-4 text-red-500" />,
+      onClick: handleDelete,
+      className: "text-red-500",
+      disabled: (row: API.BaseNotificationsVO) => !!isDeleting,
+      loading: (row: API.BaseNotificationsVO) => isDeleting === row.id,
+      loadingText: "删除中...",
+    },
+  ];
+
+  // Table toolbar actions
+  const toolbars = [
+    {
+      label: "发送通知",
+      icon: <Send />,
+      onClick: () => setIsSendDialogOpen(true),
+    },
+    {
+      label: "创建通知",
+      icon: <Plus />,
+      onClick: () => setIsCreateDialogOpen(true),
+    },
+  ];
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Bell className="h-6 w-6" />
-          <h1 className="text-2xl font-semibold">通知管理</h1>
-        </div>
-        <div className="flex space-x-2">
-          <SendNotificationDialog
-            onSuccess={handleSuccess}
-            trigger={
-              <Button variant="outline">
-                <Send className="h-4 w-4 mr-2" />
-                发送通知
-              </Button>
-            }
-          />
-          <NotificationDialog
-            onSuccess={handleSuccess}
-            trigger={
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                创建通知
-              </Button>
-            }
-          />
-        </div>
-      </div>
+    <>
+      {/* Create Dialog */}
+      <NotificationDialog
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+        onSuccess={handleSuccess}
+      />
 
-      <DataManagementTable
-        key={refreshKey}
-        title=""
-        icon={<></>}
-        columns={[...columns, actionColumn]}
-        isLoading={isLoading}
-        searchPlaceholder="搜索通知..."
-        queryFn={async ({ pageNum, pageSize }) => {
-          const response = await getNotificationsPage1(
-            { pageNum, pageSize },
-            {}
-          );
-          const pageData = response.data as API.PageBaseNotificationsVO;
-          return {
-            list: pageData?.records || [],
-            totalItems: pageData?.totalRow || 0,
-            totalPages: pageData?.totalPage || 0,
-          };
+      {/* Edit Dialog */}
+      <NotificationDialog
+        open={isEditDialogOpen}
+        onOpenChange={(open) => {
+          setIsEditDialogOpen(open);
+          if (!open) {
+            setEditingNotification(null);
+          }
         }}
-        pagination={{
-          currentPage,
-          totalPages: 1,
-          totalItems: 0,
-          onPageChange: setCurrentPage,
+        onSuccess={handleSuccess}
+        notification={editingNotification}
+      />
+
+      {/* Send Dialog */}
+      <SendNotificationDialog
+        open={isSendDialogOpen}
+        onOpenChange={setIsSendDialogOpen}
+        onSuccess={handleSuccess}
+      />
+
+      <DataTable<API.BaseNotificationsVO>
+        title="通知管理"
+        description="管理系统通知和消息"
+        loading={isLoading}
+        columns={columns}
+        actions={actions}
+        data={notifications}
+        toolbars={toolbars}
+        page={page}
+        onPageChange={(pageNumber) => {
+          setPage({ ...page, pageNumber });
+        }}
+        filter={filter}
+        onFilterChange={(newFilter) => {
+          setFilter(newFilter);
+          setPage({ ...page, pageNumber: 1 }); // 筛选变化时重置页码
         }}
       />
-    </div>
+    </>
   );
 }

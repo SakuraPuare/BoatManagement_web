@@ -1,92 +1,121 @@
-import React, { useCallback, useEffect, useState } from "react";
+"use client";
 
+import React, { useCallback, useEffect, useState } from "react";
+import { DataTable } from "@/components/data-table";
+import { Filter, Page } from "@/components/data-table/types";
 import { adminGetUnitList } from "@/services/api/adminUnit";
 import { adminGetBoatPage } from "@/services/api/adminBoat";
 import { adminGetBoatTypeList } from "@/services/api/adminBoatType";
 import { adminGetDockList } from "@/services/api/adminDock";
-import { Pencil, Ship } from "lucide-react";
-import { BoatDialog, boatFormSchema } from "./boat-dialog";
-
-
+import { ColumnDef } from "@tanstack/react-table";
+import { formatDate } from "date-fns";
+import { Pencil, PlusCircle } from "lucide-react";
+import { toast } from "sonner";
+import { BoatDialog } from "./boat-dialog";
 
 type BoatVO = {
   boat: API.BaseBoatsVO;
   boatType: API.BaseBoatTypesVO;
   dock: API.BaseDocksVO;
-  // vendor: API.BaseVendorsVO;
   unit: API.BaseUnitsVO;
 };
 
 export default function BoatsPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState<Page>({
+    pageNumber: 1,
+    pageSize: 10,
+  });
+  const [filter, setFilter] = useState<Filter<BoatVO>>({
+    filter: {},
+    filterOptions: [],
+    search: null,
+    sort: null,
+    startDateTime: null,
+    endDateTime: null,
+  });
   const [boats, setBoats] = useState<BoatVO[]>([]);
   const [baseBoats, setBaseBoats] = useState<API.BaseBoatsVO[]>([]);
   const [boatTypes, setBoatTypes] = useState<API.BaseBoatTypesVO[]>([]);
-  // const [vendors, setVendors] = useState<API.BaseVendorsVO[]>([]);
   const [units, setUnits] = useState<API.BaseUnitsVO[]>([]);
   const [docks, setDocks] = useState<API.BaseDocksVO[]>([]);
 
-  const [selectedBoat, setSelectedBoat] = useState<BoatVO | null>(null);
-
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const ITEMS_PER_PAGE = 10;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  // State for boat dialog
+  const [isBoatDialogOpen, setIsBoatDialogOpen] = useState(false);
+  const [editingBoat, setEditingBoat] = useState<API.BaseBoatsVO | null>(null);
 
   const fetchBoats = useCallback(async () => {
+    setIsLoading(true);
     try {
       const response = await adminGetBoatPage(
-        { pageNum: currentPage, pageSize: ITEMS_PER_PAGE },
-        {}
+        {
+          pageNum: page.pageNumber || 1,
+          pageSize: page.pageSize || 10,
+          ...(filter.search && { search: filter.search }),
+          ...(filter.sort && { sort: filter.sort }),
+          ...(filter.startDateTime && { startDateTime: filter.startDateTime }),
+          ...(filter.endDateTime && { endDateTime: filter.endDateTime }),
+        },
+        {} as API.BaseBoatsDTO
       );
-      console.log(response.data?.records);
-      setBaseBoats(response.data?.records || []);
+
+      const responseData = response.data as any;
+      setPage({
+        pageNumber: responseData?.pageNum || 1,
+        pageSize: responseData?.pageSize || 10,
+        totalPage: responseData?.totalPage,
+        totalRow: responseData?.totalRow,
+      });
+
+      setBaseBoats(responseData?.records || []);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch boats:", error);
+      toast.error("获取船只列表失败");
+    } finally {
+      setIsLoading(false);
     }
-  }, [currentPage, statusFilter]);
+  }, [filter, page.pageNumber, page.pageSize]);
 
   const fetchBoatTypes = useCallback(async () => {
     try {
       const response = await adminGetBoatTypeList({}, {});
-      setBoatTypes(response.data || []);
-      return response;
+      setBoatTypes(response.data?.data || []);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch boat types:", error);
+      toast.error("获取船只类型失败");
     }
   }, []);
 
   const fetchDocks = useCallback(async () => {
     try {
       const response = await adminGetDockList({}, {});
-      setDocks(response.data || []);
-      return response;
+      setDocks(response.data?.data || []);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch docks:", error);
+      toast.error("获取码头列表失败");
     }
   }, []);
 
   const fetchUnits = useCallback(async () => {
     try {
       const response = await adminGetUnitList({}, {});
-      setUnits(response.data || []);
-      return response;
+      setUnits(response.data?.data || []);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch units:", error);
+      toast.error("获取单位列表失败");
     }
   }, []);
 
   const fetchAllData = useCallback(async () => {
-    await fetchBoatTypes();
-    await fetchDocks();
-    await fetchUnits();
-    await fetchBoats();
-  }, []);
+    await Promise.all([
+      fetchBoatTypes(),
+      fetchDocks(),
+      fetchUnits(),
+      fetchBoats(),
+    ]);
+  }, [fetchBoatTypes, fetchDocks, fetchUnits, fetchBoats]);
 
   useEffect(() => {
-    setIsLoading(true);
     fetchAllData();
   }, [fetchAllData]);
 
@@ -97,105 +126,152 @@ export default function BoatsPage() {
       docks.length !== 0 &&
       units.length !== 0
     ) {
-      const boats = baseBoats.map((boat) => {
+      const boatVOs = baseBoats.map((boat) => {
         const boatType = boatTypes.find((bt) => bt.id === boat.typeId);
         const dock = docks.find((d) => d.id === boat.dockId);
-        // const vendor = vendors.find((v) => v.id === boat.vendorId);
         const unit = units.find((u) => u.id === boat.unitId);
         return {
           boat: boat,
           boatType: boatType!,
           dock: dock!,
-          // vendor: vendor!,
           unit: unit!,
         };
       });
-      setBoats(boats);
-      setIsLoading(false);
+      setBoats(boatVOs);
     }
-  }, [baseBoats, boatTypes, docks]);
+  }, [baseBoats, boatTypes, docks, units]);
 
-  const handleEdit = (boat: BoatVO) => {
-    setSelectedBoat(boat);
-    setIsDialogOpen(true);
-  };
+  const handleOpenBoatDialog = useCallback((boat?: API.BaseBoatsVO) => {
+    setEditingBoat(boat || null);
+    setIsBoatDialogOpen(true);
+  }, []);
 
-  const columns: Column<BoatVO>[] = [
-    { header: "ID", accessor: "boat.id" },
-    { header: "船名", accessor: "boat.name" },
-    { header: "船型", accessor: "boatType.typeName" },
-    { header: "船长", accessor: "boatType.length" },
-    { header: "船宽", accessor: "boatType.width" },
-    { header: "载重", accessor: "boatType.maxLoad" },
-    { header: "核载人数", accessor: "boatType.grossNumber" },
-    { header: "码头", accessor: "dock.name" },
-    { header: "单位", accessor: "unit.name" },
-    { header: "创建时间", accessor: "boat.createdAt" },
-    { header: "更新时间", accessor: "boat.updatedAt" },
+  // Table columns definition
+  const columns: ColumnDef<BoatVO>[] = [
+    {
+      id: "id",
+      header: "ID",
+      accessorFn: (row) => row.boat.id,
+      enableSorting: true,
+    },
+    {
+      id: "name",
+      header: "船名",
+      accessorFn: (row) => row.boat.name,
+      enableSorting: true,
+    },
+    {
+      id: "typeName",
+      header: "船型",
+      accessorFn: (row) => row.boatType?.typeName,
+      enableSorting: true,
+    },
+    {
+      id: "length",
+      header: "船长(m)",
+      accessorFn: (row) => row.boatType?.length,
+      enableSorting: true,
+    },
+    {
+      id: "width",
+      header: "船宽(m)",
+      accessorFn: (row) => row.boatType?.width,
+      enableSorting: true,
+    },
+    {
+      id: "maxLoad",
+      header: "载重(吨)",
+      accessorFn: (row) => row.boatType?.maxLoad,
+      enableSorting: true,
+    },
+    {
+      id: "grossNumber",
+      header: "核载人数",
+      accessorFn: (row) => row.boatType?.grossNumber,
+      enableSorting: true,
+    },
+    {
+      id: "dockName",
+      header: "码头",
+      accessorFn: (row) => row.dock?.name,
+      enableSorting: true,
+    },
+    {
+      id: "unitName",
+      header: "单位",
+      accessorFn: (row) => row.unit?.name,
+      enableSorting: true,
+    },
+    {
+      id: "createdAt",
+      header: "创建时间",
+      cell: ({ row }) =>
+        row.original.boat.createdAt
+          ? formatDate(row.original.boat.createdAt, "yyyy-MM-dd HH:mm:ss")
+          : "-",
+      enableSorting: true,
+    },
+    {
+      id: "updatedAt",
+      header: "更新时间",
+      cell: ({ row }) =>
+        row.original.boat.updatedAt
+          ? formatDate(row.original.boat.updatedAt, "yyyy-MM-dd HH:mm:ss")
+          : "-",
+      enableSorting: true,
+    },
   ];
 
-  const actions: Action<BoatVO>[] = [
+  // Table row actions
+  const actions = [
     {
-      icon: <Pencil className="h-4 w-4 mr-2" />,
       label: "编辑",
-      onClick: handleEdit,
+      icon: <Pencil className="mr-2 h-4 w-4" />,
+      onClick: (row: BoatVO) => handleOpenBoatDialog(row.boat),
+    },
+  ];
+
+  // Table toolbar actions
+  const toolbars = [
+    {
+      label: "添加船只",
+      icon: <PlusCircle />,
+      onClick: () => handleOpenBoatDialog(),
     },
   ];
 
   return (
     <>
-      <DataManagementTable
-        title="船只管理"
-        icon={<Ship className="h-6 w-6" />}
-        data={boats}
-        isLoading={isLoading}
-        columns={columns}
-        actions={actions}
-        searchPlaceholder="搜索船名、船型或码头..."
-        dialog={BoatDialog}
-        schema={boatFormSchema}
-        queryFn={async ({ pageNum, pageSize }, searchQuery) => {
-          const response = await adminGetBoatPage({ pageNum, pageSize }, {
-            name: searchQuery,
-          } as API.BaseBoatsDTO);
-          const records = response.data?.records || [];
-          const boatVOs = records.map((boat: API.BaseBoatsVO) => ({
-            boat,
-            boatType: boatTypes.find((bt) => bt.id === boat.typeId)!,
-            dock: docks.find((d) => d.id === boat.dockId)!,
-            unit: units.find((u) => u.id === boat.unitId)!,
-          }));
-          return {
-            list: boatVOs,
-            totalItems: records.length,
-            totalPages: response.data?.totalPage || 0,
-          };
-        }}
-        statusFilter={{
-          value: statusFilter,
-          onChange: setStatusFilter,
-          options: [],
-        }}
-        pagination={{
-          currentPage,
-          totalPages,
-          totalItems: boats.length,
-          onPageChange: setCurrentPage,
-        }}
-      />
-
       <BoatDialog
-        open={isDialogOpen}
+        open={isBoatDialogOpen}
         onOpenChange={(open) => {
-          setIsDialogOpen(open);
+          setIsBoatDialogOpen(open);
           if (!open) {
             fetchAllData();
-            setSelectedBoat(null);
+            setEditingBoat(null);
           }
         }}
-        boat={selectedBoat?.boat || null}
+        boat={editingBoat}
         boatTypes={boatTypes}
         docks={docks}
+      />
+
+      <DataTable<BoatVO>
+        title="船只管理"
+        loading={isLoading}
+        columns={columns}
+        actions={actions}
+        data={boats}
+        toolbars={toolbars}
+        page={page}
+        onPageChange={(pageNumber) => {
+          setPage({ ...page, pageNumber });
+        }}
+        filter={filter}
+        onFilterChange={(newFilter) => {
+          setFilter(newFilter);
+          setPage({ ...page, pageNumber: 1 });
+        }}
       />
     </>
   );

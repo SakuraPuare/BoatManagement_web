@@ -7,8 +7,6 @@ import { Lock, Ship, User } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-
-
 export default function RegisterPage() {
   const { register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);

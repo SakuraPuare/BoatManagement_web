@@ -4,8 +4,6 @@ import { ChevronLeft, Menu, MonitorCheck, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-
-
 interface SidebarItem {
   title: string;
   path: string;

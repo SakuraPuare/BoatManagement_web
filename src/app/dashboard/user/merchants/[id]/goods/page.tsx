@@ -1,10 +1,14 @@
+"use client";
+
 import React, { useCallback, useEffect, useState } from "react";
 import { Package } from "lucide-react";
 import {
   createUserMerchantGoodsOrder,
   getUserMerchantGoodsPage,
 } from "@/services/api/userMerchant";
-
+import { DataTable } from "@/components/data-table";
+import { ColumnDef } from "@tanstack/react-table";
+import { Filter, Page } from "@/components/data-table/types";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
@@ -28,8 +32,6 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-
 
 const orderFormSchema = z.object({
   quantity: z.string().min(1, "请输入购买数量"),
@@ -131,11 +133,24 @@ export default function MerchantGoodsPage() {
   const params = useParams();
   const merchantId = params.id as string;
   const { user } = useAuth();
-  const [goods, setGoods] = useState<API.BaseGoodsVO[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+
+  // State for data table
   const [isLoading, setIsLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState<Page>({
+    pageNumber: 1,
+    pageSize: 10,
+  });
+  const [filter, setFilter] = useState<Filter<API.BaseGoodsVO>>({
+    filter: {},
+    filterOptions: [],
+    search: null,
+    sort: null,
+    startDateTime: null,
+    endDateTime: null,
+  });
+  const [goods, setGoods] = useState<API.BaseGoodsVO[]>([]);
+
+  // State for purchase dialog
   const [selectedGood, setSelectedGood] = useState<API.BaseGoodsVO | null>(
     null
   );
@@ -146,7 +161,9 @@ export default function MerchantGoodsPage() {
   const checkMerchantOwnership = useCallback(async () => {
     if (!user || !merchantId) return;
     try {
-      const response = await userCheckIsMerchant({ merchantId });
+      const response = await userCheckIsMerchant({
+        merchantId: parseInt(merchantId, 10),
+      });
       setIsMerchantOwner(!!response.data);
     } catch (error) {
       console.error("检查商家所有权失败:", error);
@@ -160,59 +177,86 @@ export default function MerchantGoodsPage() {
     try {
       const response = await getUserMerchantGoodsPage(
         {
-          merchantId: parseInt(merchantId),
-          pageNum: currentPage,
-          pageSize: 10,
+          merchantId: parseInt(merchantId, 10),
+          pageNum: page.pageNumber || 1,
+          pageSize: page.pageSize || 10,
+          ...(filter.search && { search: filter.search }),
+          ...(filter.sort && { sort: filter.sort }),
+          ...(filter.startDateTime && { startDateTime: filter.startDateTime }),
+          ...(filter.endDateTime && { endDateTime: filter.endDateTime }),
         },
-        { name: searchQuery }
+        filter.filter
       );
-      console.log(response.data);
+
       if (response.data) {
         const pageData = response.data as API.PageBaseGoodsVO;
+        setPage({
+          pageNumber: pageData.pageNumber || 1,
+          pageSize: pageData.pageSize || 10,
+          totalPage: pageData.totalPage,
+          totalRow: pageData.totalRow,
+        });
+
         setGoods(pageData.records || []);
-        setTotalPages(pageData.totalPage || 0);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch goods:", error);
       toast.error("获取商品列表失败");
     } finally {
       setIsLoading(false);
     }
-  }, [merchantId, currentPage, searchQuery]);
+  }, [merchantId, filter, page.pageNumber, page.pageSize]);
 
   useEffect(() => {
     fetchGoods();
     checkMerchantOwnership();
   }, [fetchGoods, checkMerchantOwnership]);
 
-  const columns: Column<API.BaseGoodsVO>[] = [
+  // 处理购买商品
+  const handlePurchaseGood = useCallback((good: API.BaseGoodsVO) => {
+    setSelectedGood(good);
+    setIsDialogOpen(true);
+  }, []);
+
+  // Table columns definition
+  const columns: ColumnDef<API.BaseGoodsVO>[] = [
     {
-      accessor: "name",
+      id: "name",
       header: "商品名称",
+      accessorKey: "name",
+      enableSorting: true,
     },
     {
-      accessor: "description",
+      id: "description",
       header: "描述",
+      accessorKey: "description",
+      enableSorting: false,
     },
     {
-      accessor: "price",
+      id: "price",
       header: "价格",
-      render: (price) => <span>¥{price}</span>,
+      accessorKey: "price",
+      cell: ({ row }) => `¥${row.original.price || 0}`,
+      enableSorting: true,
     },
     {
-      accessor: "unit",
+      id: "unit",
       header: "单位",
+      accessorKey: "unit",
+      enableSorting: false,
     },
     {
-      accessor: "stock",
+      id: "stock",
       header: "库存",
+      accessorKey: "stock",
+      enableSorting: true,
     },
     {
-      accessor: "id.",
+      id: "actions",
       header: "操作",
-      render: (_, row?: TableRow<API.BaseGoodsVO>) => {
-        if (!row) return null;
-        const { stock } = row.data;
+      cell: ({ row }) => {
+        const good = row.original;
+        const { stock } = good;
 
         // 如果库存为0，显示已售罄
         if (stock === 0) {
@@ -242,33 +286,37 @@ export default function MerchantGoodsPage() {
           <Button
             variant="default"
             size="sm"
-            onClick={() => {
-              setSelectedGood(row.data);
-              setIsDialogOpen(true);
-            }}
+            onClick={() => handlePurchaseGood(good)}
           >
             购买
           </Button>
         );
       },
+      enableSorting: false,
     },
   ];
 
   return (
     <>
-      <DataManagementTable
+      <DataTable<API.BaseGoodsVO>
         title="商品列表"
-        icon={<Package className="h-6 w-6" />}
-        data={goods}
+        description={
+          <div className="flex items-center gap-2">
+            <Package className="h-6 w-6" />
+            <span>查看商家的商品并进行购买</span>
+          </div>
+        }
+        loading={isLoading}
         columns={columns}
-        isLoading={isLoading}
-        searchPlaceholder="搜索商品..."
-        onSearch={setSearchQuery}
-        pagination={{
-          currentPage,
-          totalPages,
-          totalItems: goods.length,
-          onPageChange: setCurrentPage,
+        data={goods}
+        page={page}
+        onPageChange={(pageNumber) => {
+          setPage({ ...page, pageNumber });
+        }}
+        filter={filter}
+        onFilterChange={(newFilter) => {
+          setFilter(newFilter);
+          setPage({ ...page, pageNumber: 1 });
         }}
       />
 

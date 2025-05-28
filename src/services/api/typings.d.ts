@@ -1648,7 +1648,7 @@ declare namespace API {
   type ResponseVoid = {
     code?: number;
     message?: string;
-    data?: Record<string, any>;
+    data?: any;
     time?: number;
   };
 
@@ -1720,9 +1720,18 @@ declare namespace API {
     idCard?: string;
   };
 
+  type userCheckIsMerchantParams = {
+    merchantId: number;
+  };
+
+  type userGetBoatOrdersListParams = {
+    status?: string;
+  };
+
   type userGetBoatOrdersPageParams = {
     pageNum?: number;
     pageSize?: number;
+    status?: string;
   };
 
   type userGetBoatRequestByIdsParams = {
@@ -1773,9 +1782,14 @@ declare namespace API {
     id: number;
   };
 
+  type userGetGoodsOrdersListParams = {
+    status?: string;
+  };
+
   type userGetGoodsOrdersPageParams = {
     pageNum?: number;
     pageSize?: number;
+    status?: string;
   };
 
   type userGetUserParams = {

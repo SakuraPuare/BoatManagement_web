@@ -25,7 +25,8 @@ export type FieldConfig = {
     | "custom"
     | "multiselect"
     | "number"
-    | "image";
+    | "image"
+    | "date";
   /** 字段的标签 */
   label?: string;
   /** 字段的占位符 */

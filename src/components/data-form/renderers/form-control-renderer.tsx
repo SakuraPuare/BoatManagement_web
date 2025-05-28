@@ -10,6 +10,7 @@ import { z } from "zod";
 import { FieldConfig } from "../types";
 import { CheckboxControlRenderer } from "./checkbox-control-renderer";
 import { CustomControlRenderer } from "./custom-control-renderer";
+import { DateControlRenderer } from "./date-control-renderer";
 import { ImageControlRenderer } from "./image-control-renderer";
 import { InputControlRenderer } from "./input-control-renderer";
 import { MultiSelectControlRenderer } from "./multiselect-control-renderer";
@@ -97,6 +98,10 @@ export function FormControlRenderer<
           setValue={setValue}
         />
       );
+    }
+    // Date 日期选择器
+    case "date": {
+      return <DateControlRenderer field={field} fieldConfig={config} />;
     }
     // Image 显示
     case "image": {

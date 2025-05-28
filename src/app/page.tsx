@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { Advantages } from "@/components/Advantages";
 import { Features } from "@/components/Features";

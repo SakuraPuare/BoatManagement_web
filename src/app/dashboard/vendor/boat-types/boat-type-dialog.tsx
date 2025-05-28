@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";

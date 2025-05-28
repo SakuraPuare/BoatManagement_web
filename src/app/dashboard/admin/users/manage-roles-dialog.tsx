@@ -1,12 +1,13 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,7 +16,6 @@ import { adminGetAllRoles } from "@/services/api/adminUser";
 // 假设有这个 API
 import { getRoleList } from "@/utils/role";
 import { RoleChineseName } from "@/constants/role";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 

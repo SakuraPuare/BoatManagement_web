@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useCallback, useEffect, useState } from "react";
 import { ShoppingCart, Store } from "lucide-react";
 import { getUserMerchantPageQuery } from "@/services/api/userMerchant";

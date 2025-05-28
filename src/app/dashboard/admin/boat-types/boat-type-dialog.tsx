@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { DialogForm, FieldConfig } from "@/components/data-form";
 import {

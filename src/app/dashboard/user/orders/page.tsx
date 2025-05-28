@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useCallback, useEffect, useState } from "react";
 import { DollarSign, Package, Ship, X } from "lucide-react";
 import {

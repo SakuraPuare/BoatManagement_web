@@ -1,4 +1,6 @@
+"use client";
 import React, { useState } from "react";
+
 import { cn } from "@/lib/utils";
 import { ChevronLeft, Menu, MonitorCheck, X } from "lucide-react";
 import Link from "next/link";

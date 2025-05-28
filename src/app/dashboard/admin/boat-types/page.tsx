@@ -1,3 +1,4 @@
+"use client";
 import React, { useCallback, useEffect, useState } from "react";
 import { BoatTypeDialog } from "@/app/dashboard/admin/boat-types/boat-type-dialog";
 import { Button } from "@/components/ui/button";

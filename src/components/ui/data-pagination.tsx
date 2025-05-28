@@ -9,8 +9,6 @@ import {
   PaginationPrevious
 } from "@/components/ui/pagination";
 
-"use client";
-
 interface DataPaginationProps {
     currentPage: number;
     totalPages: number;

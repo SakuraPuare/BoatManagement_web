@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useCallback, useEffect, useState } from "react";
 import { DataTable } from "@/components/data-table";
 import { DialogForm, FieldConfig } from "@/components/data-form";

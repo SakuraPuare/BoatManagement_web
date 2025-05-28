@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { Home, Package, ShoppingCart } from "lucide-react";

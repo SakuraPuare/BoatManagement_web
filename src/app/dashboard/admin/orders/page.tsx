@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useCallback, useEffect, useState } from "react";
 import { DataTable } from "@/components/data-table";
 import { Filter, Page } from "@/components/data-table/types";

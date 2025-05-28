@@ -1,5 +1,5 @@
-import { Checkbox } from "@/components/ui/checkbox";
 import React from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   ControllerRenderProps,
   FieldValues,
@@ -10,7 +10,7 @@ import { FieldConfig } from "../types";
 
 interface CheckboxControlRendererProps<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>,
+  TName extends Path<TFieldValues>
 > {
   field: ControllerRenderProps<TFieldValues, TName>;
   fieldConfig: FieldConfig;
@@ -18,7 +18,7 @@ interface CheckboxControlRendererProps<
 
 export function CheckboxControlRenderer<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>,
+  TName extends Path<TFieldValues>
 >({ field, fieldConfig }: CheckboxControlRendererProps<TFieldValues, TName>) {
   return (
     <Checkbox

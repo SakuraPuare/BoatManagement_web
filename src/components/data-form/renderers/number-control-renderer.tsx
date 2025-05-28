@@ -1,5 +1,5 @@
-import { Input } from "@/components/ui/input";
 import React from "react";
+import { Input } from "@/components/ui/input";
 import {
   ControllerRenderProps,
   FieldValues,
@@ -11,7 +11,7 @@ import { FieldConfig } from "../types";
 
 interface NumberControlRendererProps<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>,
+  TName extends Path<TFieldValues>
 > {
   field: ControllerRenderProps<TFieldValues, TName>;
   fieldConfig: FieldConfig;
@@ -20,7 +20,7 @@ interface NumberControlRendererProps<
 
 export function NumberControlRenderer<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>,
+  TName extends Path<TFieldValues>
 >({
   field,
   fieldConfig,

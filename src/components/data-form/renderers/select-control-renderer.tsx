@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Select,
   SelectContent,
@@ -5,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import React from "react";
 import {
   ControllerRenderProps,
   FieldValues,
@@ -17,7 +17,7 @@ import { FieldConfig } from "../types";
 
 interface SelectControlRendererProps<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>,
+  TName extends Path<TFieldValues>
 > {
   field: ControllerRenderProps<TFieldValues, TName>;
   fieldConfig: FieldConfig;
@@ -27,7 +27,7 @@ interface SelectControlRendererProps<
 
 export function SelectControlRenderer<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>,
+  TName extends Path<TFieldValues>
 >({
   field,
   fieldConfig,

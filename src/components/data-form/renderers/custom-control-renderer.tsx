@@ -8,7 +8,7 @@ import { FieldConfig } from "../types";
 
 interface CustomControlRendererProps<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>,
+  TName extends Path<TFieldValues>
 > {
   field: ControllerRenderProps<TFieldValues, TName>;
   fieldConfig: FieldConfig;
@@ -17,7 +17,7 @@ interface CustomControlRendererProps<
 
 export function CustomControlRenderer<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>,
+  TName extends Path<TFieldValues>
 >({
   field,
   fieldConfig,

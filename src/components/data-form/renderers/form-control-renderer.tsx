@@ -19,7 +19,7 @@ import { TextareaControlRenderer } from "./textarea-control-renderer";
 
 interface FormControlRendererProps<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends Path<TFieldValues> = Path<TFieldValues>,
+  TName extends Path<TFieldValues> = Path<TFieldValues>
 > {
   fieldKey: string;
   field: ControllerRenderProps<TFieldValues, TName>;
@@ -31,7 +31,7 @@ interface FormControlRendererProps<
 
 export function FormControlRenderer<
   TFieldValues extends FieldValues,
-  TName extends Path<TFieldValues>,
+  TName extends Path<TFieldValues>
 >({
   fieldKey,
   field,

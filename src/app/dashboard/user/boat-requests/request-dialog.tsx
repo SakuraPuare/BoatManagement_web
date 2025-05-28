@@ -1,40 +1,10 @@
 "use client";
 import React from "react";
 
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+import { DialogForm, FieldConfig } from "@/components/data-form";
 import { userCreateBoatRequest } from "@/services/api/userBoatRequest";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -49,18 +19,22 @@ const requestFormSchema = z.object({
   }),
 });
 
+type FormValues = z.infer<typeof requestFormSchema>;
+
 interface RequestDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   docks: API.BaseDocksVO[];
+  onSuccess?: () => void;
 }
 
 export function RequestDialog({
   open,
   onOpenChange,
   docks,
+  onSuccess,
 }: RequestDialogProps) {
-  const form = useForm<z.infer<typeof requestFormSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(requestFormSchema),
     defaultValues: {
       startDockId: 0,
@@ -71,7 +45,7 @@ export function RequestDialog({
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof requestFormSchema>) => {
+  const onSubmit = async (values: FormValues) => {
     try {
       const res = await userCreateBoatRequest({
         ...values,
@@ -82,6 +56,7 @@ export function RequestDialog({
         toast.success("创建请求成功");
         onOpenChange(false);
         form.reset();
+        onSuccess?.();
       } else {
         toast.error("创建请求失败");
       }
@@ -93,194 +68,72 @@ export function RequestDialog({
     }
   };
 
+  // 字段配置
+  const fieldConfigs: Record<keyof FormValues, FieldConfig> = {
+    startDockId: {
+      type: "select",
+      label: "起始码头",
+      placeholder: "选择起始码头",
+      options: docks.map((dock) => ({
+        value: dock.id?.toString() || "",
+        label: dock.name || "",
+      })),
+    },
+    endDockId: {
+      type: "select",
+      label: "目的码头",
+      placeholder: "选择目的码头",
+      options: docks.map((dock) => ({
+        value: dock.id?.toString() || "",
+        label: dock.name || "",
+      })),
+    },
+    startTime: {
+      type: "date",
+      label: "开始时间",
+      placeholder: "选择开始时间",
+    },
+    endTime: {
+      type: "date",
+      label: "结束时间",
+      placeholder: "选择结束时间",
+    },
+    type: {
+      type: "select",
+      label: "请求类型",
+      placeholder: "选择请求类型",
+      options: [
+        { value: "REAL_TIME", label: "实时请求" },
+        { value: "RESERVATION", label: "预约请求" },
+      ],
+    },
+  };
+
+  // 默认表单值
+  const defaultValues: FormValues = {
+    startDockId: 0,
+    endDockId: 0,
+    startTime: new Date(),
+    endTime: new Date(),
+    type: "REAL_TIME",
+  };
+
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="sm:max-w-[425px]">
-        <AlertDialogHeader>
-          <AlertDialogTitle>新建船只请求</AlertDialogTitle>
-        </AlertDialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="startDockId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>起始码头</FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(parseInt(value))}
-                    defaultValue={field.value.toString()}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="选择起始码头" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {docks.map((dock) => (
-                        <SelectItem key={dock.id} value={dock.id!.toString()}>
-                          {dock.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="endDockId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>目的码头</FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(parseInt(value))}
-                    defaultValue={field.value.toString()}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="选择目的码头" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {docks.map((dock) => (
-                        <SelectItem key={dock.id} value={dock.id!.toString()}>
-                          {dock.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="startTime"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>开始时间</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>选择日期</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date < new Date() || date > new Date("2025-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="endTime"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>结束时间</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>选择日期</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date < new Date() || date > new Date("2025-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>请求类型</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="选择请求类型" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="REAL_TIME">实时请求</SelectItem>
-                      <SelectItem value="RESERVATION">预约请求</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <AlertDialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                type="button"
-              >
-                取消
-              </Button>
-              <Button type="submit">
-                {form.formState.isSubmitting ? "提交中..." : "创建"}
-              </Button>
-            </AlertDialogFooter>
-          </form>
-        </Form>
-      </AlertDialogContent>
-    </AlertDialog>
+    <DialogForm
+      title="新建船只请求"
+      description="请填写船只请求信息"
+      open={open}
+      onOpenChange={onOpenChange}
+      onSubmit={onSubmit}
+      formSchema={requestFormSchema}
+      defaultValues={defaultValues}
+      fieldConfigs={fieldConfigs}
+      formMethods={form}
+      submitButtonText={form.formState.isSubmitting ? "提交中..." : "创建"}
+      cancelButtonText="取消"
+      showCancelButton={true}
+      fieldOrder={["startDockId", "endDockId", "startTime", "endTime", "type"]}
+      key="new"
+    />
   );
 }

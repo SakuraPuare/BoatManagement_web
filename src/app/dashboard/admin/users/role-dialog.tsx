@@ -1,20 +1,7 @@
 "use client";
 import React from "react";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { DialogForm, FieldConfig } from "@/components/data-form";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
 import {
   ROLE_CHINESE_NAMES,
   ROLE_COLORS,
@@ -37,9 +24,15 @@ interface RoleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   user: API.BaseAccountsVO;
+  onSuccess?: () => void;
 }
 
-export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
+export function RoleDialog({
+  open,
+  onOpenChange,
+  user,
+  onSuccess,
+}: RoleDialogProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(RoleFormSchema),
     defaultValues: {
@@ -65,6 +58,7 @@ export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
       toast.success("角色更新功能暂未实现");
       onOpenChange(false);
       form.reset();
+      onSuccess?.();
     } catch (error) {
       console.error("更新权限失败:", error);
       toast.error(
@@ -73,64 +67,60 @@ export function RoleDialog({ open, onOpenChange, user }: RoleDialogProps) {
     }
   };
 
-  return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="sm:max-w-[525px]">
-        <AlertDialogHeader>
-          <AlertDialogTitle>权限设置 - {user.username}</AlertDialogTitle>
-        </AlertDialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="role"
-              render={() => (
-                <FormItem>
-                  <FormLabel>用户角色</FormLabel>
-                  <FormDescription>
-                    选择要分配给用户的角色。用户可以同时拥有多个角色。
-                  </FormDescription>
-                  <div className="space-y-4">
-                    {Object.entries(ROLE_MASKS).map(([_, roleValue]) => (
-                      <div
-                        key={roleValue}
-                        className="flex items-start space-x-4"
-                      >
-                        <Button
-                          type="button"
-                          variant={hasRole(roleValue) ? "default" : "outline"}
-                          onClick={() => toggleRole(roleValue)}
-                          className={cn(
-                            "min-w-[100px]",
-                            hasRole(roleValue) && ROLE_COLORS[roleValue]
-                          )}
-                        >
-                          {ROLE_CHINESE_NAMES[roleValue]}
-                        </Button>
-                        <FormDescription className="mt-2">
-                          {ROLE_DESCRIPTIONS[roleValue]}
-                        </FormDescription>
-                      </div>
-                    ))}
-                  </div>
-                </FormItem>
-              )}
-            />
-            <AlertDialogFooter>
+  // 字段配置
+  const fieldConfigs: Record<keyof FormValues, FieldConfig> = {
+    role: {
+      type: "custom",
+      label: "用户角色",
+      render: ({ field }) => (
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            选择要分配给用户的角色。用户可以同时拥有多个角色。
+          </p>
+          {Object.entries(ROLE_MASKS).map(([_, roleValue]) => (
+            <div key={roleValue} className="flex items-start space-x-4">
               <Button
-                variant="outline"
-                onClick={() => onOpenChange(false)}
                 type="button"
+                variant={hasRole(roleValue) ? "default" : "outline"}
+                onClick={() => toggleRole(roleValue)}
+                className={cn(
+                  "min-w-[100px]",
+                  hasRole(roleValue) && ROLE_COLORS[roleValue]
+                )}
               >
-                取消
+                {ROLE_CHINESE_NAMES[roleValue]}
               </Button>
-              <Button type="submit">
-                {form.formState.isSubmitting ? "更新中..." : "更新权限"}
-              </Button>
-            </AlertDialogFooter>
-          </form>
-        </Form>
-      </AlertDialogContent>
-    </AlertDialog>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {ROLE_DESCRIPTIONS[roleValue]}
+              </p>
+            </div>
+          ))}
+        </div>
+      ),
+    },
+  };
+
+  // 默认表单值
+  const defaultValues: FormValues = {
+    role: ROLE_MASKS.USER,
+  };
+
+  return (
+    <DialogForm
+      title={`权限设置 - ${user.username}`}
+      description="管理用户的角色权限"
+      open={open}
+      onOpenChange={onOpenChange}
+      onSubmit={onSubmit}
+      formSchema={RoleFormSchema}
+      defaultValues={defaultValues}
+      fieldConfigs={fieldConfigs}
+      formMethods={form}
+      submitButtonText={form.formState.isSubmitting ? "更新中..." : "更新权限"}
+      cancelButtonText="取消"
+      showCancelButton={true}
+      fieldOrder={["role"]}
+      key={user?.id ?? "new"}
+    />
   );
 }

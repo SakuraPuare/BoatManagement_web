@@ -1,30 +1,7 @@
 "use client";
 import React from "react";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { DialogForm, FieldConfig } from "@/components/data-form";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { adminUpdateBoat } from "@/services/api/adminBoat";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -37,6 +14,8 @@ export const boatFormSchema = z.object({
   dockId: z.number().min(1, "请选择码头"),
 });
 
+type FormValues = z.infer<typeof boatFormSchema>;
+
 interface BoatDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -44,6 +23,7 @@ interface BoatDialogProps {
   boatTypes: API.BaseBoatTypesVO[];
   docks: API.BaseDocksVO[];
   onOpenBoatTypeDialog?: () => void;
+  onSuccess?: () => void;
 }
 
 export function BoatDialog({
@@ -53,22 +33,18 @@ export function BoatDialog({
   boatTypes,
   docks,
   onOpenBoatTypeDialog,
+  onSuccess,
 }: BoatDialogProps) {
-  const form = useForm<z.infer<typeof boatFormSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(boatFormSchema),
     defaultValues: {
-      name: boat?.name || "",
-      typeId: boat?.typeId || 0,
-      dockId: boat?.dockId || 0,
-    },
-    values: {
-      name: boat?.name || "",
-      typeId: boat?.typeId || 0,
-      dockId: boat?.dockId || 0,
+      name: "",
+      typeId: 0,
+      dockId: 0,
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof boatFormSchema>) => {
+  const onSubmit = async (values: FormValues) => {
     const boatType = boatTypes.find(
       (type) => type.id === Number(values.typeId)
     );
@@ -82,6 +58,7 @@ export function BoatDialog({
       }
       onOpenChange(false);
       toast.success(boat?.id ? "更新成功" : "创建成功");
+      onSuccess?.();
     } catch (error) {
       console.error("操作失败:", error);
       toast.error(
@@ -90,125 +67,85 @@ export function BoatDialog({
     }
   };
 
+  // 字段配置
+  const fieldConfigs: Record<keyof FormValues, FieldConfig> = {
+    name: {
+      type: "input",
+      label: "船名",
+      placeholder: "请输入船名",
+    },
+    typeId: {
+      type: "custom",
+      label: "船只类型",
+      render: ({ field }) => (
+        <div className="flex gap-2">
+          <select
+            className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+            value={field.value?.toString()}
+            onChange={(e) => field.onChange(Number(e.target.value))}
+          >
+            <option value="">选择船只类型</option>
+            {boatTypes.map((type) => (
+              <option key={type.id} value={type.id?.toString() || ""}>
+                {type.typeName}
+              </option>
+            ))}
+          </select>
+          {onOpenBoatTypeDialog && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                onOpenBoatTypeDialog();
+                onOpenChange(false);
+              }}
+            >
+              新增类型
+            </Button>
+          )}
+        </div>
+      ),
+    },
+    dockId: {
+      type: "select",
+      label: "所属码头",
+      placeholder: "选择码头",
+      options: docks.map((dock) => ({
+        value: dock.id?.toString() || "",
+        label: dock.name || "",
+      })),
+    },
+  };
+
+  // 默认表单值
+  const defaultValues: FormValues = boat?.id
+    ? {
+        name: boat.name || "",
+        typeId: boat.typeId || 0,
+        dockId: boat.dockId || 0,
+      }
+    : {
+        name: "",
+        typeId: 0,
+        dockId: 0,
+      };
+
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="sm:max-w-[425px]">
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            {boat?.id ? "编辑船只" : "添加船只"}
-          </AlertDialogTitle>
-        </AlertDialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>船名</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="请输入船名" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="typeId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>船只类型</FormLabel>
-                  <div className="flex gap-2">
-                    <Select
-                      onValueChange={(value) => field.onChange(Number(value))}
-                      value={field.value?.toString()}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="flex-1">
-                          <SelectValue placeholder="选择船只类型" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {boatTypes.map((type) => (
-                          <SelectItem
-                            key={type.id}
-                            value={type.id?.toString() || ""}
-                          >
-                            {type.typeName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {onOpenBoatTypeDialog && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => {
-                          onOpenBoatTypeDialog();
-                          onOpenChange(false);
-                        }}
-                      >
-                        新增类型
-                      </Button>
-                    )}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="dockId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>所属码头</FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(Number(value))}
-                    value={field.value?.toString()}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="选择码头" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {docks.map((dock) => (
-                        <SelectItem
-                          key={dock.id}
-                          value={dock.id?.toString() || ""}
-                        >
-                          {dock.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <AlertDialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                type="button"
-              >
-                取消
-              </Button>
-              <Button type="submit">
-                {form.formState.isSubmitting
-                  ? "提交中..."
-                  : boat?.id
-                  ? "更新"
-                  : "创建"}
-              </Button>
-            </AlertDialogFooter>
-          </form>
-        </Form>
-      </AlertDialogContent>
-    </AlertDialog>
+    <DialogForm
+      title={boat?.id ? "编辑船只" : "添加船只"}
+      description={boat?.id ? "修改船只信息" : "请填写船只信息"}
+      open={open}
+      onOpenChange={onOpenChange}
+      onSubmit={onSubmit}
+      formSchema={boatFormSchema}
+      defaultValues={defaultValues}
+      fieldConfigs={fieldConfigs}
+      formMethods={form}
+      submitButtonText={boat?.id ? "更新" : "创建"}
+      cancelButtonText="取消"
+      showCancelButton={true}
+      fieldOrder={["name", "typeId", "dockId"]}
+      key={boat?.id ?? "new"}
+    />
   );
 }

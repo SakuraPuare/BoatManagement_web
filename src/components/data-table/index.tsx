@@ -16,8 +16,6 @@ import { camelToSnakeCase } from "./utils";
 // 导入类型定义
 import { Filter, Page, TimeRange } from "./types";
 
-
-
 /**
  * DataTable 组件的 Props
  * @template T - 表格数据的类型
@@ -253,7 +251,6 @@ export function DataTable<T>({
       const newFilter = { ...filter, sort: params };
       onFilterChange(newFilter);
     }
-    
   }, [sorting]); // 依赖项只需要 sorting，以避免不必要的触发
 
   /**
@@ -301,7 +298,6 @@ export function DataTable<T>({
     if (changed) {
       onFilterChange(newFilter);
     }
-    
   }, [timeRange]); // 依赖项只需要 timeRange，以避免不必要的触发
 
   /**
@@ -327,7 +323,6 @@ export function DataTable<T>({
         endDateTime: newEnd,
       });
     }
-    
   }, [filter?.startDateTime, filter?.endDateTime]); // 依赖外部 filter 的时间戳
 
   /**
@@ -337,7 +332,6 @@ export function DataTable<T>({
     if (filter?.search !== searchTerm) {
       setSearchTerm(filter?.search ?? "");
     }
-    
   }, [filter?.search]);
 
   /**

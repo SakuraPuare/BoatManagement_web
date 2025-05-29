@@ -70,7 +70,7 @@ export default function MerchantsPage() {
       const users = (usersResponse.data as API.BaseAccountsVO[]) || [];
       const units = (unitsResponse.data as API.BaseUnitsVO[]) || [];
       const responseData = merchantsResponse.data as any;
-      
+
       setPage({
         pageNumber: responseData?.pageNumber || 1,
         pageSize: responseData?.pageSize || 10,
@@ -82,7 +82,7 @@ export default function MerchantsPage() {
       setMerchants(merchants);
       setUsers(users);
       setUnits(units);
-      
+
       // 如果用户或单位数据为空，记录警告
       if (users.length === 0) {
         console.warn("用户数据为空，可能影响商家信息显示");

@@ -63,10 +63,16 @@ export function DialogForm<
         <DialogContent className="sm:max-w-[60%] max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>表单配置错误：缺少表单验证规则</DialogDescription>
+            <DialogDescription>
+              表单配置错误：缺少表单验证规则
+            </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               关闭
             </Button>
           </DialogFooter>
@@ -81,7 +87,9 @@ export function DialogForm<
   // 内部创建的 react-hook-form 实例，仅在未提供外部 formMethods 时使用
   // Use a temporary variable to hold the internally created form methods if needed
   const internalForm = useForm<TFormValues>({
-    resolver: formSchema ? zodResolver(formSchema) as unknown as Resolver<TFormValues> : undefined,
+    resolver: formSchema
+      ? (zodResolver(formSchema) as unknown as Resolver<TFormValues>)
+      : undefined,
     // defaultValues are handled by reset below OR by external form methods
   });
 
@@ -125,7 +133,7 @@ export function DialogForm<
   };
 
   // 确定需要渲染的字段列表，过滤掉 hideFields 中指定的字段
-  const fieldsToRender = formSchema?.shape 
+  const fieldsToRender = formSchema?.shape
     ? Object.keys(formSchema.shape).filter(
         // Cast hideFields to string[] for includes check, assuming keys are strings
         (key) => !(hideFields as string[]).includes(key)

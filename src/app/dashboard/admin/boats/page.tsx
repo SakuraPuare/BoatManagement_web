@@ -82,7 +82,7 @@ export default function BoatsPage() {
   const fetchBoatTypes = useCallback(async () => {
     try {
       const response = await adminGetBoatTypeList({}, {});
-      console.log('Boat types response:', response.data);
+      console.log("Boat types response:", response.data);
       setBoatTypes((response.data as any) || []);
     } catch (error) {
       console.error("Failed to fetch boat types:", error);
@@ -93,7 +93,7 @@ export default function BoatsPage() {
   const fetchDocks = useCallback(async () => {
     try {
       const response = await adminGetDockList({}, {});
-      console.log('Docks response:', response.data);
+      console.log("Docks response:", response.data);
       setDocks((response.data as any) || []);
     } catch (error) {
       console.error("Failed to fetch docks:", error);
@@ -104,7 +104,7 @@ export default function BoatsPage() {
   const fetchUnits = useCallback(async () => {
     try {
       const response = await adminGetUnitList({}, {});
-      console.log('Units response:', response.data);
+      console.log("Units response:", response.data);
       setUnits((response.data as any) || []);
     } catch (error) {
       console.error("Failed to fetch units:", error);
@@ -115,7 +115,7 @@ export default function BoatsPage() {
   const fetchVendors = useCallback(async () => {
     try {
       const response = await adminGetVendorList({}, {});
-      console.log('Vendors response:', response.data);
+      console.log("Vendors response:", response.data);
       setVendors((response.data as any) || []);
     } catch (error) {
       console.error("Failed to fetch vendors:", error);
@@ -139,27 +139,27 @@ export default function BoatsPage() {
 
   useEffect(() => {
     if (baseBoats.length > 0) {
-      console.log('开始映射船只数据...');
-      console.log('baseBoats:', baseBoats);
-      console.log('boatTypes:', boatTypes);
-      console.log('docks:', docks);
-      console.log('units:', units);
-      console.log('vendors:', vendors);
-      
+      console.log("开始映射船只数据...");
+      console.log("baseBoats:", baseBoats);
+      console.log("boatTypes:", boatTypes);
+      console.log("docks:", docks);
+      console.log("units:", units);
+      console.log("vendors:", vendors);
+
       const boatVOs = baseBoats.map((boat) => {
         const boatType = boatTypes.find((bt) => bt.id === boat.typeId);
         const dock = docks.find((d) => d.id === boat.dockId);
         const unit = units.find((u) => u.id === boat.unitId);
         const vendor = vendors.find((v) => v.id === boat.vendorId);
-        
+
         console.log(`船只${boat.name}映射结果:`, {
           boat,
           boatType,
           dock,
           unit,
-          vendor
+          vendor,
         });
-        
+
         return {
           boat: boat,
           boatType: boatType || ({} as API.BaseBoatTypesVO),
@@ -198,27 +198,28 @@ export default function BoatsPage() {
       enableSorting: true,
     },
     {
-      id: "dockName", 
+      id: "dockName",
       header: "码头",
       accessorFn: (row) => row.dock?.name || "-",
       enableSorting: true,
     },
     {
       id: "unitName",
-      header: "单位", 
+      header: "单位",
       accessorFn: (row) => row.unit?.name || "-",
       enableSorting: true,
     },
     {
       id: "vendorName",
       header: "供应商",
-      accessorFn: (row) => row.vendor?.userId ? `供应商${row.vendor.userId}` : "-",
+      accessorFn: (row) =>
+        row.vendor?.userId ? `供应商${row.vendor.userId}` : "-",
       enableSorting: true,
     },
     {
       id: "isEnabled",
       header: "状态",
-      cell: ({ row }) => row.original.boat.isEnabled ? "启用" : "禁用",
+      cell: ({ row }) => (row.original.boat.isEnabled ? "启用" : "禁用"),
       enableSorting: true,
     },
     {

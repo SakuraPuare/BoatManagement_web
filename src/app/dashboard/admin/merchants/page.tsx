@@ -27,15 +27,11 @@ export default function MerchantsPage() {
     filterOptions: [
       {
         id: "status",
-        label: "状态筛选",
+        label: "状态",
         options: [
-          { value: "all", label: "全部状态" },
-          ...Object.entries(MERCHANT_CERTIFY_STATUS_MAP).map(
-            ([value, config]) => ({
-              value: value,
-              label: config.label,
-            })
-          ),
+          { value: "PENDING", label: "待审核" },
+          { value: "APPROVED", label: "已通过" },
+          { value: "REJECTED", label: "已拒绝" },
         ],
       },
     ],
@@ -71,12 +67,12 @@ export default function MerchantsPage() {
           ),
         ]);
 
-      const users = (usersResponse.data?.data as API.BaseAccountsVO[]) || [];
-      const units = (unitsResponse.data?.data as API.BaseUnitsVO[]) || [];
+      const users = (usersResponse.data as API.BaseAccountsVO[]) || [];
+      const units = (unitsResponse.data as API.BaseUnitsVO[]) || [];
       const responseData = merchantsResponse.data as any;
-
+      
       setPage({
-        pageNumber: responseData?.pageNum || 1,
+        pageNumber: responseData?.pageNumber || 1,
         pageSize: responseData?.pageSize || 10,
         totalPage: responseData?.totalPage,
         totalRow: responseData?.totalRow,
@@ -86,6 +82,14 @@ export default function MerchantsPage() {
       setMerchants(merchants);
       setUsers(users);
       setUnits(units);
+      
+      // 如果用户或单位数据为空，记录警告
+      if (users.length === 0) {
+        console.warn("用户数据为空，可能影响商家信息显示");
+      }
+      if (units.length === 0) {
+        console.warn("单位数据为空，可能影响商家信息显示");
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
       toast.error("获取数据失败");
@@ -99,18 +103,17 @@ export default function MerchantsPage() {
   }, [fetchData]);
 
   useEffect(() => {
-    if (users.length > 0 && units.length > 0) {
-      const merchantListData = merchants.map((merchant) => {
-        const user = users.find((user) => user.id === merchant.userId);
-        const unit = units.find((unit) => unit.id === merchant.unitId);
-        return {
-          ...merchant,
-          user: user || ({} as API.BaseAccountsVO),
-          unit: unit || ({} as API.BaseUnitsVO),
-        };
-      });
-      setMerchantList(merchantListData);
-    }
+    // 即使没有用户和单位数据也显示商家列表
+    const merchantListData = merchants.map((merchant) => {
+      const user = users.find((user) => user.id === merchant.userId);
+      const unit = units.find((unit) => unit.id === merchant.unitId);
+      return {
+        ...merchant,
+        user: user || ({} as API.BaseAccountsVO),
+        unit: unit || ({} as API.BaseUnitsVO),
+      };
+    });
+    setMerchantList(merchantListData);
   }, [users, units, merchants]);
 
   // Table columns definition
@@ -124,37 +127,37 @@ export default function MerchantsPage() {
     {
       id: "username",
       header: "用户名",
-      accessorFn: (row) => row.user?.username,
+      accessorFn: (row) => row.user?.username || `用户ID: ${row.userId}`,
       enableSorting: true,
     },
     {
       id: "unitId",
       header: "单位ID",
-      accessorFn: (row) => row.unit?.id,
+      accessorFn: (row) => row.unit?.id || row.unitId,
       enableSorting: true,
     },
     {
       id: "unitName",
       header: "单位名",
-      accessorFn: (row) => row.unit?.name,
+      accessorFn: (row) => row.unit?.name || `单位ID: ${row.unitId}`,
       enableSorting: true,
     },
     {
       id: "unitAddress",
       header: "单位地址",
-      accessorFn: (row) => row.unit?.address,
+      accessorFn: (row) => row.unit?.address || "-",
       enableSorting: false,
     },
     {
       id: "legalPerson",
       header: "法定代表人",
-      accessorFn: (row) => row.unit?.legalPerson,
+      accessorFn: (row) => row.unit?.legalPerson || "-",
       enableSorting: false,
     },
     {
       id: "contactPhone",
       header: "联系电话",
-      accessorFn: (row) => row.unit?.contactPhone,
+      accessorFn: (row) => row.unit?.contactPhone || "-",
       enableSorting: false,
     },
     {

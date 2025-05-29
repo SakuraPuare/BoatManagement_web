@@ -128,13 +128,13 @@ export default function DataTableFilter<T>({
                   {/* "全部" 选项 */}
                   <SelectItem value="all">{option.label} 全部</SelectItem>
                   {/* 渲染具体筛选选项 */}
-                  {option.options.map(
-                    (selection: { label: string; value: string }) => (
+                  {option.options && option.options
+                    .filter((selection) => selection.value && selection.value.trim() !== "") // 过滤掉空值
+                    .map((selection: { label: string; value: string }) => (
                       <SelectItem key={selection.value} value={selection.value}>
                         {selection.label} {/* 显示选项标签 */}
                       </SelectItem>
-                    )
-                  )}
+                    ))}
                 </SelectContent>
               </Select>
             </div>

@@ -34,6 +34,11 @@ export function SelectControlRenderer<
   fieldKey,
   formSchema,
 }: SelectControlRendererProps<TFieldValues, TName>) {
+  // 安全检查 formSchema 是否存在
+  if (!formSchema?.shape) {
+    return <div className="text-sm text-muted-foreground">表单配置错误</div>;
+  }
+
   const shape = formSchema.shape as Record<
     string,
     z.ZodTypeAny | z.ZodOptional<any> | z.ZodNullable<any>

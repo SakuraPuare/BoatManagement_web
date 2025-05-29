@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -49,6 +49,39 @@ export function BoatTypeDialog({
       isEnabled: true,
     },
   });
+
+  // 使用 useMemo 计算默认值，确保它能响应 boatType 的变化
+  const defaultValues = useMemo((): FormValues => {
+    if (boatType?.id) {
+      return {
+        typeName: boatType.typeName || "",
+        description: boatType.description || "",
+        length: boatType.length || 0,
+        width: boatType.width || 0,
+        grossNumber: boatType.grossNumber || 0,
+        maxLoad: boatType.maxLoad || 0,
+        maxSpeed: boatType.maxSpeed || 0,
+        maxEndurance: boatType.maxEndurance || 0,
+        isEnabled: boatType.isEnabled ?? true,
+      };
+    }
+    return {
+      typeName: "",
+      description: "",
+      length: 0,
+      width: 0,
+      grossNumber: 0,
+      maxLoad: 0,
+      maxSpeed: 0,
+      maxEndurance: 0,
+      isEnabled: true,
+    };
+  }, [boatType]);
+
+  // 当 boatType 数据变化时，重置表单值
+  useEffect(() => {
+    form.reset(defaultValues);
+  }, [defaultValues, form]);
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -116,42 +149,17 @@ export function BoatTypeDialog({
     },
   };
 
-  // 默认表单值
-  const defaultValues: FormValues = boatType?.id
-    ? {
-        typeName: boatType.typeName || "",
-        description: boatType.description || "",
-        length: boatType.length || 0,
-        width: boatType.width || 0,
-        grossNumber: boatType.grossNumber || 0,
-        maxLoad: boatType.maxLoad || 0,
-        maxSpeed: boatType.maxSpeed || 0,
-        maxEndurance: boatType.maxEndurance || 0,
-        isEnabled: boatType.isEnabled ?? true,
-      }
-    : {
-        typeName: "",
-        description: "",
-        length: 0,
-        width: 0,
-        grossNumber: 0,
-        maxLoad: 0,
-        maxSpeed: 0,
-        maxEndurance: 0,
-        isEnabled: true,
-      };
-
   return (
     <DialogForm
       title={boatType?.id ? "编辑船舶类型" : "添加船舶类型"}
       description={boatType?.id ? "修改船舶类型信息" : "请填写船舶类型信息"}
       open={open}
       onOpenChange={onOpenChange}
-      onSubmit={onSubmit}
+      onSubmit={onSubmit as (data: any) => void}
       formSchema={boatTypeFormSchema}
       defaultValues={defaultValues}
       fieldConfigs={fieldConfigs}
-      formMethods={form}
+      formMethods={form as any}
       submitButtonText="保存"
       cancelButtonText="取消"
       showCancelButton={true}

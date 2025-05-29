@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { DialogForm, FieldConfig } from "@/components/data-form";
 import { vendorCreateBoat, vendorUpdateBoat } from "@/services/api/vendorBoat";
@@ -43,6 +43,29 @@ export function BoatDialog({
       isEnabled: true,
     },
   });
+
+  // 使用 useMemo 计算默认值，确保它能响应 boat 的变化
+  const defaultValues = useMemo((): FormValues => {
+    if (boat?.id) {
+      return {
+        name: boat.name || "",
+        typeId: boat.typeId?.toString() || "",
+        dockId: boat.dockId?.toString() || "",
+        isEnabled: boat.isEnabled ?? true,
+      };
+    }
+    return {
+      name: "",
+      typeId: "",
+      dockId: "",
+      isEnabled: true,
+    };
+  }, [boat]);
+
+  // 当 boat 数据变化时，重置表单值
+  useEffect(() => {
+    form.reset(defaultValues);
+  }, [defaultValues, form]);
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -105,32 +128,17 @@ export function BoatDialog({
     },
   };
 
-  // 默认表单值
-  const defaultValues: FormValues = boat?.id
-    ? {
-        name: boat.name || "",
-        typeId: boat.typeId?.toString() || "",
-        dockId: boat.dockId?.toString() || "",
-        isEnabled: boat.isEnabled ?? true,
-      }
-    : {
-        name: "",
-        typeId: "",
-        dockId: "",
-        isEnabled: true,
-      };
-
   return (
     <DialogForm
       title={boat?.id ? "编辑船只" : "添加船只"}
       description={boat?.id ? "修改船只信息" : "请填写船只信息"}
       open={open}
       onOpenChange={onOpenChange}
-      onSubmit={onSubmit}
+      onSubmit={onSubmit as (data: any) => void}
       formSchema={boatFormSchema}
       defaultValues={defaultValues}
       fieldConfigs={fieldConfigs}
-      formMethods={form}
+      formMethods={form as any}
       submitButtonText={boat?.id ? "更新" : "添加"}
       cancelButtonText="取消"
       showCancelButton={true}

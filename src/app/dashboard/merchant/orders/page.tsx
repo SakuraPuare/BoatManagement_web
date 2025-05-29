@@ -1,31 +1,28 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  merchantCancelOrder,
-  merchantCompleteOrder,
-  merchantGetOrdersPage,
+  merchantCancelGoodsOrder,
+  merchantCompleteGoodsOrder,
+  merchantGetGoodsOrdersPage,
 } from "@/services/api/merchantOrder";
 import { DataTable } from "@/components/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { Filter, Page } from "@/components/data-table/types";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { CheckCircle, Ship, ShoppingBag, Trash2 } from "lucide-react";
+import { CheckCircle, ShoppingBag, Trash2 } from "lucide-react";
 import { ORDER_STATUS } from "@/lib/constants/status";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type OrderStatus = keyof typeof ORDER_STATUS;
 
 export default function MerchantOrdersPage() {
-  const [activeTab, setActiveTab] = useState<"boat" | "goods">("boat");
-
-  // State for data table
+  // 商品订单状态
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState<Page>({
     pageNumber: 1,
     pageSize: 10,
   });
-  const [filter, setFilter] = useState<Filter<API.BaseBoatOrdersVO>>({
+  const [filter, setFilter] = useState<Filter<API.BaseGoodsOrdersVO>>({
     filter: {},
     filterOptions: [
       {
@@ -45,16 +42,17 @@ export default function MerchantOrdersPage() {
     startDateTime: null,
     endDateTime: null,
   });
-  const [orders, setOrders] = useState<API.BaseBoatOrdersVO[]>([]);
+  const [orders, setOrders] = useState<API.BaseGoodsOrdersVO[]>([]);
 
   // State for delete/cancel confirmation
   const [isProcessing, setIsProcessing] = useState<number | null>(null);
 
+  // 获取商品订单
   const fetchOrders = useCallback(async () => {
     setIsLoading(true);
     try {
       const statusValue = filter.filter.status as string;
-      const response = await merchantGetOrdersPage(
+      const response = await merchantGetGoodsOrdersPage(
         {
           pageNum: page.pageNumber || 1,
           pageSize: page.pageSize || 10,
@@ -67,7 +65,7 @@ export default function MerchantOrdersPage() {
       );
 
       if (response.data) {
-        const pageData = response.data as API.PageBaseBoatOrdersVO;
+        const pageData = response.data as API.PageBaseGoodsOrdersVO;
         setPage({
           pageNumber: pageData.pageNumber || 1,
           pageSize: pageData.pageSize || 10,
@@ -89,15 +87,16 @@ export default function MerchantOrdersPage() {
     fetchOrders();
   }, [fetchOrders]);
 
-  // 处理函数
+  // 订单处理函数
   const handleCancelOrder = useCallback(
-    async (order: API.BaseBoatOrdersVO) => {
-      if (!order.orderId) return;
+    async (order: API.BaseGoodsOrdersVO) => {
+      if (!order.id) return;
 
-      setIsProcessing(order.orderId);
+      setIsProcessing(order.id);
       try {
-        const res = await merchantCancelOrder({ id: order.orderId });
-        if (res.data) {
+        const res = await merchantCancelGoodsOrder({ id: order.id });
+        console.log(res);
+        if (res.code === 200) {
           toast.success("取消订单成功");
           fetchOrders();
         } else {
@@ -114,12 +113,12 @@ export default function MerchantOrdersPage() {
   );
 
   const handleCompleteOrder = useCallback(
-    async (order: API.BaseBoatOrdersVO) => {
-      if (!order.orderId) return;
+    async (order: API.BaseGoodsOrdersVO) => {
+      if (!order.id) return;
 
-      setIsProcessing(order.orderId);
+      setIsProcessing(order.id);
       try {
-        const res = await merchantCompleteOrder({ id: order.orderId });
+        const res = await merchantCompleteGoodsOrder({ id: order.id });
         if (res.data) {
           toast.success("完成订单成功");
           fetchOrders();
@@ -136,18 +135,24 @@ export default function MerchantOrdersPage() {
     [fetchOrders]
   );
 
-  // Table columns definition
-  const columns: ColumnDef<API.BaseBoatOrdersVO>[] = [
+  // 订单列定义
+  const columns: ColumnDef<API.BaseGoodsOrdersVO>[] = [
     {
-      id: "orderId",
+      id: "id",
       header: "订单ID",
-      accessorKey: "orderId",
+      accessorKey: "id",
       enableSorting: true,
     },
     {
       id: "userId",
       header: "用户ID",
       accessorKey: "userId",
+      enableSorting: true,
+    },
+    {
+      id: "merchantId",
+      header: "商家ID",
+      accessorKey: "merchantId",
       enableSorting: true,
     },
     {
@@ -189,20 +194,10 @@ export default function MerchantOrdersPage() {
           : "-",
       enableSorting: true,
     },
-    {
-      id: "updatedAt",
-      header: "更新时间",
-      accessorKey: "updatedAt",
-      cell: ({ row }) =>
-        row.original.updatedAt
-          ? new Date(row.original.updatedAt).toLocaleString("zh-CN")
-          : "-",
-      enableSorting: true,
-    },
   ];
 
-  // Table row actions with conditional display
-  const getActions = (row: API.BaseBoatOrdersVO) => {
+  // 订单行操作
+  const getActions = (row: API.BaseGoodsOrdersVO) => {
     const actions = [];
 
     // 只有待处理和处理中的订单可以取消
@@ -211,6 +206,7 @@ export default function MerchantOrdersPage() {
         label: "取消订单",
         icon: <Trash2 className="h-4 w-4 mr-2" />,
         onClick: () => handleCancelOrder(row),
+        disabled: isProcessing === row.id,
       });
     }
 
@@ -220,17 +216,24 @@ export default function MerchantOrdersPage() {
         label: "完成订单",
         icon: <CheckCircle className="h-4 w-4 mr-2" />,
         onClick: () => handleCompleteOrder(row),
+        disabled: isProcessing === row.id,
       });
     }
 
     return actions;
   };
 
-  // 船舶订单组件
-  const BoatOrdersTab = () => {
-    return (
-      <DataTable<API.BaseBoatOrdersVO>
-        title="船舶订单"
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <ShoppingBag className="h-6 w-6" />
+          <h2 className="text-3xl font-bold tracking-tight">商品订单管理</h2>
+        </div>
+      </div>
+
+      <DataTable<API.BaseGoodsOrdersVO>
+        title="商品订单"
         loading={isLoading}
         columns={columns}
         getActions={getActions}
@@ -245,49 +248,6 @@ export default function MerchantOrdersPage() {
           setPage({ ...page, pageNumber: 1 });
         }}
       />
-    );
-  };
-
-  // 商品订单组件
-  const GoodsOrdersTab = () => {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-gray-500">
-        <ShoppingBag className="h-12 w-12 mb-4" />
-        <p>商品订单功能开发中...</p>
-      </div>
-    );
-  };
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">订单管理</h2>
-      </div>
-
-      <Tabs
-        defaultValue="boat"
-        value={activeTab}
-        onValueChange={(value) => setActiveTab(value as "boat" | "goods")}
-      >
-        <TabsList className="grid w-[400px] grid-cols-2">
-          <TabsTrigger value="boat" className="flex items-center gap-2">
-            <Ship className="h-4 w-4" />
-            船舶订单
-          </TabsTrigger>
-          <TabsTrigger value="goods" className="flex items-center gap-2">
-            <ShoppingBag className="h-4 w-4" />
-            商品订单
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="boat" className="mt-6">
-          <BoatOrdersTab />
-        </TabsContent>
-
-        <TabsContent value="goods" className="mt-6">
-          <GoodsOrdersTab />
-        </TabsContent>
-      </Tabs>
     </div>
   );
 }

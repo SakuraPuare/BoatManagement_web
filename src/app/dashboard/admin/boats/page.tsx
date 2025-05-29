@@ -6,6 +6,7 @@ import { adminGetUnitList } from "@/services/api/adminUnit";
 import { adminGetBoatPage } from "@/services/api/adminBoat";
 import { adminGetBoatTypeList } from "@/services/api/adminBoatType";
 import { adminGetDockList } from "@/services/api/adminDock";
+import { adminGetVendorList } from "@/services/api/adminVendor";
 import { ColumnDef } from "@tanstack/react-table";
 import { formatDate } from "date-fns";
 import { Pencil, PlusCircle } from "lucide-react";
@@ -17,6 +18,7 @@ type BoatVO = {
   boatType: API.BaseBoatTypesVO;
   dock: API.BaseDocksVO;
   unit: API.BaseUnitsVO;
+  vendor: API.BaseVendorsVO;
 };
 
 export default function BoatsPage() {
@@ -38,6 +40,7 @@ export default function BoatsPage() {
   const [boatTypes, setBoatTypes] = useState<API.BaseBoatTypesVO[]>([]);
   const [units, setUnits] = useState<API.BaseUnitsVO[]>([]);
   const [docks, setDocks] = useState<API.BaseDocksVO[]>([]);
+  const [vendors, setVendors] = useState<API.BaseVendorsVO[]>([]);
 
   // State for boat dialog
   const [isBoatDialogOpen, setIsBoatDialogOpen] = useState(false);
@@ -59,8 +62,9 @@ export default function BoatsPage() {
       );
 
       const responseData = response.data as any;
+      console.log(responseData);
       setPage({
-        pageNumber: responseData?.pageNum || 1,
+        pageNumber: responseData?.pageNumber || 1,
         pageSize: responseData?.pageSize || 10,
         totalPage: responseData?.totalPage,
         totalRow: responseData?.totalRow,
@@ -78,7 +82,8 @@ export default function BoatsPage() {
   const fetchBoatTypes = useCallback(async () => {
     try {
       const response = await adminGetBoatTypeList({}, {});
-      setBoatTypes(response.data?.data || []);
+      console.log('Boat types response:', response.data);
+      setBoatTypes((response.data as any) || []);
     } catch (error) {
       console.error("Failed to fetch boat types:", error);
       toast.error("获取船只类型失败");
@@ -88,7 +93,8 @@ export default function BoatsPage() {
   const fetchDocks = useCallback(async () => {
     try {
       const response = await adminGetDockList({}, {});
-      setDocks(response.data?.data || []);
+      console.log('Docks response:', response.data);
+      setDocks((response.data as any) || []);
     } catch (error) {
       console.error("Failed to fetch docks:", error);
       toast.error("获取码头列表失败");
@@ -98,10 +104,22 @@ export default function BoatsPage() {
   const fetchUnits = useCallback(async () => {
     try {
       const response = await adminGetUnitList({}, {});
-      setUnits(response.data?.data || []);
+      console.log('Units response:', response.data);
+      setUnits((response.data as any) || []);
     } catch (error) {
       console.error("Failed to fetch units:", error);
       toast.error("获取单位列表失败");
+    }
+  }, []);
+
+  const fetchVendors = useCallback(async () => {
+    try {
+      const response = await adminGetVendorList({}, {});
+      console.log('Vendors response:', response.data);
+      setVendors((response.data as any) || []);
+    } catch (error) {
+      console.error("Failed to fetch vendors:", error);
+      toast.error("获取供应商列表失败");
     }
   }, []);
 
@@ -110,35 +128,49 @@ export default function BoatsPage() {
       fetchBoatTypes(),
       fetchDocks(),
       fetchUnits(),
+      fetchVendors(),
       fetchBoats(),
     ]);
-  }, [fetchBoatTypes, fetchDocks, fetchUnits, fetchBoats]);
+  }, [fetchBoatTypes, fetchDocks, fetchUnits, fetchVendors, fetchBoats]);
 
   useEffect(() => {
     fetchAllData();
   }, [fetchAllData]);
 
   useEffect(() => {
-    if (
-      baseBoats.length !== 0 &&
-      boatTypes.length !== 0 &&
-      docks.length !== 0 &&
-      units.length !== 0
-    ) {
+    if (baseBoats.length > 0) {
+      console.log('开始映射船只数据...');
+      console.log('baseBoats:', baseBoats);
+      console.log('boatTypes:', boatTypes);
+      console.log('docks:', docks);
+      console.log('units:', units);
+      console.log('vendors:', vendors);
+      
       const boatVOs = baseBoats.map((boat) => {
         const boatType = boatTypes.find((bt) => bt.id === boat.typeId);
         const dock = docks.find((d) => d.id === boat.dockId);
         const unit = units.find((u) => u.id === boat.unitId);
+        const vendor = vendors.find((v) => v.id === boat.vendorId);
+        
+        console.log(`船只${boat.name}映射结果:`, {
+          boat,
+          boatType,
+          dock,
+          unit,
+          vendor
+        });
+        
         return {
           boat: boat,
-          boatType: boatType!,
-          dock: dock!,
-          unit: unit!,
+          boatType: boatType || ({} as API.BaseBoatTypesVO),
+          dock: dock || ({} as API.BaseDocksVO),
+          unit: unit || ({} as API.BaseUnitsVO),
+          vendor: vendor || ({} as API.BaseVendorsVO),
         };
       });
       setBoats(boatVOs);
     }
-  }, [baseBoats, boatTypes, docks, units]);
+  }, [baseBoats, boatTypes, docks, units, vendors]);
 
   const handleOpenBoatDialog = useCallback((boat?: API.BaseBoatsVO) => {
     setEditingBoat(boat || null);
@@ -162,43 +194,31 @@ export default function BoatsPage() {
     {
       id: "typeName",
       header: "船型",
-      accessorFn: (row) => row.boatType?.typeName,
+      accessorFn: (row) => row.boatType?.typeName || "-",
       enableSorting: true,
     },
     {
-      id: "length",
-      header: "船长(m)",
-      accessorFn: (row) => row.boatType?.length,
-      enableSorting: true,
-    },
-    {
-      id: "width",
-      header: "船宽(m)",
-      accessorFn: (row) => row.boatType?.width,
-      enableSorting: true,
-    },
-    {
-      id: "maxLoad",
-      header: "载重(吨)",
-      accessorFn: (row) => row.boatType?.maxLoad,
-      enableSorting: true,
-    },
-    {
-      id: "grossNumber",
-      header: "核载人数",
-      accessorFn: (row) => row.boatType?.grossNumber,
-      enableSorting: true,
-    },
-    {
-      id: "dockName",
+      id: "dockName", 
       header: "码头",
-      accessorFn: (row) => row.dock?.name,
+      accessorFn: (row) => row.dock?.name || "-",
       enableSorting: true,
     },
     {
       id: "unitName",
-      header: "单位",
-      accessorFn: (row) => row.unit?.name,
+      header: "单位", 
+      accessorFn: (row) => row.unit?.name || "-",
+      enableSorting: true,
+    },
+    {
+      id: "vendorName",
+      header: "供应商",
+      accessorFn: (row) => row.vendor?.userId ? `供应商${row.vendor.userId}` : "-",
+      enableSorting: true,
+    },
+    {
+      id: "isEnabled",
+      header: "状态",
+      cell: ({ row }) => row.original.boat.isEnabled ? "启用" : "禁用",
       enableSorting: true,
     },
     {

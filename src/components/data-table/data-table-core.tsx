@@ -69,8 +69,6 @@ export function DataTableCore<T>({
               {/* 全选 Checkbox 列，根据 showCheckboxColumn 决定是否显示 */}
               {showCheckboxColumn && (
                 <TableHead className="w-[50px]">
-                  {" "}
-                  {/* 固定宽度 */}
                   <Checkbox
                     checked={
                       table.getIsAllPageRowsSelected() || // 全选状态
@@ -129,8 +127,7 @@ export function DataTableCore<T>({
               {/* 如果定义了行操作，则添加 "操作" 列 */}
               {showActionsColumn && (
                 <TableHead className="w-[80px]">操作</TableHead>
-              )}{" "}
-              {/* 固定宽度 */}
+              )}
             </TableRow>
           ))}
         </TableHeader>

@@ -42,10 +42,16 @@ export default function UserAuditPage() {
   const [filter, setFilter] = useState<Filter<API.BaseUserCertifyVO>>({
     filter: {},
     filterOptions: [
-      { label: "全部", value: "" },
-      { label: "待审核", value: "PENDING" },
-      { label: "已通过", value: "APPROVED" },
-      { label: "已拒绝", value: "REJECTED" },
+      {
+        id: "status",
+        label: "审核状态",
+        placeholder: "选择审核状态",
+        options: [
+          { label: "待审核", value: "PENDING" },
+          { label: "已通过", value: "APPROVED" },
+          { label: "已拒绝", value: "REJECTED" },
+        ],
+      },
     ],
     search: null,
     sort: null,
@@ -83,7 +89,7 @@ export default function UserAuditPage() {
       );
 
       setPage({
-        pageNumber: res.data?.pageNum || 1,
+        pageNumber: res.data?.pageNumber || 1,
         pageSize: res.data?.pageSize || 10,
         totalPage: res.data?.totalPage,
         totalRow: res.data?.totalRow,
